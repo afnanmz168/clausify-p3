@@ -1,0 +1,41 @@
+SOFTWARE DISTRIBUTION AND SERVICES AGREEMENT
+
+This Agreement is made effective as of 15 January 2024 (the "Effective Date") by and between Harborline Systems Inc., a Delaware corporation ("Supplier"), and Meridian Retail Partners LLC, a New York limited liability company ("Distributor").
+
+1. LICENSE GRANT. Supplier grants Distributor a non-transferable, non-exclusive license to market and sublicense the Software within the Territory during the Term.
+
+2. EXCLUSIVITY. During the Term, Distributor shall purchase all of its requirements for products of the type covered by this Agreement exclusively from Supplier, and shall not market, distribute, or promote any competing product from any other source.
+
+3. MINIMUM COMMITMENT. Distributor shall purchase a minimum of twelve thousand (12,000) licensed units in each contract year. Any shortfall shall be invoiced at the then-current list price regardless of actual sales.
+
+4. MOST FAVORED NATION. Distributor shall extend to Supplier pricing no less favorable than the most favorable pricing Distributor extends to any other vendor for comparable goods or services.
+
+5. NON-COMPETE. For a period of three (3) years following termination or expiration of this Agreement, Distributor shall not, directly or indirectly, engage in, own, manage, or provide services to any business that competes with Supplier within the Territory.
+
+6. INTELLECTUAL PROPERTY ASSIGNMENT. Distributor hereby irrevocably assigns to Supplier all right, title, and interest in and to any improvements, derivative works, feedback, or modifications relating to the Software, including all patent, copyright, and trade secret rights therein.
+
+7. PERPETUAL LICENSE. Supplier is granted an irrevocable, perpetual, worldwide, royalty-free license to use any Distributor materials incorporated into or delivered with the Software.
+
+8. LIQUIDATED DAMAGES. In the event Distributor breaches Section 2 or Section 5, Distributor shall pay Supplier liquidated damages in the amount of two hundred fifty thousand dollars ($250,000) per occurrence, which the Parties agree is a reasonable estimate of actual damages and not a penalty.
+
+9. LIMITATION OF LIABILITY. Except with respect to Distributor's indemnification obligations, breach of confidentiality, and breach of Sections 2, 5, 6, or 7, for which Distributor's liability shall be unlimited, each Party's aggregate liability shall not exceed the fees paid in the twelve (12) months preceding the claim.
+
+10. INDEMNIFICATION. Distributor shall defend, indemnify, and hold harmless Supplier from and against any and all losses, damages, claims, and expenses arising from Distributor's acts or omissions, without limitation as to amount.
+
+11. AUDIT RIGHTS. Supplier may, upon thirty (30) days' written notice, inspect and audit Distributor's books and records relating to this Agreement not more than twice per calendar year.
+
+12. TERM AND RENEWAL. The initial term is two (2) years and shall automatically renew for successive one (1) year terms unless either Party provides written notice of non-renewal at least ninety (90) days prior to the end of the then-current term.
+
+13. TERMINATION FOR CONVENIENCE. Supplier may terminate this Agreement at any time for any reason upon sixty (60) days' written notice to Distributor.
+
+14. ANTI-ASSIGNMENT. Distributor shall not assign or transfer this Agreement, in whole or in part, without the prior written consent of Supplier, and any purported assignment without such consent shall be void.
+
+15. CHANGE OF CONTROL. In the event of a merger, consolidation, or sale of substantially all assets of Distributor, Supplier may terminate this Agreement upon written notice.
+
+16. INSURANCE. Distributor shall maintain commercial general liability insurance of not less than two million dollars ($2,000,000) per occurrence throughout the Term.
+
+17. GOVERNING LAW. This Agreement shall be governed by and construed in accordance with the laws of the State of New York, without regard to its conflict of laws principles.
+
+18. EXPIRATION. Unless earlier terminated, this Agreement shall expire on 14 January 2026.
+
+IN WITNESS WHEREOF, the Parties have executed this Agreement as of the Effective Date.
