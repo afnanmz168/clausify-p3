@@ -1,0 +1,33 @@
+\chapter*{Nomenclature}
+The next list describes several symbols \& abbreviation that will be later used within the body of the document
+
+\vspace{0.5cm}
+\begin{tabular}{p{3cm} p{11cm}}
+CUAD & Contract Understanding Atticus Dataset\\
+EM & Exact Match\\
+FN / FP & False Negative / False Positive\\
+IP & Intellectual Property\\
+LR & Logistic Regression\\
+MIL & Multiple-Instance Learning\\
+MPS & Metal Performance Shaders (Apple GPU backend)\\
+NLP & Natural Language Processing\\
+QA & Question Answering\\
+ROUGE & Recall-Oriented Understudy for Gisting Evaluation\\
+SQuAD & Stanford Question Answering Dataset\\
+TF--IDF & Term Frequency--Inverse Document Frequency\\
+TN / TP & True Negative / True Positive\\
+BERT & Bidirectional Encoder Representations from Transformers\\
+ECE & Expected Calibration Error\\
+\end{tabular}
+
+\vspace{0.6cm}
+\textbf{Glossary of terms}
+\begin{description}[itemsep=4pt]
+  \item[Clause category] One of the 41 types of contractual provision annotated in CUAD (e.g., \emph{Governing Law}, \emph{Non-Compete}, \emph{Cap on Liability}).
+  \item[Contract-level split] A train/test partition that assigns whole contracts to one side, so no clause from a training contract can appear in the test set.
+  \item[Presence classification] Deciding, for each clause category, whether a contract contains at least one clause of that category.
+  \item[Span extraction] Locating the exact character span of a clause inside the contract text, formulated as extractive question answering.
+  \item[Max-pooling (over windows)] Scoring every sliding window of a document and taking the maximum window score as the document-level prediction.
+  \item[Retrieval ceiling] The upper bound that a retrieval step imposes on a downstream model's recall: clauses in windows the retriever never selects can never be found.
+  \item[Weaker party] The contract signer with less bargaining power, from whose perspective the risk taxonomy is scored.
+\end{description}

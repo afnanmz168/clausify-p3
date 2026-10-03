@@ -1,0 +1,100 @@
+\section{Background}
+Almost everything people and businesses do together runs on contracts, but actually reading them is a luxury. A typical agreement in our dataset has a median length of about 33{,}000 characters --- roughly 5{,}000 words --- and the longest one crosses 338{,}000 characters. Somewhere inside all that text sit the provisions that really matter: who owns newly created intellectual property, whether liability has a ceiling, whether the contract quietly renews itself, whether one party is banned from competing after it ends. Getting a lawyer to review such a document takes hours and costs money that individuals and small businesses often do not have. So people sign contracts they have not fully understood, and carry risks they never saw.
+
+The Contract Understanding Atticus Dataset (CUAD) \cite{hendrycks2021cuad} was built to help automate this kind of review. It contains 510 real commercial contracts in which legal experts highlighted every clause belonging to 41 categories that matter in corporate transactions. The annotation effort alone is said to be worth around two million US dollars of attorney time. But CUAD frames the problem purely as extraction: given a category, find the clause text. Once it finds a clause labelled ``Uncapped Liability,'' it stops. There is no warning about what that clause means for the signer, no plain-language explanation, and no check of how clauses interact.
+
+\subsection{System at a Glance}
+Before the detailed treatment in Chapter~4, Figure~\ref{fig:overview} gives the shape of the whole system in one picture. The system answers three questions about a contract in order --- \emph{what is in it}, \emph{where is it}, and \emph{what does it mean} --- and only the first two are what CUAD was built to benchmark. The third stage, shaded, is what this project adds.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  node distance=6mm,
+  box/.style={draw, rounded corners=2pt, minimum height=19mm, text width=25mm,
+              align=center, font=\small, fill=blue!6},
+  new/.style={box, fill=orange!15},
+  arr/.style={-{Stealth[length=2.5mm]}, thick}
+]
+\node[box] (a) {\textbf{Contract}\\[2pt]{\scriptsize raw text}\\{\scriptsize median 33k chars}};
+\node[box, right=of a] (b) {\textbf{What is in it?}\\[2pt]{\scriptsize presence over}\\{\scriptsize 41 categories}};
+\node[box, right=of b] (c) {\textbf{Where is it?}\\[2pt]{\scriptsize exact clause}\\{\scriptsize text extracted}};
+\node[new, right=of c] (d) {\textbf{What does it mean?}\\[2pt]{\scriptsize risk level +}\\{\scriptsize plain English}};
+\draw[arr] (a) -- (b);
+\draw[arr] (b) -- (c);
+\draw[arr] (c) -- (d);
+
+\draw[decorate, decoration={brace, mirror, amplitude=4pt}]
+  ($(b.south west)+(0,-1.5mm)$) -- ($(c.south east)+(0,-1.5mm)$)
+  node[midway, below=4pt, font=\scriptsize\itshape] {CUAD's original task};
+\draw[decorate, decoration={brace, mirror, amplitude=4pt}]
+  ($(d.south west)+(0,-1.5mm)$) -- ($(d.south east)+(0,-1.5mm)$)
+  node[midway, below=4pt, font=\scriptsize\itshape] {added here};
+\end{tikzpicture}
+\caption{The three questions the pipeline answers about a contract.}
+\label{fig:overview}
+\end{figure}
+
+\section{Rationale of the Study or Motivation}
+Our project tries to close that gap. On top of clause detection and extraction, we add a prototype taxonomy that assigns every \emph{category} a High, Medium or Low level from the weaker party's point of view, and a text-generation component intended to render each clause as a single plain-English sentence. We packaged the whole pipeline into \emph{Clausify}, a prototype web application where a user pastes or uploads a contract and gets back a risk-prioritized clause report. Both added layers turned out to be weaker than we expected --- the taxonomy is unvalidated (Section~\ref{sec:taxvalid}) and the generation component learned to emit category templates rather than clause-specific summaries (Section~\ref{sec:summ}) --- and Chapters~5 and~6 report that rather than the intention.
+
+The rationale for the study is therefore practical as much as academic. Existing work on CUAD answers the question ``where is the clause?'' for a lawyer who already knows what to look for. The people who most need help --- individuals, freelancers and small businesses signing agreements without legal counsel --- need the next answers as well: which of the clauses found matter most to them, and what each one means in ordinary language. A system that delivers those answers, and that is honest about how often it is wrong, would make contract review accessible to users who are currently priced out of it. Equally important, the project set out to measure rather than assume how well such a system works, because a contract-review tool that looks confident but silently misses clauses is worse than no tool at all.
+
+\section{Problem Statement}
+Concretely, the project works on four connected problems:
+\begin{enumerate}[itemsep=2pt]
+  \item \textbf{Presence classification.} For each of the 41 CUAD categories, decide whether a given contract contains at least one clause of that category. The main technical obstacle here is length: contracts are roughly 16$\times$ longer than the input window of a standard transformer encoder.
+  \item \textbf{Span extraction.} For every category judged present, locate the exact clause text inside the contract. We formulate this as extractive question answering in the style of SQuAD \cite{rajpurkar2016squad}.
+  \item \textbf{Plain-language summarization.} Rewrite each extracted clause as one sentence that a non-lawyer can understand.
+  \item \textbf{Risk communication.} Attach a category-level risk level and a one-line reason to every detected clause, so the output reads as a prioritized report rather than a list of quotations. Whether this is genuinely useful to a signer is a usability question we did not evaluate (Section~\ref{sec:threats}).
+\end{enumerate}
+
+\subsection{Research Questions}
+\label{sec:rqs}
+The objectives below operationalize five questions, which the rest of the project is organized to answer. We state them here with the answer we arrived at, so a reader can check each claim against the evidence rather than hunt for it.
+
+\begin{description}[itemsep=4pt, leftmargin=1.6cm]
+  \item[RQ1] \emph{Can a sliding-window transformer outperform a full-document lexical baseline at clause-presence classification on long contracts?}\\
+  \textbf{No.} The baseline wins by $+0.081$ micro-F1, and the gap survives training on the full window set (Section~\ref{sec:budget}) and three random seeds (Section~\ref{sec:seeds}). Answered in Chapter~5.
+  \item[RQ2] \emph{How accurately can the system extract clause spans from long contracts?}\\
+  Token-F1 0.763 (95\% CI $[0.740, 0.782]$) \emph{when handed a window containing the clause}, but 0.386 when the window is chosen by the presence stage (Sections~\ref{sec:span} and~\ref{sec:e2e}).
+  \item[RQ3] \emph{Does the summarization component produce genuinely clause-specific plain-English output?}\\
+  \textbf{No.} It reproduces one of 41 pre-written category templates verbatim on every input; against clause-specific references it scores no better than the template with no model at all (Section~\ref{sec:summ}).
+  \item[RQ4] \emph{How do errors propagate across the complete pipeline?}\\
+  Multiplicatively and worse than the components suggest: 21.7\% of gold clauses survive all three stages against the $\approx$64\% the component scores predict (Section~\ref{sec:e2e}).
+  \item[RQ5] \emph{Does category-level risk prioritization align the system's errors with what would harm a signer?}\\
+  \textbf{No, and it currently works against it.} The configuration we report as the headline misses 37.5\% of High-risk clauses, while the component we describe as weaker misses 15.9\% (Section~\ref{sec:riskeval}). Aggregate micro-F1 and user harm point in different directions.
+\end{description}
+
+Three of these five answers are negative. We report them as the results of the project rather than as shortcomings of it: each is a measurement that a reader of the component scores alone would have got wrong.
+
+\section{Objective}
+\begin{itemize}[itemsep=2pt]
+  \item Build and honestly evaluate a full three-model CUAD pipeline on consumer hardware, using an 80/20 contract-level train/test split so that every reported number comes from genuinely unseen contracts.
+  \item Check whether a windowed transformer actually beats a strong classical baseline for document-level presence classification, instead of assuming that it does.
+  \item Measure span-extraction quality with token-level F1 and exact match on the held-out test set.
+  \item Evaluate the summarizer against two different reference sets, because we found a single automatic metric measures its reference set rather than the task.
+  \item Measure what survives the pipeline end to end, rather than reporting only stage-wise scores.
+  \item Deploy the trained models in a working demonstration application with a risk-prioritized interface.
+\end{itemize}
+
+\section{Methodology in Brief}
+The project followed an evaluate-first workflow on a fixed, seeded, contract-level 80/20 split of CUAD (408 training contracts and 102 test contracts). After exploratory analysis of the data (Section~\ref{sec:eda}), a full-document TF--IDF and logistic-regression baseline for clause presence was built \emph{before} any transformer was trained, and the recall ceiling that a retrieval step would impose was measured (Section~\ref{sec:ceiling}). On that evidence, a window-level DistilBERT classifier was trained whose window scores are max-pooled into a document-level decision (multiple-instance learning), and it was combined with the baseline in a parameter-free AND-ensemble. A DistilBERT question-answering model extracts the exact clause span, a fine-tuned FLAN-T5-small model produces a one-sentence plain-English explanation, and a hand-authored table assigns each of the 41 categories a High, Medium or Low risk level.
+
+Every model was evaluated once on the 102 held-out contracts. Point estimates are reported together with cluster-bootstrap confidence intervals and with controls for training budget, random seed, aggregation rule, decision threshold and dataset split, and the complete pipeline was evaluated end to end. Finally, the trained models were deployed in \emph{Clausify}, a Streamlit web application that produces a risk-prioritized clause report for any contract a user provides. Chapter~4 describes the methodology in full.
+
+\section{Scopes and Challenges}
+\textbf{Scope.} The project covers English-language commercial contracts as represented by CUAD: 510 agreements drawn from US SEC filings, annotated for 41 clause categories. Within that scope it addresses four tasks --- presence classification, span extraction, plain-language explanation and category-level risk prioritization --- and delivers a working prototype application. The following are deliberately outside the scope: legal advice of any kind; contracts in other languages or jurisdictions (including Bangladeshi contracts, which motivated the work but were not tested); instance-level risk scoring of a particular clause's wording; detection of conflicts between clauses; and a formal usability study of the application. All models were sized to train and run on a single consumer laptop.
+
+\textbf{Challenges.} Six challenges shaped the design:
+\begin{enumerate}[itemsep=2pt]
+  \item \textbf{Document length.} A median contract is about 33{,}000 characters and the longest exceeds 338{,}000, roughly 16$\times$ the input window of a standard transformer encoder.
+  \item \textbf{Class imbalance and a few-shot tail.} Category positive rates range from 100\% down to 2.5\%; several categories have only a handful of positive contracts in the entire corpus.
+  \item \textbf{A small, fixed dataset.} 510 contracts is the whole dataset, and expert legal annotation is too expensive to extend, so overfitting and leakage had to be controlled carefully.
+  \item \textbf{Limited hardware.} Training ran on an Apple-Silicon laptop without CUDA; the first-choice backbone (DeBERTa-v3) was numerically unstable on the MPS backend, and GPU memory was not released between training runs.
+  \item \textbf{No plain-language ground truth.} CUAD contains no plain-English targets, so the summarization component needed a self-written reference set, which turned out to limit what it could learn.
+  \item \textbf{Risk has no ground truth either.} Contract risk depends on the party, the context and the jurisdiction, and no established expert-validated risk model covers CUAD's 41 categories.
+\end{enumerate}
+
+\section{Report Organization}
+The rest of this report is organized as follows. Chapter~2 reviews the background and related literature. Chapter~3 sets out the requirements of the system and its societal, environmental, ethical and economic dimensions, together with the project management plan. Chapter~4 presents the proposed methodology: the design process, the alternative designs considered for each stage, the data pipeline, and the implementation of the models and the Clausify application. Chapter~5 analyses the results on the held-out test set, including the statistical analysis and the design adjustments that followed from it. Chapter~5 concludes with the findings, contributions, limitations and recommendations for future work. The appendices contain the full 41-category risk taxonomy, a reproducibility checklist and the repository layout.
+

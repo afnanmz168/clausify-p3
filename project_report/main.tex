@@ -1,0 +1,139 @@
+%*******************************************************************
+%   Project Name: BracU Thesis Template (CSE400, Fall 2024 onwards)
+%   Prepared by: Ayesha Abed Library, Brac University
+%
+%   Used here for the B.Sc. final year PROJECT report:
+%   "AI-Powered Legal Document Analysis System (CUAD)"
+%   Compile:  tectonic main.tex      (or on Overleaf: pdfLaTeX + Biber)
+%*******************************************************************
+% Project Structure:
+% appendix: Contains "appendix.tex" files.
+% bibliography: Contains "references.bib" file.
+% chapters: Contains "chapter.tex" files.
+% core: titlepage, declaration, approval, ethics_statement, abstract,
+%       acknowledgement, nomenclature
+% images: Contains all images files.
+%*******************************************************************
+
+\documentclass[Times,12pt,oneside,openany,print,index]{report}
+\usepackage[a4paper,width=150mm,top=25mm,bottom=25mm]{geometry}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{csquotes} % Provides advanced facilities for in-line and display quotations
+\usepackage{amsmath} % TO use mathematical equations
+\usepackage{amssymb}
+\pagestyle{plain} % Just a plain page number.
+
+\usepackage{graphicx} % to use the graphicx package
+\graphicspath{{images/}} % Path to Image files
+\usepackage{caption} % To use caption with figure and images
+\usepackage{array} % column alignment in tables
+
+\usepackage[nottoc]{tocbibind} % add ToC/bibliography etc. to the Table of Contents
+
+\usepackage[normalem]{ulem} % underlining
+
+% ---- additional packages needed by the project content ----
+\usepackage{booktabs}     % \toprule, \midrule, \bottomrule, \addlinespace
+\usepackage{longtable}    % multi-page tables (risk taxonomy)
+\usepackage{multirow}
+\usepackage{enumitem}     % compact lists
+\usepackage{setspace}     % \singlespacing inside table notes
+\usepackage{xcolor}
+\usepackage{tikz}         % pipeline diagrams
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric,
+                decorations.pathreplacing, calc, fit, backgrounds, patterns}
+\definecolor{riskhigh}{HTML}{D94F5C}
+\definecolor{riskmed}{HTML}{E8A13A}
+\definecolor{risklow}{HTML}{4CAF82}
+\setcounter{tocdepth}{2}
+
+\usepackage{hyperref} % Provides LaTeX the ability to create hyperlinks within the document.
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=magenta,
+    urlcolor=black,
+    citecolor=black,
+}
+\urlstyle{same}
+
+\setlength{\parindent}{0em} % To control Indentation of paragraphs
+\setlength{\parskip}{6pt} % space between paragraphs (none indent)
+
+\usepackage[backend=bibtex,style=ieee,sorting=none]{biblatex} % IEEE citation style
+\addbibresource{bibliography/references.bib} % Imports bibliography file
+
+\let\cleardoublepage=\clearpage % removes unwanted doublepages
+
+\begin{document}
+
+\thispagestyle{empty} % removes page number from title page
+\input{core/titlepage} % Add title page
+\cleardoublepage
+
+\pagenumbering{roman} % Roman numbers to be use all pages before Chapter 1
+
+\phantomsection
+\addcontentsline{toc}{chapter}{Declaration}
+\input{core/declaration}
+
+\phantomsection
+\addcontentsline{toc}{chapter}{Approval}
+\input{core/approval}
+
+\phantomsection
+\addcontentsline{toc}{chapter}{Ethics Statement}
+\input{core/ethics_statement}
+
+\phantomsection
+\addcontentsline{toc}{chapter}{Abstract}
+\input{core/abstract}
+
+\phantomsection
+\addcontentsline{toc}{chapter}{Acknowledgment}
+\input{core/acknowledgement}
+
+\renewcommand{\contentsname}{Table of Contents} % Rename TOC name from Contents to Table of Contents
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Table of Contents} % Add Table of Contents in TOC
+\tableofcontents % To  generation of the Table of Contents
+
+\listoffigures % To  generation of the List of Figure
+\listoftables % To  generation of the Tables of Figure
+
+\phantomsection
+\addcontentsline{toc}{chapter}{Nomenclature}
+\input{core/nomenclature}
+\cleardoublepage
+
+\pagenumbering{arabic} % To use page number 1,2,3 ..
+
+\chapter{Introduction}
+\input{chapters/chapter_1.tex}
+
+\chapter{Literature Review}
+\input{chapters/chapter_2.tex}
+
+\chapter{Requirements, Impacts and Constraints}
+\input{chapters/chapter_3.tex}
+
+\chapter{Proposed Methodology}
+\input{chapters/chapter_5.tex}
+
+\chapter{Result Analysis}
+\input{chapters/chapter_6.tex}
+
+\chapter{Conclusion}
+\input{chapters/chapter_9.tex}
+
+\phantomsection
+\printbibliography[heading=bibintoc,title={Bibliography}] % Where the bibliography will be printed
+
+% ********************************** Appendices ********************************
+\appendix
+\input{appendix/appendix_1}
+\input{appendix/appendix_2}
+
+\end{document}

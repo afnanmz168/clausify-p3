@@ -1,0 +1,6 @@
+\section*{Abstract}
+This project builds and evaluates a three-model pipeline for automated contract review on CUAD (510 contracts, 41 clause categories), using a held-out contract-level 20\% test split. A sliding-window DistilBERT presence classifier \emph{loses} to a full-document TF--IDF baseline (micro-F1 0.694 against 0.775), and the gap survives training on all 53{,}662 windows, three seeds, six aggregation rules and a threshold sweep. A conjunctive ensemble reaches 0.776, but its margin is smaller than the bootstrap, seed and split variance alike. Span extraction reaches token-F1 0.763 given a correct window. The fine-tuned summarizer emits one of 41 self-written templates verbatim on every input, scoring 0.116 against clause-specific references. End to end only 21.7\% of gold clauses survive all three stages, and the highest-scoring configuration misses 37.5\% of High-risk clauses. The system is a prototype, deployed as \emph{Clausify}; its risk taxonomy remains unvalidated.
+
+\vspace{1cm}
+\textbf{Keywords:} legal NLP; CUAD; clause extraction; category-level risk prioritization; contract summarization; held-out evaluation
+\pagebreak
