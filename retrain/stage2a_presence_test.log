@@ -1,0 +1,66 @@
+device: mps
+test contracts: 102
+windowed 510 contracts
+TF-IDF test probabilities: (102, 41)
+Loading weights:   0%|          | 0/104 [00:00<?, ?it/s]Loading weights: 100%|██████████| 104/104 [00:00<00:00, 10173.23it/s]
+presence inference: 150224 (question, window) pairs in 46.4 min
+                    model  micro_F1
+0     Ensemble AND  (min)     0.779
+1         TF-IDF baseline     0.775
+2    Ensemble AVG  (mean)     0.718
+3  Transformer (max-pool)     0.692
+4     Ensemble OR   (max)     0.692
+CONFUSION MATRIX (AND-ensemble, 80/20 test set)
+                 Predicted Absent   Predicted Present
+Actually Absent      TN =  2525         FP =   309
+Actually Present     FN =   291         TP =  1057
+
+TEST METRICS (from the confusion matrix):
+  Accuracy    : 0.8565
+  Precision   : 0.7738
+  Recall      : 0.7841
+  Specificity : 0.8910
+  F1 Score    : 0.7789
+                              category  test_pos  precision  recall     f1
+9                        Document Name       102      1.000   1.000  1.000
+28                             Parties       101      0.990   1.000  0.995
+2                       Agreement Date        93      0.939   0.989  0.963
+13                       Governing Law        90      0.964   0.900  0.931
+18                       License Grant        56      0.925   0.875  0.899
+3                      Anti-Assignment        74      0.850   0.919  0.883
+12                     Expiration Date        84      0.921   0.833  0.875
+5                     Cap On Liability        62      0.911   0.823  0.864
+10                      Effective Date        73      0.831   0.877  0.853
+14                           Insurance        34      0.784   0.853  0.817
+4                         Audit Rights        42      0.810   0.810  0.810
+29           Post-Termination Services        37      0.721   0.838  0.775
+11                         Exclusivity        34      0.658   0.735  0.694
+20                  Minimum Commitment        32      0.591   0.812  0.684
+40                   Warranty Duration        21      0.800   0.571  0.667
+26            Non-Transferable License        25      0.526   0.800  0.635
+37                  Uncapped Liability        25      0.586   0.680  0.630
+31                        Renewal Term        29      0.621   0.621  0.621
+35         Termination For Convenience        48      0.651   0.583  0.615
+23             No-Solicit Of Employees        17      0.889   0.471  0.615
+16    Irrevocable Or Perpetual License        17      0.625   0.588  0.606
+24                         Non-Compete        25      0.600   0.600  0.600
+33                      Rofr/Rofo/Rofn        20      0.571   0.600  0.585
+15             Ip Ownership Assignment        25      0.516   0.640  0.571
+8                  Covenant Not To Sue        14      0.435   0.714  0.541
+32              Revenue/Profit Sharing        23      0.429   0.652  0.517
+27  Notice Period To Terminate Renewal        17      0.455   0.588  0.513
+6                    Change Of Control        23      0.424   0.609  0.500
+1           Affiliate License-Licensor         3      0.400   0.667  0.500
+0           Affiliate License-Licensee        10      0.455   0.500  0.476
+39                  Volume Restriction        14      0.462   0.429  0.444
+17                  Joint Ip Ownership         8      0.400   0.500  0.444
+36             Third Party Beneficiary        10      0.750   0.300  0.429
+7    Competitive Restriction Exception        17      0.462   0.353  0.400
+19                  Liquidated Damages        11      0.250   0.182  0.211
+25                   Non-Disparagement        11      1.000   0.091  0.167
+21                 Most Favored Nation         7      0.000   0.000  0.000
+22             No-Solicit Of Customers         6      0.000   0.000  0.000
+30                  Price Restrictions         4      0.000   0.000  0.000
+34                  Source Code Escrow         2      0.000   0.000  0.000
+38   Unlimited/All-You-Can-Eat-License         2      0.000   0.000  0.000
+saved stage2a_presence_test.json
