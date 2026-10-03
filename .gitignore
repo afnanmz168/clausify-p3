@@ -21,3 +21,5 @@ venv/
 optimizer.pt
 .ipynb_checkpoints/
 _prev_run_*/
+report_latex/*.aux
+report_latex/*.log
