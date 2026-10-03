@@ -20,3 +20,4 @@ venv/
 *.pth
 optimizer.pt
 .ipynb_checkpoints/
+_prev_run_*/
