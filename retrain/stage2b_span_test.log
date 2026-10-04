@@ -1,0 +1,10 @@
+device: mps
+test contracts: 102
+windowed 510 contracts
+Loading weights:   0%|          | 0/102 [00:00<?, ?it/s]Loading weights: 100%|██████████| 102/102 [00:00<00:00, 9191.71it/s]
+Map:   0%|          | 0/2667 [00:00<?, ? examples/s]Map:  37%|███▋      | 1000/2667 [00:00<00:00, 6265.47 examples/s]Map:  75%|███████▍  | 2000/2667 [00:00<00:00, 6891.42 examples/s]Map: 100%|██████████| 2667/2667 [00:00<00:00, 6776.26 examples/s]
+span extractor on 2667 test examples (answer-bearing windows):
+  Exact Match     : 35.5%
+  token-F1        : 0.764
+  overlap (F1>=.5): 82.8%
+{'n': 2667, 'exact_match': 0.3551, 'token_f1': 0.7639, 'overlap_f1_ge_0.5': 0.8283}
