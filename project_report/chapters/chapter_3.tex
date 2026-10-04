@@ -27,6 +27,7 @@ Table~\ref{tab:resources} lists the data, hardware and software the project depe
 \caption{Data, hardware and software requirements.}
 \label{tab:resources}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{p{3.2cm} p{10.2cm}}
 \toprule
 \textbf{Resource} & \textbf{Specification}\\
@@ -41,6 +42,7 @@ Application & Streamlit ($\geq$1.40) single-page web application\\
 Development tools & Jupyter notebooks, Git and GitHub, \LaTeX\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 \subsection{Design constraints}
@@ -66,11 +68,11 @@ Two design decisions keep the operating footprint small as well. Inference is lo
 \label{sec:ethics}
 The front-matter Ethics Statement records how the data and models were obtained. This section examines the ethical issues that arise from the \emph{use} of the system, and the professional responsibilities they place on its designers.
 
-The system is a research prototype meant to assist contract review. It is not legal advice, and that is stated in the application itself. For a tool of this kind the more serious ethical questions are not about the dataset but about what happens if someone relies on the output, so we set them out explicitly.
+The system is a research prototype meant to assist contract review. It is not legal advice, and the application states this in a notice shown above every analysis. For a tool of this kind the more serious ethical questions are not about the dataset but about what happens if someone relies on the output, so we set them out explicitly.
 
 \textbf{False reassurance is the primary hazard.} A clause the system does not detect produces no warning, and an absent warning is easily read as ``there is nothing here to worry about''. Our measurements say that reading would be wrong: 22.0\% of gold clauses are missed at the presence stage, only 21.7\% survive the full pipeline (Section~\ref{sec:e2e}), and the configuration we report as our headline misses 37.5\% of the High-risk clauses specifically (Section~\ref{sec:riskeval}). A user who reviews a contract with this tool and sees three warnings has not established that there are only three problems. This asymmetry --- silent false negatives versus visible false positives --- is why we regard High-risk recall as the ethically relevant metric even though it is not the one the aggregate optimizes.
 
-\textbf{Over-reliance by non-lawyers.} The interface is designed for people without legal training, which is exactly the audience least able to detect when it is wrong. Plain-English text presented with a confidence bar carries an authority the underlying model does not earn --- and Section~\ref{sec:threshold} shows the confidence bar is not even calibrated: scores above 0.9 correspond to roughly a 73\% chance of the clause being present. The plain-language sentence is a category template, not a reading of the user's clause (Section~\ref{sec:summ}). Presented uncritically, both invite more trust than the evidence supports.
+\textbf{Over-reliance by non-lawyers.} The interface is designed for people without legal training, which is exactly the audience least able to detect when it is wrong. Plain-English text presented with a confidence bar carries an authority the underlying model does not earn --- and Section~\ref{sec:threshold} shows the confidence bar is not even calibrated: scores above 0.9 correspond to roughly a 73\% chance of the clause being present. The plain-English reason on each clause card is a fixed sentence per category from the risk taxonomy, not a reading of the user's clause; the summarizer that was meant to provide clause-specific text also turned out to emit category templates (Section~\ref{sec:summ}) and is not used in the application. Presented uncritically, both the bar and the reason invite more trust than the evidence supports.
 
 \textbf{Jurisdiction mismatch.} CUAD is US commercial contract law. Risk levels that are reasonable there may be wrong elsewhere --- a non-compete that binds in one jurisdiction may be unenforceable in another, which would make a High badge actively misleading. Since the motivating deployment context for this work is Bangladesh, and we have tested no Bangladeshi contract, this is a live limitation rather than a hypothetical one.
 
@@ -112,6 +114,7 @@ The project was carried out by a team of three over the 2026 academic year. Tabl
 \caption{Project schedule and deliverables.}
 \label{tab:schedule}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{p{2.6cm} p{6.0cm} p{4.8cm}}
 \toprule
 \textbf{Period (2026)} & \textbf{Activities} & \textbf{Deliverables}\\
@@ -129,6 +132,7 @@ September & Write-up of the full report and a conference-style paper; presentati
 October & Viva preparation; re-training and re-testing of each model; final report in the CSE400 template & Final project report\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 \subsection{Budget}
@@ -145,6 +149,7 @@ Table~\ref{tab:projrisk} lists the main risks identified during the project and 
 \caption{Project risks and mitigation strategies.}
 \label{tab:projrisk}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{p{4.1cm} p{1.5cm} p{7.6cm}}
 \toprule
 \textbf{Risk} & \textbf{Impact} & \textbf{Mitigation}\\
@@ -168,6 +173,7 @@ Loss of work or results & Medium & Version control on GitHub; trained weights ba
 Users over-trusting the application & High & Not-legal-advice notice; risk badge presented as more reliable than quoted text; limitations stated in the application (Section~\ref{sec:demolimits}).\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 \section{Economic Analysis}
@@ -180,6 +186,7 @@ Users over-trusting the application & High & Not-legal-advice notice; risk badge
 \caption{Qualitative cost--benefit comparison of contract-review options.}
 \label{tab:econ}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{p{3.0cm} p{3.0cm} p{3.4cm} p{3.6cm}}
 \toprule
  & \textbf{Lawyer review} & \textbf{Hosted LLM service} & \textbf{This system (local)}\\
@@ -191,6 +198,7 @@ Reliability & Expert judgement & Unmeasured on this task & Measured; misses many
 Legal standing & Legal advice & None & None\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 \textbf{Benefits.} The main benefit is triage: directing a reader to the parts of a long contract most likely to matter and explaining them in plain language, at negligible cost. The value of expert review in this domain is high --- the CUAD annotations alone reportedly represent about two million US dollars of attorney time \cite{hendrycks2021cuad} --- so even a partial reduction in the time needed to locate key clauses has economic value.

@@ -12,6 +12,7 @@ Table~\ref{tab:ensemble} and Figure~\ref{fig:ensemble} compare all the presence 
 \centering
 \caption{Presence models on the 20\% test set.}
 \label{tab:ensemble}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lc}
 \toprule
 \textbf{Model} & \textbf{micro-F1}\\
@@ -27,6 +28,7 @@ Transformer trained on all 53{,}662 windows & 0.694\\
 Ensemble AND on that transformer            & 0.782\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 
 {\footnotesize\singlespacing \emph{Note.} micro-F1 over all 4{,}182 test cells.\par}
 \end{table}
@@ -44,6 +46,7 @@ Our evaluation protocol called for a full confusion-matrix analysis of the final
 \centering
 \caption{Confusion matrix of the AND-ensemble on the 20\% test set (4{,}182 decisions).}
 \label{tab:cm}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lcc}
 \toprule
  & \textbf{Predicted Absent} & \textbf{Predicted Present}\\
@@ -52,12 +55,14 @@ Our evaluation protocol called for a full confusion-matrix analysis of the final
 \textbf{Actually Present} & FN = 296     & TP = 1{,}052\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 \begin{table}[ht]
 \centering
 \caption{Test metrics derived from the confusion matrix.}
 \label{tab:metrics}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llc}
 \toprule
 \textbf{Metric} & \textbf{Formula} & \textbf{Value}\\
@@ -69,6 +74,7 @@ Specificity & $TN/(TN+FP)$                  & 89.03\%\\
 F1 score    & $2PR/(P+R)$                   & 0.7761\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 \begin{figure}[ht]
@@ -90,7 +96,7 @@ Figure~\ref{fig:percat} shows per-category F1 for the strongest categories. The 
 \end{figure}
 \subsection{Span Extraction}
 \label{sec:span}
-We evaluated the QA model on all 2{,}667 answer-bearing test windows (Table~\ref{tab:span}). A token-F1 of 0.763, with 82.7\% of predictions overlapping the gold span at F1 $\geq$ 0.5, means that when the clause is in front of the model, it captures most of the right text roughly eight times out of ten. The lower exact-match score did not surprise us: annotated legal spans are long, and their exact boundaries are genuinely debatable (should a leading section number be included?), so content overlap is the metric that carries information here. For scale, the published CUAD baselines at this task use DeBERTa-v3-large, roughly five times the parameters of our distilled backbone.
+We evaluated the QA model on all 2{,}667 answer-bearing test windows (Table~\ref{tab:span}). A token-F1 of 0.763, with 82.7\% of predictions overlapping the gold span at F1 $\geq$ 0.5, means that when the clause is in front of the model, it captures most of the right text roughly eight times out of ten. The lower exact-match score did not surprise us: annotated legal spans are long, and their exact boundaries are genuinely debatable (should a leading section number be included?), so content overlap is the metric that carries information here. For scale, the best published CUAD result uses DeBERTa-xlarge, roughly an order of magnitude more parameters than our 67M-parameter distilled backbone.
 
 Section~\ref{sec:bootstrap} argued that a point estimate on 102 contracts should not be read without an interval, and that argument does not stop applying when the task changes. We therefore ran the \emph{same} cluster bootstrap here. The correlation structure is if anything stronger than in presence classification: the 2{,}667 span decisions come from only 102 contracts, and a contract with unusual drafting conventions --- numbered sub-clauses, defined-term-heavy prose --- shifts every span in it in the same direction. Table~\ref{tab:span} therefore reports two intervals per metric: one resampling \emph{contracts} (the correct unit) and one resampling \emph{clauses} independently (the naive unit), because the gap between them is itself informative.
 
@@ -99,6 +105,7 @@ Section~\ref{sec:bootstrap} argued that a point estimate on 102 contracts should
 \caption{Span extraction on the answer-bearing test windows.}
 \label{tab:span}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lccc}
 \toprule
 \textbf{Metric} & \textbf{Score} & \textbf{95\% CI (by contract)} & \textbf{95\% CI (by clause)}\\
@@ -108,13 +115,14 @@ Overlap (token-F1 $\geq$ 0.5) & 82.7\% & $[79.7\%,\ 85.1\%]$ & $[81.3\%,\ 84.1\%
 Exact Match                   & 35.5\% & $[32.5\%,\ 38.6\%]$ & $[33.7\%,\ 37.3\%]$\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 
 {\footnotesize\singlespacing \emph{Note.} 95\% bootstrap intervals, 10{,}000 resamples. The contract-clustered interval is the one to quote; the clause-level interval is shown only to expose how far a naive resampling unit understates the uncertainty.\par}
 \end{table}
 
 The contract-clustered interval on token-F1 is $[0.740, 0.782]$ --- roughly \emph{twice} as wide as the $[0.751, 0.774]$ that treating clauses as independent would have produced. That factor is the practical cost of ignoring clustering, and it is the same effect that made the cluster bootstrap necessary in Section~\ref{sec:bootstrap}. It also sets the resolution of this number: differences below about two points of token-F1 are not measurable on a test set of this size, which is worth remembering before comparing 0.763 against any published figure.
 
-\textbf{Scope caveat.} These numbers measure extraction quality \emph{given an answer-bearing window}. The full-document benchmark in the CUAD paper (precision at 80\% recall over all windows, including the answer-free ones) needs a heavier document-stride ranking evaluation that we did not run, so we make no claim on that metric. Section~\ref{sec:e2e} measures the complementary thing: what happens to span quality when the window is chosen by the presence stage instead of being handed over.
+\textbf{Scope caveat.} These numbers measure extraction quality \emph{given an answer-bearing window}. More precisely, each test window is the 1{,}200-character focus window re-centred on the gold answer (Section~\ref{sec:leakage}), so the model is told, implicitly, where the answer is; the benchmark is an oracle upper bound on extraction, not a deployable score. The full-document benchmark in the CUAD paper (precision at 80\% recall over all windows, including the answer-free ones) needs a heavier document-stride ranking evaluation that we did not run, so we make no claim on that metric. Section~\ref{sec:e2e} measures the complementary thing: what happens to span quality when the window is chosen by the presence stage instead of being handed over.
 \subsection{Summarization}
 \label{sec:summ}
 
@@ -138,6 +146,7 @@ Because the clauses are identical across the two conditions, the difference betw
 \caption{ROUGE-L under two reference sets, same 150 clauses.}
 \label{tab:sumeval}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llcc}
 \toprule
 \textbf{System} & \textbf{Reference set} & \textbf{ROUGE-L} & \textbf{95\% CI}\\
@@ -149,6 +158,7 @@ Zero-shot FLAN-T5-small  & clause-specific (pilot)  & 0.299 & $[0.275,\ 0.322]$\
 \emph{Category template itself} & clause-specific (pilot) & 0.115 & $[0.104,\ 0.127]$\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 
 {\footnotesize\singlespacing \emph{Note.} Intervals are 95\% bootstrap CIs over the 150 clauses (10{,}000 resamples).\par}
 \end{table}
@@ -167,6 +177,7 @@ Three things follow, and none of them is a hedge.
 \caption{Fine-tuned vs.\ zero-shot summarizer on the same test clause (abridged).}
 \label{tab:sumqual}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{p{3.2cm} p{10.3cm}}
 \toprule
 \textbf{Input clause} & ``Any attempted assignment or delegation in violation of this section by either party without the prior written consent of the other will be void.''\\
@@ -178,10 +189,11 @@ Zero-shot     & ``a) Any attempted assignment or delegation in violation of this
 Clause-specific reference & Neither side may hand its rights or duties to a third party without the other's written consent, which cannot be unreasonably refused.\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 \subsubsection{What we therefore claim}
-We claim a working \textbf{classification-to-template} system: it identifies a clause's category and attaches a pre-written, human-authored plain-English sentence for that category, which is genuinely useful in the Clausify interface --- a signer reading ``You cannot transfer this contract to someone else without permission'' next to a wall of legalese is better off than before. We do \textbf{not} claim free-text legal summarization, and the 0.775 should never be quoted as evidence of it. The number that describes clause-level summarization ability is 0.116, and the honest conclusion is that this component is a proof of concept, not a result.
+We claim a working \textbf{classification-to-template} system: it identifies a clause's category and attaches a pre-written, human-authored plain-English sentence for that category, which would be genuinely useful in an interface --- a signer reading ``You cannot transfer this contract to someone else without permission'' next to a wall of legalese is better off than before. (The Clausify application does not run the summarizer; its cards show the equivalent fixed per-category reason from the risk taxonomy.) We do \textbf{not} claim free-text legal summarization, and the 0.775 should never be quoted as evidence of it. The number that describes clause-level summarization ability is 0.116, and the honest conclusion is that this component is a proof of concept, not a result.
 
 Getting past this needs a target set with clause-level variation, which is exactly what the pilot above provides a small taste of: 150 references took a few hours to draft. Section~\ref{sec:futurework} sets out the scaled version.
 
@@ -191,7 +203,7 @@ This section analyses the selected design as a whole: what survives the complete
 \subsection{End-to-End: What Actually Reaches the User}
 \label{sec:e2e}
 
-Every number so far has been measured with the other stages held out of the way. Presence classification was scored given the ground-truth category list; span extraction was scored given a window already known to contain the answer; summarization was scored given a gold clause. Each of those is the right way to evaluate a component in isolation, and none of them describes what Clausify does to a contract. The stages run in series, and errors compound: a category the presence stage misses is a clause the span stage never sees.
+Every number so far has been measured with the other stages held out of the way. Presence classification was scored given the ground-truth category list; span extraction was scored given a window already known to contain the answer; summarization was scored given a gold clause. Each of those is the right way to evaluate a component in isolation, and none of them describes what the pipeline does to a contract. The stages run in series, and errors compound: a category the presence stage misses is a clause the span stage never sees.
 
 So we ran the pipeline end to end on all 102 test contracts and asked one question of each of the 1{,}348 gold clauses: does it survive \emph{all three} stages? A clause counts as surviving only if (i) the presence stage detects its category, (ii) the span stage --- reading the window the presence stage selected, never a window chosen using the gold offset --- returns text overlapping the gold clause at token-F1 $\geq$ 0.5, and (iii) the risk level attached is the correct one. Table~\ref{tab:e2e} gives the attrition.
 
@@ -200,6 +212,7 @@ So we ran the pipeline end to end on all 102 test contracts and asked one questi
 \caption{End-to-end survival of the 1{,}348 gold clauses.}
 \label{tab:e2e}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llcc}
 \toprule
 \textbf{Stage} & \textbf{Condition} & \textbf{Clauses surviving} & \textbf{Share of gold}\\
@@ -213,6 +226,7 @@ Risk & correct level attached & 293 & 21.7\%\\
 \multicolumn{2}{l}{\emph{95\% CI, cluster bootstrap over contracts}} & & $[19.6\%,\ 23.9\%]$\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 
 {\footnotesize\singlespacing \emph{Note.} AND-ensemble presence rule. The last column is the fraction of clauses still alive after that stage.\par}
 \end{table}
@@ -229,6 +243,7 @@ The collapse happens at stage 2B, and it has two distinct causes, which we separ
 \caption{Decomposing the span-stage loss over the 1{,}052 clauses whose category was detected.}
 \label{tab:e2eattr}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lcc}
 \toprule
  & \textbf{Count} & \textbf{Share}\\
@@ -240,6 +255,7 @@ Selected window does \emph{not} contain the gold clause & 334 & 31.7\%\\
 \quad --- span scored $\geq$ 0.5 regardless (duplicate wording elsewhere) & 8 & \\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 \textbf{Cause one: the max-pooled window is often the wrong window.} Max-pooling was chosen (Section~\ref{sec:mil}) because it removes the recall ceiling --- if any window fires, the category is reported --- and Section~\ref{sec:mil} was careful about what that costs in \emph{precision}. What it did not anticipate is that the argmax window is also being used as a \emph{locator}, and it is a poor one: 31.7\% of the time the highest-scoring window does not contain the clause at all. The MIL objective never asked it to. The model was trained to answer ``does this window contain a clause of this category'', and a window that discusses liability in general terms can outscore the one that actually caps it. For those 334 clauses the span stage is being handed the wrong 2{,}000 characters, and no extractor could recover them.
@@ -253,7 +269,7 @@ First, \textbf{the span numbers in Section~\ref{sec:span} are an upper bound on 
 
 Second, \textbf{the most valuable next engineering step is not a bigger backbone}. Cause two is a data-construction problem with a cheap fix --- train the span model on windows where the answer is placed at varied offsets, or on the same blind chunks it will see at inference --- and cause one argues for choosing the extraction window by a locator trained for that job rather than reusing a presence score. Both are within the compute budget of this project; neither requires more parameters.
 
-Third, \textbf{Clausify's output should be read as a shortlist, not an extraction}. When the application shows a clause card, the category is right about 78\% of the time it was present, but the quoted text is a good rendering of the actual clause in roughly one case in five overall. The application already tells users it is not legal advice; on this evidence it should also tell them that the quoted text may not be the clause the badge refers to, and Section~\ref{sec:demolimits} now says so.
+Third, \textbf{Clausify's output should be read as a shortlist, not an extraction}. When the application shows a clause card, the category is right about 78\% of the time it was present, but the quoted text is a good rendering of the actual clause in roughly one case in five overall. The application tells users it is not legal advice, and on this evidence it also tells them that the quoted text may not be the clause the badge refers to (Section~\ref{sec:demolimits}).
 \subsection{Risk-Weighted Evaluation: Does the Metric Match the Purpose?}
 \label{sec:riskeval}
 
@@ -266,6 +282,7 @@ Table~\ref{tab:riskeval} splits the 41 categories into the three risk bands of o
 \caption{Presence performance within each risk band.}
 \label{tab:riskeval}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llccccc}
 \toprule
 \textbf{Band} & \textbf{Model} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{Found} & \textbf{Missed}\\
@@ -289,6 +306,7 @@ Table~\ref{tab:riskeval} splits the 41 categories into the three risk bands of o
  & OR ensemble  & 0.803 & 0.969 & 0.878 & 653 & 21\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 
 {\footnotesize\singlespacing \emph{Note.} Threshold 0.5. ``Missed'' counts gold clauses of that band the model failed to report.\par}
 \end{table}
@@ -316,6 +334,7 @@ The confusion matrix counts 311 false positives and 296 false negatives, and cou
 \label{tab:errors}
 \scriptsize
 \renewcommand{\arraystretch}{1.25}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{@{}p{2.1cm} p{1.5cm} p{9.6cm}@{}}
 \toprule
 \textbf{Category} & \textbf{Scores} & \textbf{Evidence}\\
@@ -345,6 +364,7 @@ Effective Date & F1 0.06 & Window does \emph{not} contain the gold clause; the m
 Insurance & F1 0.20 & Gold is the insurance obligation; the model returns the neighbouring indemnification clause. \emph{Topically adjacent, legally distinct.}\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 
 {\footnotesize\singlespacing \emph{Note.} Text abridged. Scores are the TF--IDF and transformer probabilities.\par}
 \end{table}
@@ -363,6 +383,7 @@ We split the 41 categories by \emph{training} frequency, took the bottom ten (11
 \caption{The ensemble on the ten rarest categories versus the rest.}
 \label{tab:raretail}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llccccc}
 \toprule
 \textbf{Group} & \textbf{Model} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{TP} & \textbf{FN}\\
@@ -378,6 +399,7 @@ We split the 41 categories by \emph{training} frequency, took the bottom ten (11
  & \textbf{AND ensemble} & 0.776 & 0.810 & \textbf{0.792} & 1{,}035 & 243\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 
 {\footnotesize\singlespacing \emph{Note.} Micro-averaged within each group.\par}
 \end{table}
@@ -402,6 +424,7 @@ Section~\ref{sec:mil} chose max-pooling because it \emph{is} the multiple-instan
 \caption{Aggregation ablation on identical window scores.}
 \label{tab:pooling}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lccccc}
 \toprule
 \textbf{Aggregation} & \textbf{F1@0.5} & \textbf{P@0.5} & \textbf{R@0.5} & \textbf{Best F1} & \textbf{at threshold}\\
@@ -416,6 +439,7 @@ Second-highest window     & 0.6832 & 0.662 & 0.705 & 0.7016 & 0.30\\
 \emph{TF--IDF baseline (no windows)} & \textbf{0.7747} & 0.742 & 0.810 & --- & ---\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 
 {\footnotesize\singlespacing \emph{Note.} ``Best'' is each rule's micro-F1 at its own optimal threshold, found by sweeping the test set --- a diagnostic upper bound, not a configuration we adopt.\par}
 \end{table}
@@ -473,6 +497,7 @@ The natural tool is a \textbf{bootstrap confidence interval}, but the resampling
 \caption{Cluster bootstrap over the 102 test contracts.}
 \label{tab:bootstrap}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lccc}
 \toprule
 \textbf{Comparison} & \textbf{Difference in micro-F1} & \textbf{95\% CI} & \textbf{$P(>0)$}\\
@@ -482,6 +507,7 @@ TF--IDF baseline vs.\ transformer  & $+0.0805$ & $[+0.0626,\ +0.0992]$ & 1.000\\
 AND-ensemble vs.\ transformer      & $+0.0818$ & $[+0.0654,\ +0.0987]$ & 1.000\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 
 {\footnotesize\singlespacing \emph{Note.} 10{,}000 resamples. The paired difference is what settles each comparison; $P(>0)$ is the fraction of resamples in which the first model wins.\par}
 \end{table}
@@ -490,9 +516,9 @@ The three comparisons do not come out the same way, and the difference between t
 
 \textbf{The ensemble's win over the baseline is not real.} The interval is $[-0.0068, +0.0089]$: it straddles zero, and the ensemble is ahead in only 62.6\% of resamples, barely better than a coin flip. Taken individually the two models score 0.776 (95\% CI $[0.759, 0.792]$) and 0.775 (95\% CI $[0.758, 0.791]$), intervals that almost entirely overlap. On this test set the AND-ensemble and the TF--IDF baseline are \emph{statistically indistinguishable}, and we now state that as a measurement rather than as a hedge. The top two rows of Table~\ref{tab:ensemble} should be read as a tie.
 
-\textbf{The transformer's loss, by contrast, is real.} The baseline beats the windowed transformer by 0.0805, with an interval of $[+0.0626, +0.0992]$ that is nowhere near zero, and it wins in every one of the 10{,}000 resamples. This matters for how the project' two empirical claims should be weighted, because they are not on equal footing. The finding we stand behind most firmly --- that a full-document lexical model beats a windowed DistilBERT at document-level presence classification --- is the one that clears the significance test comfortably. The finding we were already cautious about --- that the conjunctive ensemble edges past the baseline --- is the one that does not. That our caution happened to point the right way is reassuring, but it was worth checking rather than assuming, and a reader should not have had to take it on trust.
+\textbf{The transformer's loss, by contrast, is real.} The baseline beats the windowed transformer by 0.0805, with an interval of $[+0.0626, +0.0992]$ that is nowhere near zero, and it wins in every one of the 10{,}000 resamples. This matters for how the project's two empirical claims should be weighted, because they are not on equal footing. The finding we stand behind most firmly --- that a full-document lexical model beats a windowed DistilBERT at document-level presence classification --- is the one that clears the significance test comfortably. The finding we were already cautious about --- that the conjunctive ensemble edges past the baseline --- is the one that does not. That our caution happened to point the right way is reassuring, but it was worth checking rather than assuming, and a reader should not have had to take it on trust.
 
-None of this undercuts the case for the ensemble, because that case was never the 0.001 of micro-F1. The AND rule earns its place through the \emph{error profile} it produces rather than its position on the leaderboard: it converts the transformer's inflated false positives into balanced precision and recall, which is what the next section examines.
+None of this undercuts the case for the ensemble, because that case was never the 0.001 of micro-F1. The AND rule earns its place through the \emph{error profile} it produces rather than its position on the leaderboard: it converts the transformer's inflated false positives into balanced precision and recall (Table~\ref{tab:metrics}); Sections~\ref{sec:seeds} and~\ref{sec:raretail} examine what that profile costs.
 \subsection{How much of this moves if we only change the random seed?}
 \label{sec:seeds}
 Section~\ref{sec:bootstrap} measured one kind of uncertainty --- how much the score depends on \emph{which contracts} landed in the test set --- and used it to call the ensemble's margin a tie. There is a second kind it cannot see. Every number reported so far comes from a single training run per model, and a fine-tuning run is stochastic: weight initialization of the classification head, data shuffling, and the negative-window sample all depend on the seed. If simply reseeding moves the score as much as the effects we are discussing, then a leaderboard built from single runs is reporting noise regardless of how the test set was drawn.
@@ -504,6 +530,7 @@ This is easy to check and we had not checked it, so we retrained the presence tr
 \caption{The presence transformer across three random seeds.}
 \label{tab:seeds}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lcccccc}
 \toprule
 \textbf{Model} & \textbf{Seed 42} & \textbf{Seed 43} & \textbf{Seed 44} & \textbf{Mean} & \textbf{SD} & \textbf{Range}\\
@@ -514,6 +541,7 @@ AND ensemble           & 0.7761 & 0.7774 & 0.7803 & 0.7780 & 0.0022 & 0.0042\\
 TF--IDF baseline       & \multicolumn{3}{c}{0.7747 (deterministic)} & 0.7747 & --- & ---\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 
 {\footnotesize\singlespacing \emph{Note.} All three runs use the 24{,}000-example budget and differ only in seed; the TF--IDF baseline is deterministic and appears once.\par}
 \end{table}
@@ -536,6 +564,7 @@ The only way to settle it is to remove the confound, so we retrained the presenc
 \caption{The presence transformer at two training budgets.}
 \label{tab:budget}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lccccc}
 \toprule
 \textbf{Model} & \textbf{Training windows} & \textbf{micro-F1} & \textbf{Precision} & \textbf{Recall}\\
@@ -549,6 +578,7 @@ TF--IDF baseline        & all 408 contracts & 0.7747 & 0.7424 & 0.8101\\
 \multicolumn{2}{l}{TF--IDF baseline $-$ full-data transformer} & $+0.0809$ & \multicolumn{2}{l}{$[+0.0649,\ +0.0980]$}\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 
 {\footnotesize\singlespacing \emph{Note.} Evaluated identically on the 102 held-out contracts; differences use the paired cluster bootstrap of Section~\ref{sec:bootstrap}.\par}
 \end{table}
@@ -571,6 +601,7 @@ Retraining the transformer on twenty splits is not affordable, but the TF--IDF b
 \caption{The TF--IDF baseline refitted on 20 independent contract-level splits.}
 \label{tab:splitvar}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lccccc}
 \toprule
  & \textbf{Mean} & \textbf{SD} & \textbf{Min} & \textbf{Max} & \textbf{Range}\\
@@ -580,6 +611,7 @@ micro-F1 over 20 splits & 0.7829 & 0.0063 & 0.7702 & 0.7918 & 0.0216\\
 \multicolumn{6}{l}{\emph{The split used throughout this project (seed 42): 0.7747}}\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 Three readings follow. First, \textbf{split variance is the biggest of the three uncertainties we have measured}: SD 0.0063 against 0.0022 for model seed and a bootstrap interval half-width of about 0.008. It is roughly four and a half times the ensemble's $+0.0014$ margin, which is now the third independent reason to treat that margin as noise.
@@ -598,6 +630,7 @@ Table~\ref{tab:scorecard} pulls together the held-out results of all three model
 \caption{Final held-out test results (408 training / 102 test contracts).}
 \label{tab:scorecard}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llll}
 \toprule
 \textbf{Stage} & \textbf{Model} & \textbf{Metric} & \textbf{Score}\\
@@ -615,6 +648,7 @@ Table~\ref{tab:scorecard} pulls together the held-out results of all three model
 \textbf{Full pipeline} & \textbf{all three stages} & \textbf{gold clauses surviving} & \textbf{21.7\%}\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 \textbf{Relationship to existing work.} Table~\ref{tab:related} in Chapter~2 compares this project with prior work. The original CUAD study reports span extraction with DeBERTa-v3-XL under a full-document precision-at-recall protocol; our distilled backbones are roughly an order of magnitude smaller and our span scores are measured within answer-bearing windows, so the absolute numbers are not directly comparable and we do not present them as such. What the comparison does show is a difference in scope: prior work stops at locating clauses, while this project adds presence decisions, a category-level risk layer and plain-language output, and evaluates the complete pipeline end to end.
@@ -662,11 +696,11 @@ No usability evaluation was carried out. The application's central claim --- tha
 %% ==================================================================
 \subsection{Honest Limitations of the Demo}
 \label{sec:demolimits}
-For interactive latency the app runs the transformer presence model alone rather than the AND-ensemble (the TF--IDF leg needs the fitted vectorizer, which the packaged demo leaves out). As Chapter~5 showed, the transformer alone over-detects; the user can counter this by raising the threshold slider. Two qualifications on that sentence have to be added now that both have been measured.
+For interactive latency the app runs the transformer presence model alone rather than the AND-ensemble (the TF--IDF leg needs the fitted vectorizer, which the packaged demo leaves out). As Section~\ref{sec:bootstrap} showed, the transformer alone over-detects; the user can counter this by raising the threshold slider. Two qualifications on that sentence have to be added now that both have been measured.
 
 \textbf{The threshold slider is not calibrated in the units a user will read it in.} Section~\ref{sec:threshold} shows the transformer's max-pooled score has an Expected Calibration Error of 0.201 and is overconfident throughout: among detections scoring above 0.9 --- a nearly full confidence bar --- the clause is actually present about 73\% of the time, and among those in the 0.5--0.6 band, under 20\%. Moving the slider does trade recall for precision in the right direction, but the number on it should not be read as a probability. Fitting a calibration map on a validation split would fix this without retraining and is the cheapest available improvement to the interface.
 
 \textbf{Running the transformer alone is, unusually, the better choice for High-risk clauses.} The project reports the AND ensemble as its headline configuration, so a reader might take the demo's use of the transformer alone as a compromise forced by packaging. Section~\ref{sec:riskeval} shows it is not a compromise at all where it matters most: the ensemble misses 37.5\% of High-risk clauses while the transformer alone misses 15.9\%. The demo's configuration is worse on aggregate micro-F1 and better at surfacing the clauses a signer would most regret missing. We record this as an accident rather than a design decision --- it was made for packaging reasons before we had run the risk-weighted evaluation --- but it is the configuration we would now choose deliberately.
 
-\textbf{The 30-window cap silently truncates long contracts.} To bound latency the app scores at most 30 windows, so any contract beyond 45{,}500 characters is only partly read, and clauses past that point cannot be detected at all. None of the Chapter~5 numbers reflect this, since they score full documents. This is not an edge case: \textbf{38.4\% of CUAD contracts (196 of 510) exceed 45{,}500 characters}, and the longest test contract is 289{,}615 characters, of which the app reads the first 16\%. Table~\ref{tab:appbench} shows the symptom --- the 75th-percentile and longest contracts take the same time despite differing fourfold in length, because both are truncated to 30 windows. Span boundaries inherit the distilled backbone's approximate edges --- and Section~\ref{sec:e2e} shows this understates the problem: when the extraction window is chosen by the presence model rather than handed over, the quoted text overlaps the real clause in only about a fifth of cases overall. The practical consequence for a user of this demo is worth stating plainly, and the application should state it too: \textbf{the risk badge and the category name are much more reliable than the quoted sentence beneath them}. A card should be read as ``this contract appears to contain a clause of this type, look here'' rather than as ``this is the clause''. And the risk levels are per-category, not per-instance: the taxonomy flags that a \emph{Cap on Liability} clause deserves attention, but it does not read whether this particular cap is generous or punishing. All of this is stated in the app itself. What the demonstration does establish is that both models generalize to contracts they have never seen, and that the output can be presented in a form a layperson can act on.
+\textbf{The 30-window cap silently truncates long contracts.} To bound latency the app scores at most 30 windows, so any contract beyond 45{,}500 characters is only partly read, and clauses past that point cannot be detected at all. None of the Chapter~5 numbers reflect this, since they score full documents. This is not an edge case: \textbf{38.4\% of CUAD contracts (196 of 510) exceed 45{,}500 characters}, and the longest test contract is 289{,}615 characters, of which the app reads the first 16\%. Table~\ref{tab:appbench} shows the symptom --- the 75th-percentile and longest contracts take the same time despite differing fourfold in length, because both are truncated to 30 windows. Span boundaries inherit the distilled backbone's approximate edges --- and Section~\ref{sec:e2e} shows this understates the problem: when the extraction window is chosen by the presence model rather than handed over, the quoted text overlaps the real clause in only about a fifth of cases overall. The practical consequence for a user of this demo is worth stating plainly, and the application should state it too: \textbf{the risk badge and the category name are much more reliable than the quoted sentence beneath them}. A card should be read as ``this contract appears to contain a clause of this type, look here'' rather than as ``this is the clause''. And the risk levels are per-category, not per-instance: the taxonomy flags that a \emph{Cap on Liability} clause deserves attention, but it does not read whether this particular cap is generous or punishing. All of this is now stated in the notice the application shows above every analysis. What the demonstration does establish is that both models generalize to contracts they have never seen, and that the output can be presented in a form a layperson can act on.
 

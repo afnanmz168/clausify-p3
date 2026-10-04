@@ -1,10 +1,11 @@
 \section{Design Process or Methodology Overview}
 The design followed the objectives and constraints of Chapter~3 through an evaluate-first process with four rules: (i) build a strong, simple baseline before any complex model; (ii) measure the feasibility ceiling of a design before spending training time on it; (iii) fix the contract-level train/test split once and reuse it everywhere, never tuning on the test set; and (iv) evaluate each stage on its own and then the whole pipeline end to end. The resulting system is a three-stage pipeline with a risk layer on top.
 
-The system is a staged pipeline (Figure~\ref{fig:pipeline}). Contract text is windowed; a presence stage decides which of the 41 categories the contract contains; a span stage extracts the exact clause text for each detected category; a risk layer attaches the detected \emph{category's} High/Medium/Low level; and a text-generation stage attaches a plain-English sentence. The final output is a risk-prioritized report. Section~\ref{sec:summ} shows that the last stage does not in fact summarize the clause in front of it --- it selects among 41 pre-written category sentences --- so the pipeline is better described as classification-to-template than as summarization. Figure~\ref{fig:pipeline} names the stages and the models behind them; Figure~\ref{fig:dataflow} at the end of this chapter repeats the same chain with the concrete data object that crosses each boundary, which is the version to consult when reading the implementation.
+The system is a staged pipeline (Figure~\ref{fig:pipeline}). Contract text is windowed; a presence stage decides which of the 41 categories the contract contains; a span stage extracts the exact clause text for each detected category; a risk layer attaches the detected \emph{category's} High\slash Medium\slash Low level; and a text-generation stage attaches a plain-English sentence. The final output is a risk-prioritized report. (The deployed Clausify application runs the presence, span and risk stages only; Section~\ref{sec:clausify}.) Section~\ref{sec:summ} shows that the last stage does not in fact summarize the clause in front of it --- it selects among 41 pre-written category sentences --- so the pipeline is better described as classification-to-template than as summarization. Figure~\ref{fig:pipeline} names the stages and the models behind them; Figure~\ref{fig:dataflow} at the end of this chapter repeats the same chain with the concrete data object that crosses each boundary, which is the version to consult when reading the implementation.
 
 \begin{figure}[ht]
 \centering
+\begin{adjustbox}{max width=\textwidth}
 \begin{tikzpicture}[
   node distance=4mm and 6mm,
   stage/.style={draw, rounded corners=2pt, minimum height=9mm, minimum width=30mm,
@@ -27,6 +28,7 @@ The system is a staged pipeline (Figure~\ref{fig:pipeline}). Contract text is wi
 \draw[arr] (f.south) |- (g.west);
 \draw[arr] (e) -- (g);
 \end{tikzpicture}
+\end{adjustbox}
 \caption{The end-to-end pipeline; shaded stages are added by this work.}
 \label{fig:pipeline}
 \end{figure}
@@ -45,12 +47,13 @@ Classical bag-of-words models have no input-length limit, so a TF--IDF represent
 \label{sec:ceiling}
 The obvious way to hand a long contract to a transformer is retrieval: slide 2{,}000-character windows with a 1{,}500-character stride over the text (the windowing scheme itself is drawn in Figure~\ref{fig:windows}), score each window by TF--IDF cosine similarity to the category query, and give the model only the best window or windows. The query uses only information available at inference time --- the category name or its CUAD question, never the answer --- so there is no leakage.
 
-Before training anything, we measured the \emph{retrieval hit-rate}: how often does the selected window actually contain the gold clause? Figure~\ref{fig:ceiling} shows what the measurement is doing and why the answer is a hard bound. Whatever this number is, it is an upper bound on the downstream model's recall, because a clause sitting in a window the retriever never selects cannot be found by any model placed after it. The best strategy we found (category name as query, top-3 windows) reached only \textbf{64.0\%} (Table~\ref{tab:retrieval}). Interestingly, the CUAD question text did worse than the bare category name, because the questions share so much boilerplate that all the category queries end up nearly identical. A recall ceiling of 0.64 sits below the baseline's overall performance ($\approx$0.78), so a retrieval-windowed transformer was going to lose before it was ever trained. The measurement took seconds and saved us a wasted training run.
+Before training anything, we measured the \emph{retrieval hit-rate}: how often does the selected window actually contain the gold clause? Figure~\ref{fig:ceiling} shows what the measurement is doing and why the answer is a hard bound. Whatever this number is, it is an upper bound on the downstream model's recall, because a clause sitting in a window the retriever never selects cannot be found by any model placed after it. The best strategy we found (category name as query, top-3 windows) reached only \textbf{64.0\%} (Table~\ref{tab:retrieval}). Interestingly, the CUAD question text did worse than the bare category name, because the questions share so much boilerplate that all the category queries end up nearly identical. A recall ceiling of 0.64 sits well below the baseline's recall of 0.81 (and its micro-F1 of 0.775), so a retrieval-windowed transformer was going to lose before it was ever trained. The measurement took seconds and saved us a wasted training run.
 
 One qualification belongs with that number. What we measured is a ceiling on \emph{lexical} retrieval: every query strategy in Table~\ref{tab:retrieval} scores windows by TF--IDF cosine similarity, so a clause phrased without the vocabulary of its category name is invisible to the retriever even when it is plainly present. A dense retriever --- a sentence encoder embedding both the query and each window --- matches on meaning rather than on shared terms and would very likely lift the 64.0\% figure, possibly above the baseline. We did not test one, so the honest reading of this section is narrower than ``retrieval does not work'': it is that \emph{lexical} retrieval imposes a ceiling too low to build on, which was enough to send us to the windowing design in Section~\ref{sec:mil}. Whether a dense retriever raises the ceiling far enough to make a retrieve-then-read pipeline competitive is an open question we list in future work.
 
 \begin{figure}[ht]
 \centering
+\begin{adjustbox}{max width=\textwidth}
 \begin{tikzpicture}[x=1mm, y=1mm, font=\scriptsize,
   wbox/.style={draw=gray!55, fill=gray!8, minimum width=15mm, minimum height=7mm,
                inner sep=0pt, rounded corners=1pt},
@@ -98,6 +101,7 @@ One qualification belongs with that number. What we measured is a ceiling on \em
 \node[anchor=north, font=\tiny, text=gray!45!black] at (0,-30.6) {0\%};
 \node[anchor=north, font=\tiny, text=gray!45!black] at (140,-30.6) {100\%};
 \end{tikzpicture}
+\end{adjustbox}
 \caption{Why the measured retrieval ceiling settled the design.}
 \label{fig:ceiling}
 \end{figure}
@@ -106,6 +110,7 @@ One qualification belongs with that number. What we measured is a ceiling on \em
 \centering
 \caption{Retrieval hit-rate on positive (contract, category) pairs.}
 \label{tab:retrieval}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lcc}
 \toprule
 \textbf{Query strategy} & \textbf{Top-$k$} & \textbf{Hit-rate}\\
@@ -116,6 +121,7 @@ Category name             & 1 & 44.6\%\\
 Name + question           & 3 & 61.5\%\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 
 {\footnotesize\singlespacing \emph{Note.} The hit-rate is the recall ceiling a retrieval-based design would impose.\par}
 \end{table}
@@ -126,6 +132,7 @@ To get rid of the ceiling we trained a \emph{window-level} classifier instead: g
 
 \begin{figure}[ht]
 \centering
+\begin{adjustbox}{max width=\textwidth}
 \begin{tikzpicture}[x=1mm, y=1mm, font=\scriptsize,
   dim/.style={{Stealth[length=1.6mm]}-{Stealth[length=1.6mm]}, gray!65!black, line width=0.5pt},
   win/.style={draw=blue!55, fill=blue!10, rounded corners=1pt},
@@ -174,6 +181,7 @@ To get rid of the ceiling we trained a \emph{window-level} classifier instead: g
 \node[anchor=west, font=\tiny, text=gray!45!black] at (71,-45.5)
   {continuing to $w_{21}$ for a median-length contract};
 \end{tikzpicture}
+\end{adjustbox}
 \caption{Sliding-window generation: 2{,}000-character windows, 1{,}500-character stride.}
 \label{fig:windows}
 \end{figure}
@@ -184,6 +192,7 @@ At inference the model scores \emph{every} window of the contract, and the docum
 
 \begin{figure}[ht]
 \centering
+\begin{adjustbox}{max width=\textwidth}
 \begin{tikzpicture}[x=1mm, y=1mm, font=\scriptsize,
   win/.style={draw=gray!55, fill=gray!10, rounded corners=1pt,
               minimum width=15mm, minimum height=6mm, inner sep=0pt},
@@ -229,6 +238,7 @@ At inference the model scores \emph{every} window of the contract, and the docum
 \node[anchor=north, align=center, font=\tiny, text=gray!45!black] at (60,-37)
   {one model, shared weights --- the input is the pair (category question $q_c$, window $w_i$)};
 \end{tikzpicture}
+\end{adjustbox}
 \caption{The multiple-instance learning rule: maximum over window scores.}
 \label{fig:mil}
 \end{figure}
@@ -238,6 +248,7 @@ When we compared the two models category by category, they turned out to be \emp
 
 \begin{figure}[ht]
 \centering
+\begin{adjustbox}{max width=\textwidth}
 \begin{tikzpicture}[x=1mm, y=1mm, font=\scriptsize,
   mod/.style={draw=gray!60, fill=gray!10, rounded corners=1pt, text width=30mm,
               align=center, minimum height=11mm, inner sep=1.5pt},
@@ -280,6 +291,7 @@ When we compared the two models category by category, they turned out to be \emp
    AND fires only when \emph{both} models\\ cross the threshold, so a false positive has to be made
    twice, independently, to survive.};
 \end{tikzpicture}
+\end{adjustbox}
 \caption{The conjunctive ensemble and its three parameter-free rules.}
 \label{fig:ensemble_rule}
 \end{figure}
@@ -291,6 +303,7 @@ Two different window sizes are in play in this project, and it is worth being ex
 
 \begin{figure}[ht]
 \centering
+\begin{adjustbox}{max width=\textwidth}
 \begin{tikzpicture}[x=1mm, y=1mm, font=\scriptsize,
   dim/.style={{Stealth[length=1.6mm]}-{Stealth[length=1.6mm]}, gray!65!black, line width=0.5pt}]
 
@@ -324,6 +337,7 @@ Two different window sizes are in play in this project, and it is worth being ex
   {$\text{focus start} = \max(0,\ \text{answer start} - 150)$\quad ---\quad
    1{,}200 chars fits inside the 320-token limit; 2{,}000 does not.};
 \end{tikzpicture}
+\end{adjustbox}
 \caption{Presence window (Stage 2A) against focus window (Stage 2B).}
 \label{fig:focus}
 \end{figure}
@@ -356,7 +370,7 @@ The eight High categories fall into three groups, each triggered by a different 
 \label{sec:weaker}
 This phrase does real work in the taxonomy and it is ambiguous, so we should say how we resolved it. The weaker party is not a fixed role --- in a distribution agreement it may be the distributor, in a licence the licensee, in a franchise the franchisee --- and in a genuinely balanced agreement between equals there may be no weaker party at all.
 
-We operationalized it as follows: \textbf{the party with less bargaining power over the drafting}, which in the CUAD corpus is in practice the party that did not write the agreement. Where that is genuinely unclear from the category alone, we scored from the position of \textbf{the party on whom the obligation falls} --- so \emph{Non-Compete} is scored from the side restrained, \emph{Audit Rights} from the side audited, \emph{License Grant} from the side receiving. This is a heuristic, and it has a known failure mode worth stating: a clause that is High-risk for one side is often protective for the other, so the same badge shown to a licensor and a licensee is not equally informative. A per-instance system would resolve the perspective from the clause text; ours cannot, and assumes the user is the party with less power. That assumption is stated in the application interface.
+We operationalized it as follows: \textbf{the party with less bargaining power over the drafting}, which in the CUAD corpus is in practice the party that did not write the agreement. Where that is genuinely unclear from the category alone, we scored from the position of \textbf{the party on whom the obligation falls} --- so \emph{Non-Compete} is scored from the side restrained, \emph{Audit Rights} from the side audited, \emph{License Grant} from the side receiving. This is a heuristic, and it has a known failure mode worth stating: a clause that is High-risk for one side is often protective for the other, so the same badge shown to a licensor and a licensee is not equally informative. A per-instance system would resolve the perspective from the clause text; ours cannot, and assumes the user is the party with less power. That assumption is stated in the notice the application shows above every analysis.
 
 \subsubsection{Why a lookup table rather than a learned score}
 The taxonomy is a transparent lookup rather than a model output, and that is deliberate: it can be audited line by line, its reasoning is written down per category, and it cannot drift silently between versions. The cost of that choice is precisely the limitation named at the top of this section --- it cannot distinguish a \$10{,}000 liability cap from a \$10{,}000{,}000 one. Section~\ref{sec:riskeval} measures a second cost we did not anticipate: because the levels are fixed per category, the system's error profile is set entirely by which \emph{categories} it detects well, and the categories carrying High risk turn out to be among the ones it detects worst.
@@ -418,7 +432,7 @@ A single reviewer would establish face validity; \emph{two or three, reviewing i
 \label{sec:leakage}
 With a dataset this small, leakage is the most dangerous way to fool ourselves, so we kept one explicit rule the whole way through: \emph{labels may shape training targets, but they may never shape the input a model sees or any inference-time selection}. In practice this meant: the split is contract-level; retrieval queries use only the category or question; gold offsets label training windows but never build inputs or pick inference windows; and the ensemble rules are parameter-free, so the test set cannot tune them.
 
-One consequence is visible in Figure~\ref{fig:focus} and deserves stating outright, because it is the one place where the rule looks like it might be broken. The focus window is positioned using the gold answer offset, which is a label. That is legitimate only because it happens exclusively at \emph{training} time: it decides which text becomes a training example, never what the model reads at inference. At inference there is no gold offset, and Stage 2B simply runs over the presence window that Stage 2A selected. If re-centring were applied at inference the evaluation would be meaningless, since the model would be handed a window built around the answer it is supposed to find.
+One consequence is visible in Figure~\ref{fig:focus} and deserves stating outright, because it is the one place where the rule looks like it might be broken. The focus window is positioned using the gold answer offset, which is a label. In training that is ordinary supervision: it decides which text becomes a training example. In the deployed pipeline there is no gold offset, and Stage 2B runs over the presence window that Stage 2A selected. The \emph{isolated} span benchmark of Section~\ref{sec:span} is the exception, and we state it plainly: it builds each test example with the same re-centred focus window, so it measures extraction \emph{when the answer's location is already known}. That makes it an oracle upper bound, not a deployable score; the realistic number is the end-to-end measurement of Section~\ref{sec:e2e}, which never uses a gold offset.
 
 \section{Data Collection}
 \label{sec:datasource}
@@ -467,7 +481,7 @@ Four properties of the data ended up shaping every design decision that followed
 \begin{enumerate}[itemsep=2pt]
   \item \textbf{Severe class imbalance.} Per-category positive rates run from \emph{Document Name} at 100\% and \emph{Parties} at 99.8\% down to \emph{Source Code Escrow} at 2.5\% and \emph{Price Restrictions} at 2.9\%. The median category is present in roughly 23\% of contracts.
   \item \textbf{The rare tail is nearly few-shot.} \emph{Source Code Escrow} has only 13 positive contracts in the entire corpus. No model learns categories like that reliably, and per-category scores on this tail are mostly noise. We carry this caveat through the results chapter.
-  \item \textbf{Contracts are long.} Median 33{,}143 characters (about 5{,}000 words), maximum 338{,}211 characters --- roughly 16$\times$ a transformer's effective input window. This is the central modelling tension of the whole thesis.
+  \item \textbf{Contracts are long.} Median 33{,}143 characters (about 5{,}000 words), maximum 338{,}211 characters --- --- the median is roughly 16$\times$ a transformer's effective input window of about 2{,}000 characters, and the longest about 170$\times$. This is the central modelling tension of the whole project.
   \item \textbf{Clauses are short.} The median annotated clause is 196 characters (90th percentile 587, 99th percentile 1{,}330). So a clause fits easily inside a single window; the hard part is finding it inside a very long document.
 \end{enumerate}
 
@@ -480,6 +494,7 @@ Following the evaluation protocol set by our supervisor, we split the dataset \t
 \centering
 \caption{The contract-level 80/20 train/test split.}
 \label{tab:split}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrr}
 \toprule
  & \textbf{Contracts} & \textbf{(Contract, category) rows} & \textbf{Positive rate}\\
@@ -490,6 +505,7 @@ Test (20\%)  & 102 & 4{,}182  & 32.2\%\\
 Total        & 510 & 20{,}910 & 32.1\%\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 The aggregate positive rates in Table~\ref{tab:split} are almost identical (32.0\% vs.\ 32.2\%), but a single pair of percentages can hide a badly skewed split --- two sides can agree overall while disagreeing sharply category by category. Figure~\ref{fig:splitdist} therefore compares the two sides for all 41 categories at once. The profiles track each other closely across the whole frequency range (Pearson $r = 0.986$, mean absolute difference 3.4 percentage points). The visible exception is \emph{Termination For Convenience}, which appears in 47.1\% of test contracts against 33.1\% of training contracts, a 14.0-point gap; the other outliers are all in the rare tail, where a shift of one or two contracts moves the percentage several points on its own. Since the split was drawn once at random and never re-drawn to look better, we report these gaps rather than tune them away --- but they are worth carrying into Chapter~5, because a category over-represented in the test set carries more weight in the micro-averaged score than its training frequency would suggest.
@@ -511,6 +527,7 @@ All models were trained on the 408 training contracts (80\%) only. Training ran 
 \caption{Training configurations for the three models.}
 \label{tab:hyper}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lccc}
 \toprule
  & \textbf{Presence (MIL)} & \textbf{Span (QA)} & \textbf{Summarizer}\\
@@ -526,6 +543,7 @@ Device              & MPS & MPS & CPU\\
 Wall-clock          & $\approx$49--52 min & $\approx$23 min & $\approx$8 min\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 \subsection{Validation Protocol, and Where the Hyperparameters Came From}
 \label{sec:valprotocol}
@@ -552,6 +570,7 @@ Table~\ref{tab:valsets} states, per model, what was held out during training and
 \caption{Validation arrangements during training.}
 \label{tab:valsets}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{p{2.6cm} p{4.5cm} p{6.2cm}}
 \toprule
 \textbf{Model} & \textbf{Validation data} & \textbf{Use}\\
@@ -563,6 +582,7 @@ Span (QA) & None (\texttt{eval\_strategy="no"}) & No validation loss exists for 
 Summarizer (deployed checkpoint) & None & The checkpoint used in every reported result and in Clausify was trained with no evaluation set.\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 
 {\footnotesize\singlespacing \emph{Note.} ``Monitoring only'' means the loss was printed and plotted but never used to select a checkpoint, stop early, or change a setting --- all three runs used \texttt{save\_strategy="no"} and kept the final-step weights.\par}
 \end{table}
@@ -632,6 +652,7 @@ We instantiated Longformer-base at its published geometry --- 12 layers, 768 hid
 \caption{Longformer-base against the DistilBERT configuration used here.}
 \label{tab:lfbench}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llccc}
 \toprule
 \textbf{Model} & \textbf{Operation} & \textbf{Batch} & \textbf{Time} & \textbf{Peak memory}\\
@@ -644,6 +665,7 @@ Longformer-base & training step, 4{,}096 tok & 2 & 2{,}170\,s & 20.75\,GB\\
 DistilBERT      & training step, 256 tok     & 16 & 3.17\,s & 4.47\,GB\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 
 {\footnotesize\singlespacing \emph{Note.} Measured on the Apple M4 (16\,GB unified memory) that trained every model reported in this project.\par}
 \end{table}
@@ -662,6 +684,7 @@ Figure~\ref{fig:pipeline} names the stages; Figure~\ref{fig:dataflow} adds what 
 
 \begin{figure}[ht]
 \centering
+\begin{adjustbox}{max width=\textwidth}
 \begin{tikzpicture}[x=1mm, y=1mm, font=\scriptsize,
   st/.style={draw=blue!55, fill=blue!8, rounded corners=2pt, text width=40mm,
              align=center, minimum height=8mm, inner sep=1.5pt},
@@ -699,6 +722,7 @@ Figure~\ref{fig:pipeline} names the stages; Figure~\ref{fig:dataflow} adds what 
 \node[anchor=south, font=\tiny, text=gray!45!black] at (24,5) {\textbf{stage}};
 \node[anchor=south west, font=\tiny, text=gray!45!black] at (50,5) {\textbf{data leaving that stage}};
 \end{tikzpicture}
+\end{adjustbox}
 \caption{Data shapes crossing each stage boundary.}
 \label{fig:dataflow}
 \end{figure}
@@ -744,7 +768,7 @@ The application reproduces the inference path from training exactly:
   \item \textbf{Risk layer.} The detected category is looked up in the fixed 8/22/11 taxonomy for its level and reason.
 \end{enumerate}
 
-All inference runs on CPU so the app works on any machine; a contract takes roughly 5--15 seconds once the models are loaded. The app loads the actual trained checkpoints saved by the training pipeline (\texttt{presence\_mil/final} and \texttt{span/final}), and a single environment variable redirects it if the models are moved.
+All inference runs on CPU so the app works on any machine; a median-length contract takes about 27 seconds once the models are loaded (Table~\ref{tab:appbench}). The app loads the actual trained checkpoints saved by the training pipeline (\texttt{presence\_mil/final} and \texttt{span/final}), and a single environment variable redirects it if the models are moved.
 \subsubsection{Implementation Notes}
 The interface is a single-page Streamlit application (\texttt{app.py}) sitting on a small inference module (\texttt{model\_utils.py}) that owns model loading, windowing, max-pooling, span extraction, and the risk table. Two test contracts ship with the app: a genuine CUAD contract, and a synthetic ``Master Software License and Distribution Agreement'' that we wrote specifically to exercise a wide spread of the 41 categories. On that synthetic contract the app detects clauses across all three risk bands and puts \emph{Uncapped Liability}, \emph{IP Ownership Assignment}, \emph{Exclusivity}, and \emph{Liquidated Damages} at the top of the report --- exactly the before-you-sign warnings the design aims for.
 \subsubsection{Measured Latency}
@@ -756,6 +780,7 @@ Chapter~2 justified the choice of a distilled backbone partly on the grounds tha
 \caption{Latency of the deployed pipeline.}
 \label{tab:appbench}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 \textbf{Contract} & \textbf{Characters} & \textbf{Windows scored} & \textbf{Time} & \textbf{Peak RSS}\\
@@ -769,11 +794,12 @@ Longest in test set & 289{,}615 & 30 (capped) & 32.0\,s & 1.52\,GB\\
 \multicolumn{3}{l}{\emph{median 27.1\,s \quad mean 21.4\,s \quad worst case 32.4\,s}} & & \\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 
 {\footnotesize\singlespacing \emph{Note.} Measured through the application's own \texttt{analyze()} entry point. CPU only, Apple M4, models already loaded (cold load adds 0.4\,s). Peak RSS is the whole Python process, both models resident.\par}
 \end{table}
 
-The earlier draft of this chapter claimed a contract takes ``roughly 5--15 seconds''. That was an impression from watching the demo on short inputs, not a measurement, and it is wrong: a median-length contract takes 27.1 seconds. We have replaced the claim with the table.
+An earlier draft claimed a contract takes ``roughly 5--15 seconds''. That was an impression from watching the demo on short inputs, not a measurement, and it was wrong: a median-length contract takes 27.1 seconds.
 
 Two design consequences are visible in the numbers. First, latency is essentially linear in the number of windows, since the dominant cost is 41 categories $\times$ windows forward passes through DistilBERT --- the model is scored once per (category, window) pair and nothing is cached across categories. Second, the 30-window cap is what keeps the worst case bounded: without it the longest test contract would take several minutes, and with it every contract above roughly 47{,}000 characters receives the same truncated treatment. That cap is a latency decision with a silent recall cost --- clauses beyond the cap cannot be found at all --- and it is not reflected anywhere in the Chapter~5 numbers, which score the full document. It is a limitation of the deployed system rather than of the method, and Section~\ref{sec:demolimits} now says so.
 

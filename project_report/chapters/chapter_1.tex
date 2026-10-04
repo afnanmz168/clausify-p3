@@ -8,6 +8,7 @@ Before the detailed treatment in Chapter~4, Figure~\ref{fig:overview} gives the 
 
 \begin{figure}[ht]
 \centering
+\begin{adjustbox}{max width=\textwidth}
 \begin{tikzpicture}[
   node distance=6mm,
   box/.style={draw, rounded corners=2pt, minimum height=19mm, text width=25mm,
@@ -30,19 +31,20 @@ Before the detailed treatment in Chapter~4, Figure~\ref{fig:overview} gives the 
   ($(d.south west)+(0,-1.5mm)$) -- ($(d.south east)+(0,-1.5mm)$)
   node[midway, below=4pt, font=\scriptsize\itshape] {added here};
 \end{tikzpicture}
+\end{adjustbox}
 \caption{The three questions the pipeline answers about a contract.}
 \label{fig:overview}
 \end{figure}
 
 \section{Rationale of the Study or Motivation}
-Our project tries to close that gap. On top of clause detection and extraction, we add a prototype taxonomy that assigns every \emph{category} a High, Medium or Low level from the weaker party's point of view, and a text-generation component intended to render each clause as a single plain-English sentence. We packaged the whole pipeline into \emph{Clausify}, a prototype web application where a user pastes or uploads a contract and gets back a risk-prioritized clause report. Both added layers turned out to be weaker than we expected --- the taxonomy is unvalidated (Section~\ref{sec:taxvalid}) and the generation component learned to emit category templates rather than clause-specific summaries (Section~\ref{sec:summ}) --- and Chapters~5 and~6 report that rather than the intention.
+Our project tries to close the gap between finding a clause and understanding it. On top of clause detection and extraction, we add a prototype taxonomy that assigns every \emph{category} a High, Medium or Low level from the weaker party's point of view, and a text-generation component intended to render each clause as a single plain-English sentence. We packaged the presence and span models, together with the risk layer, into \emph{Clausify}, a prototype web application where a user pastes or uploads a contract and gets back a risk-prioritized clause report. Both added layers turned out to be weaker than we expected --- the taxonomy is unvalidated (Section~\ref{sec:taxvalid}) and the generation component learned to emit category templates rather than clause-specific summaries (Section~\ref{sec:summ}) --- and Chapters~5 and~6 report that rather than the intention.
 
 The rationale for the study is therefore practical as much as academic. Existing work on CUAD answers the question ``where is the clause?'' for a lawyer who already knows what to look for. The people who most need help --- individuals, freelancers and small businesses signing agreements without legal counsel --- need the next answers as well: which of the clauses found matter most to them, and what each one means in ordinary language. A system that delivers those answers, and that is honest about how often it is wrong, would make contract review accessible to users who are currently priced out of it. Equally important, the project set out to measure rather than assume how well such a system works, because a contract-review tool that looks confident but silently misses clauses is worse than no tool at all.
 
 \section{Problem Statement}
 Concretely, the project works on four connected problems:
 \begin{enumerate}[itemsep=2pt]
-  \item \textbf{Presence classification.} For each of the 41 CUAD categories, decide whether a given contract contains at least one clause of that category. The main technical obstacle here is length: contracts are roughly 16$\times$ longer than the input window of a standard transformer encoder.
+  \item \textbf{Presence classification.} For each of the 41 CUAD categories, decide whether a given contract contains at least one clause of that category. The main technical obstacle here is length: a median contract is roughly 16$\times$ longer than the input window of a standard transformer encoder.
   \item \textbf{Span extraction.} For every category judged present, locate the exact clause text inside the contract. We formulate this as extractive question answering in the style of SQuAD \cite{rajpurkar2016squad}.
   \item \textbf{Plain-language summarization.} Rewrite each extracted clause as one sentence that a non-lawyer can understand.
   \item \textbf{Risk communication.} Attach a category-level risk level and a one-line reason to every detected clause, so the output reads as a prioritized report rather than a list of quotations. Whether this is genuinely useful to a signer is a usability question we did not evaluate (Section~\ref{sec:threats}).
@@ -87,7 +89,7 @@ Every model was evaluated once on the 102 held-out contracts. Point estimates ar
 
 \textbf{Challenges.} Six challenges shaped the design:
 \begin{enumerate}[itemsep=2pt]
-  \item \textbf{Document length.} A median contract is about 33{,}000 characters and the longest exceeds 338{,}000, roughly 16$\times$ the input window of a standard transformer encoder.
+  \item \textbf{Document length.} A median contract is about 33{,}000 characters --- roughly 16$\times$ the 512-token input window of a standard transformer encoder (about 2{,}000 characters) --- and the longest exceeds 338{,}000 characters, about 170$\times$.
   \item \textbf{Class imbalance and a few-shot tail.} Category positive rates range from 100\% down to 2.5\%; several categories have only a handful of positive contracts in the entire corpus.
   \item \textbf{A small, fixed dataset.} 510 contracts is the whole dataset, and expert legal annotation is too expensive to extend, so overfitting and leakage had to be controlled carefully.
   \item \textbf{Limited hardware.} Training ran on an Apple-Silicon laptop without CUDA; the first-choice backbone (DeBERTa-v3) was numerically unstable on the MPS backend, and GPU memory was not released between training runs.
@@ -96,5 +98,5 @@ Every model was evaluated once on the 102 held-out contracts. Point estimates ar
 \end{enumerate}
 
 \section{Report Organization}
-The rest of this report is organized as follows. Chapter~2 reviews the background and related literature. Chapter~3 sets out the requirements of the system and its societal, environmental, ethical and economic dimensions, together with the project management plan. Chapter~4 presents the proposed methodology: the design process, the alternative designs considered for each stage, the data pipeline, and the implementation of the models and the Clausify application. Chapter~5 analyses the results on the held-out test set, including the statistical analysis and the design adjustments that followed from it. Chapter~5 concludes with the findings, contributions, limitations and recommendations for future work. The appendices contain the full 41-category risk taxonomy, a reproducibility checklist and the repository layout.
+The rest of this report is organized as follows. Chapter~2 reviews the background and related literature. Chapter~3 sets out the requirements of the system and its societal, environmental, ethical and economic dimensions, together with the project management plan. Chapter~4 presents the proposed methodology: the design process, the alternative designs considered for each stage, the data pipeline, and the implementation of the models and the Clausify application. Chapter~5 analyses the results on the held-out test set, including the statistical analysis and the design adjustments that followed from it. Chapter~6 concludes with the findings, contributions, limitations and recommendations for future work. The appendices contain the full 41-category risk taxonomy, a reproducibility checklist and the repository layout.
 

@@ -4,6 +4,7 @@
 Everything below describes the environment in which every number in this project was produced. The purpose is that a reader with the repository and this appendix can regenerate any table without asking us a question.
 
 \section*{Environment}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{p{4.5cm} p{9cm}}
 \toprule
 Python & 3.13.5\\
@@ -21,8 +22,10 @@ Accelerator & Metal Performance Shaders (MPS); no CUDA at any point\\
 \texttt{matplotlib} & figures only\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 
 \section*{Data}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{p{4.5cm} p{9cm}}
 \toprule
 Dataset & CUAD v1, Hugging Face \texttt{theatticusproject/cuad}\\
@@ -31,6 +34,7 @@ Contracts & 510; 41 categories; 20{,}910 (contract, category) rows\\
 Note & The repository's default \texttt{load\_dataset()} configuration exposes only the raw PDFs and cannot be trained on (Section~\ref{sec:datasource}).\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 
 \section*{Seeds and splits}
 \begin{itemize}[itemsep=2pt]
@@ -43,7 +47,8 @@ Note & The repository's default \texttt{load\_dataset()} configuration exposes o
 \section*{Artifact fingerprints}
 First 16 hex characters of the SHA-256 of each artifact, so a reader can confirm they hold the same files:
 
-\begin{tabular}{p{7cm} p{6cm}}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{ll}
 \toprule
 \texttt{CUAD\_v1.json} & \texttt{ed0b77d85bdf4014}\\
 \texttt{artifacts/split.json} & \texttt{177e2ef48dfab9cd}\\
@@ -53,10 +58,12 @@ First 16 hex characters of the SHA-256 of each artifact, so a reader can confirm
 \texttt{outputs/summarizer/final/model.safetensors} & \texttt{9fcb6bdf777d033c}\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 
 \section*{Commands, and which table each regenerates}
 
-\begin{tabular}{p{6.3cm} p{7.4cm}}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{l p{7.4cm}}
 \toprule
 \textbf{Command} & \textbf{Regenerates}\\
 \midrule
@@ -84,17 +91,19 @@ the taxonomy review sheets are returned\\
 \texttt{tectonic project\_report/main.tex} & This project report\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 
 \section*{Known determinism caveats}
 \begin{itemize}[itemsep=2pt]
-  \item MPS kernels are not bit-reproducible across \texttt{torch} versions; a rerun should reproduce reported scores to roughly three decimal places, not exactly.
+  \item MPS training is not bit-reproducible, even run to run on the same machine and library versions. The October 2026 re-training of every model with identical code and seed reproduced the August scores to within about 0.003 (presence micro-F1 0.6943 $\rightarrow$ 0.6924 for the transformer; span token-F1 0.763 $\rightarrow$ 0.764), not exactly.
   \item ROUGE-L in \texttt{summ\_pilot.py} is computed by an inline longest-common-subsequence implementation (matching \texttt{test.ipynb}) rather than by the \texttt{rouge\_score} package, so the two are not interchangeable.
-  \item The retrieval-ceiling measurement of Section~\ref{sec:ceiling} was computed over all 510 contracts before the split was drawn (Section~\ref{sec:threats}).
+  \item The retrieval-ceiling measurement of Section~\ref{sec:ceiling} was computed over all 510 contracts, test contracts included (Section~\ref{sec:threats}).
 \end{itemize}
 
 \chapter{Repository and Artifact Layout}
 \label{app:repo}
 
+{\footnotesize
 \begin{verbatim}
 clausify-research/                    -- research deliverable
 |- PROJECT_REPORT.md / .pdf           -- step-by-step project report
@@ -133,3 +142,4 @@ clausify-app/                         -- Clausify demo application
 |- test_contract.txt                  -- synthetic multi-clause contract
 |- APP_REPORT.md / .pdf               -- application report
 \end{verbatim}
+}

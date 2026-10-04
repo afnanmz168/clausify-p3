@@ -5,6 +5,7 @@ This section summarizes the models and techniques the project builds on.
 The transformer architecture \cite{vaswani2017attention} replaced recurrence with self-attention, and BERT-style masked-language-model pre-training \cite{devlin2019bert} established the fine-tuning recipe this project depends on: take a model pre-trained on large general corpora, then adapt it to a downstream task with relatively little labelled data. This transfer-learning property matters a lot here, because 510 contracts is a small dataset by deep-learning standards.
 
 Since our compute budget is a single laptop, we use DistilBERT \cite{sanh2019distilbert}, a distilled six-layer version of BERT that keeps roughly 97\% of BERT's language-understanding ability while being 40\% smaller and 60\% faster. The published CUAD baselines use much larger models, so our backbone choice trades some headline accuracy for the ability to reproduce everything on ordinary hardware. We point out this scale difference wherever we interpret our results.
+
 \subsection{Long-Document Strategies and Multiple-Instance Learning}
 \label{sec:lit_long}
 The usual remedies for the length mismatch come in three families: (i) \emph{retrieval}, where a cheap scorer picks the few windows most likely to hold the answer and only those go to the transformer; (ii) \emph{sliding windows with aggregation}, where the model scores every window and the document-level prediction aggregates the window scores; and (iii) \emph{sparse-attention architectures} such as Longformer, which widen the input window directly.
@@ -56,9 +57,9 @@ It also means our evaluation is missing the checks this literature calls for. We
 
 \section{Summary of Key Findings}
 \label{sec:litgap}
-Existing CUAD work stops at locating clauses. A signer plausibly needs more than that: which clauses matter, how much, and what they mean in plain language. This project attempts that layer --- a prototype per-category risk taxonomy, category-template plain-English text, and a demonstration application --- while also re-examining, on a strict held-out evaluation, the common assumption that a transformer must beat classical lexical methods at the document-level presence decision. We should say at the outset that of the three added components, the empirical results support only the first as a working artefact and neither of the other two as a solved problem; what the added layer contributes is largely a measurement of how far it is from working.
+Existing CUAD work stops at locating clauses. A signer plausibly needs more than that: which clauses matter, how much, and what they mean in plain language. This project attempts that layer --- a prototype per-category risk taxonomy, category-template plain-English text, and a demonstration application --- while also re-examining, on a strict held-out evaluation, the common assumption that a transformer must beat classical lexical methods at the document-level presence decision. We should say at the outset that of the three added components, the empirical results support only the demonstration application as a working artefact; the risk taxonomy is unvalidated and the plain-English component emits category templates rather than summaries, so neither is a solved problem. What the added layer contributes is largely a measurement of how far it is from working.
 
-Table~\ref{tab:related} places this work beside the reference points above along the dimensions that separate them. Two differences are worth reading off it directly. The obvious one is scope: prior work ends at the span, whereas the output here is a risk-ranked, plain-English report, which is the part a non-lawyer can actually act on. The less obvious one is in the long-document column. Every system on CUAD has to make a choice about document length, but that choice is normally asserted; here it was measured before any training happened --- the retrieval ceiling of 64.0\% in Section~\ref{sec:ceiling} is what ruled retrieval out and sent us to multiple-instance learning. Note also what the backbone column costs us: our distilled models are roughly an order of magnitude smaller than CUAD's DeBERTa-v3-XL, so our absolute extraction scores are not comparable to theirs, and we do not present them as such.
+Table~\ref{tab:related} places this work beside the reference points above along the dimensions that separate them. Two differences are worth reading off it directly. The obvious one is scope: prior work ends at the span, whereas the output here is a risk-ranked, plain-English report, which is the part a non-lawyer can actually act on. The less obvious one is in the long-document column. Every system on CUAD has to make a choice about document length, but that choice is normally asserted; here it was measured before any training happened --- the retrieval ceiling of 64.0\% in Section~\ref{sec:ceiling} is what ruled retrieval out and sent us to multiple-instance learning. Note also what the backbone column costs us: our distilled models (67M parameters) are roughly an order of magnitude smaller than the DeBERTa-xlarge model behind CUAD's best published result, so our absolute extraction scores are not comparable to theirs, and we do not present them as such.
 
 \begin{table}[!ht]
 \centering
@@ -68,12 +69,13 @@ Table~\ref{tab:related} places this work beside the reference points above along
 \setlength{\tabcolsep}{2.5pt}
 \renewcommand{\arraystretch}{1.2}
 \newcolumntype{R}[1]{>{\raggedright\arraybackslash}p{#1}}
-\begin{tabular}{@{}R{17mm} R{13mm} R{16mm} R{16mm} R{18mm} R{11mm} R{13mm} R{17mm}@{}}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{@{}R{21mm} R{15mm} R{20mm} R{21mm} R{24mm} R{16mm} R{15mm} R{23mm}@{}}
 \toprule
 \textbf{Work} & \textbf{Dataset} & \textbf{Task} & \textbf{Model} & \textbf{Long-doc method} & \textbf{Risk} & \textbf{Plain lang.} & \textbf{Evaluation}\\
 \midrule
 Hendrycks et al.\ \cite{hendrycks2021cuad}
- & CUAD (510) & Span extraction & DeBERTa-v3-XL & Full-doc QA, large model & No & No & Held-out; precision @ 80\% recall\\
+ & CUAD (510) & Span extraction & DeBERTa-xlarge & Full-doc QA, large model & No & No & Held-out; precision @ 80\% recall\\
 \addlinespace
 Chalkidis et al.\ \cite{chalkidis2020legalbert}
  & Multiple legal corpora & Domain pretraining $+$ classification & LEGAL-BERT & 512-token truncation & No & No & Per-task held-out\\
@@ -100,6 +102,7 @@ Retrieval--QA pipelines (generic)
  & \textbf{Contract-level held-out; cluster bootstrap; seed, budget, split controls; \emph{end-to-end}}\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 
 {\footnotesize\singlespacing \emph{Note.} ``Long-doc method'' is how each work handles inputs longer than the encoder window; ``Evaluation'' notes the level at which results are reported.\par}
 \end{table}
