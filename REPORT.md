@@ -1,7 +1,7 @@
 # CUAD Legal-Clause Pipeline — Training & Testing Report
 
 **AI-Powered Legal Document Analysis (CUAD) · BRAC University**
-Full-dataset build, EDA → three models, 80/20 train-test split with confusion matrix evaluation. Updated 2026-08-22 (second-review revision: risk-weighted evaluation, threshold/calibration, aggregation ablation, split variance; earlier supervisor revision: training-budget control, seed variance, span and end-to-end evaluation, summarizer reference-set pilot, sparse-attention benchmark).
+Full-dataset build, EDA → three models, 80/20 train-test split with confusion matrix evaluation. Updated 2026-10-04 (re-training revision: every model re-trained and re-tested on the same 80/20 split, all dependent analyses re-run; second-review revision 2026-08-22: risk-weighted evaluation, threshold/calibration, aggregation ablation, split variance; earlier supervisor revision: training-budget control, seed variance, span and end-to-end evaluation, summarizer reference-set pilot, sparse-attention benchmark).
 
 ---
 
@@ -49,15 +49,15 @@ Split files: `data/train_80.csv` and `data/test_20.csv`.
 **DistilBERT window-level classifier (MIL)**
 - 53,662 window examples (39.2% positive), subsampled to 24,000 for training
 - 2 epochs, batch 16, LR 2e-5, max length 256
-- Training loss: 0.319 → 0.261; validation loss: 0.278 → 0.257
-- Training time: ~52 min on Apple MPS
-- Standalone micro-F1 on test: **0.694**
+- Training loss: 0.318 → 0.262; validation loss: 0.275 → 0.254
+- Training time: 49.8 min on Apple MPS (October 2026 re-training; the original August run took ~52 min)
+- Standalone micro-F1 on test: **0.692**
 
 **AND-ensemble (TF-IDF + transformer, both must agree)**
-- micro-F1: **0.776** — nominally the best model, but see the significance test below: its margin over
+- micro-F1: **0.779** — nominally the best model, but see the significance test below: its margin over
   the TF-IDF baseline is not statistically distinguishable from zero.
 
-**Control 1 — was the transformer just undertrained?** (`analysis/presence_run.py`)
+**Control 1 — was the transformer just undertrained?** (`analysis/presence_run.py`; both runs from August 2026)
 The baseline sees all 408 contracts in full; the transformer saw 24,000 of 53,662 windows. We retrained
 on the **full 53,662 windows** (140.7 min), everything else identical:
 
@@ -70,16 +70,18 @@ Difference -0.0004, 95% CI [-0.0098, +0.0095] — a tie. The gap to TF-IDF holds
 (CI [+0.0649, +0.0980]). More data made the model fire *more* (recall up, precision down), which is what
 max-pooling over ~35 windows predicts. **The deficit is architectural, not a training-budget artifact.**
 
-**Control 2 — how much moves if we only change the seed?** Three runs at the 24,000 budget:
+**Control 2 — how much moves if we only change the seed?** Three runs at the 24,000 budget (seed 42 is the October re-training; seeds 43 and 44 are the August runs):
 
 | Model | Seed 42 | Seed 43 | Seed 44 | Mean | SD | Range |
 |---|---|---|---|---|---|---|
-| Transformer | 0.6943 | 0.6928 | 0.7082 | 0.6984 | 0.0085 | 0.0154 |
-| AND ensemble | 0.7761 | 0.7774 | 0.7803 | 0.7780 | 0.0022 | 0.0042 |
+| Transformer | 0.6924 | 0.6928 | 0.7082 | 0.6978 | 0.0090 | 0.0158 |
+| AND ensemble | 0.7789 | 0.7774 | 0.7803 | 0.7789 | 0.0015 | 0.0029 |
 
-The ensemble's SD (0.0022) and range (0.0042) both **exceed its +0.0014 margin** over the baseline —
-independent confirmation of the tie. The baseline's lead over the transformer is 9.5 SDs, so that
-finding is seed-robust. Note the ensemble is 4x *less* seed-variable than the transformer alone.
+With the re-trained model the ensemble's margin over the baseline is +0.0042, which is now larger than its
+seed SD (0.0015) and range (0.0029) — so seed noise alone no longer explains it. It is still smaller than the
+split SD (0.0063, below) and its bootstrap interval still contains zero, so the margin remains unestablished.
+The baseline's lead over the transformer is 8.5 SDs, so that finding is seed-robust. Note the ensemble is
+6x *less* seed-variable than the transformer alone.
 
 ### Stage 2B — Span extractor
 
@@ -104,18 +106,18 @@ finding is seed-robust. Note the ensemble is 4x *less* seed-variable than the tr
 
 |  | Predicted Absent | Predicted Present |
 |---|---|---|
-| **Actually Absent** | TN = 2,523 | FP = 311 |
-| **Actually Present** | FN = 296 | TP = 1,052 |
+| **Actually Absent** | TN = 2,525 | FP = 309 |
+| **Actually Present** | FN = 291 | TP = 1,057 |
 
 **Metrics derived from the confusion matrix:**
 
 | Metric | Value |
 |---|---|
-| **Accuracy** | 85.49% |
-| **Precision** | 77.18% |
-| **Recall (Sensitivity)** | 78.04% |
-| **Specificity** | 89.03% |
-| **F1 Score** | 0.7761 |
+| **Accuracy** | 85.65% |
+| **Precision** | 77.38% |
+| **Recall (Sensitivity)** | 78.41% |
+| **Specificity** | 89.10% |
+| **F1 Score** | 0.7789 |
 
 **Per-category F1 (top 10 and bottom 5):**
 
@@ -123,14 +125,14 @@ finding is seed-robust. Note the ensemble is 4x *less* seed-variable than the tr
 |---|---|---|---|---|
 | Document Name | 102 | 1.000 | 1.000 | 1.000 |
 | Parties | 101 | 0.990 | 1.000 | 0.995 |
-| Governing Law | 90 | 0.956 | 0.967 | 0.961 |
-| Agreement Date | 93 | 0.929 | 0.989 | 0.958 |
-| Expiration Date | 84 | 0.914 | 0.881 | 0.897 |
-| License Grant | 56 | 0.907 | 0.875 | 0.891 |
-| Anti-Assignment | 74 | 0.831 | 0.932 | 0.879 |
+| Agreement Date | 93 | 0.939 | 0.989 | 0.963 |
+| Governing Law | 90 | 0.964 | 0.900 | 0.931 |
+| License Grant | 56 | 0.925 | 0.875 | 0.899 |
+| Anti-Assignment | 74 | 0.850 | 0.919 | 0.883 |
+| Expiration Date | 84 | 0.921 | 0.833 | 0.875 |
+| Cap On Liability | 62 | 0.911 | 0.823 | 0.864 |
 | Effective Date | 73 | 0.831 | 0.877 | 0.853 |
-| Cap On Liability | 62 | 0.879 | 0.823 | 0.850 |
-| Insurance | 34 | 0.725 | 0.853 | 0.784 |
+| Insurance | 34 | 0.784 | 0.853 | 0.817 |
 | ... | | | | |
 | Most Favored Nation | 7 | 0.000 | 0.000 | 0.000 |
 | No-Solicit Of Customers | 6 | 0.000 | 0.000 | 0.000 |
@@ -144,25 +146,25 @@ Categories with 0.000 F1 have <=7 test positives — too few to learn reliably w
 
 | Model | micro-F1 |
 |---|---|
-| **Ensemble AND (both must agree)** | **0.776** |
+| **Ensemble AND (both must agree)** | **0.779** |
 | TF-IDF baseline | 0.775 |
 | Ensemble AVG | 0.718 |
-| Transformer (max-pool) alone | 0.694 |
-| Ensemble OR | 0.696 |
+| Transformer (max-pool) alone | 0.692 |
+| Ensemble OR | 0.692 |
 
 **Significance — which of these gaps are real?** A cluster bootstrap over the 102 test contracts
 (resampling contracts, not the correlated within-contract cells; 10,000 resamples,
-`analysis/bootstrap_ci.py`):
+`analysis/bootstrap_ci.py`; re-run on the re-trained model, `retrain/stage2a_bootstrap.json`):
 
 | Comparison | Difference | 95% CI | P(>0) | Verdict |
 |---|---|---|---|---|
-| AND-ensemble vs TF-IDF baseline | +0.0014 | [-0.0068, +0.0089] | 0.626 | **tie** |
-| TF-IDF baseline vs transformer | +0.0805 | [+0.0626, +0.0992] | 1.000 | **real** |
-| AND-ensemble vs transformer | +0.0818 | [+0.0654, +0.0987] | 1.000 | **real** |
+| AND-ensemble vs TF-IDF baseline | +0.0042 | [-0.0038, +0.0116] | 0.854 | **tie** |
+| TF-IDF baseline vs transformer | +0.0824 | [+0.0645, +0.1013] | 1.000 | **real** |
+| AND-ensemble vs transformer | +0.0866 | [+0.0707, +0.1033] | 1.000 | **real** |
 
 So the headline should be read carefully: the ensemble and the baseline are **tied** on this test set,
 while the windowed transformer's deficit against both is large and significant. The ensemble is still
-the model we deploy, but for its balanced error profile (precision 77.18% / recall 78.04%) rather than
+the model we deploy, but for its balanced error profile (precision 77.38% / recall 78.41%) rather than
 for its rank.
 
 ### Stage 2B — Span extractor test results
@@ -223,16 +225,16 @@ the 41 categories by **training** frequency, bottom 10 vs the rest:
 
 | Group | Model | Precision | Recall | F1 | TP | FN |
 |---|---|---|---|---|---|---|
-| **Rarest 10** (70 test positives) | Transformer | 0.261 | 0.500 | 0.343 | 35 | 35 |
+| **Rarest 10** (70 test positives) | Transformer | 0.275 | 0.557 | 0.368 | 39 | 31 |
 | | TF-IDF | 0.429 | 0.300 | 0.353 | 21 | 49 |
-| | **AND ensemble** | 0.586 | 0.243 | **0.343** | 17 | 53 |
-| **Other 31** (1,278 test positives) | Transformer | 0.582 | 0.930 | 0.716 | 1,189 | 89 |
+| | **AND ensemble** | 0.621 | 0.257 | **0.364** | 18 | 52 |
+| **Other 31** (1,278 test positives) | Transformer | 0.577 | 0.933 | 0.713 | 1,192 | 86 |
 | | TF-IDF | 0.753 | 0.838 | 0.793 | 1,071 | 207 |
-| | **AND ensemble** | 0.776 | 0.810 | **0.792** | 1,035 | 243 |
+| | **AND ensemble** | 0.777 | 0.813 | **0.795** | 1,039 | 239 |
 
-On common categories the ensemble works as advertised (+0.077 F1 over the transformer). **On the rare
-tail it nets exactly zero** — it buys 32.5 points of precision with 25.7 points of recall, cutting
-detections from 35/70 to 17/70. On five of the ten rarest categories it scores 0.000, and on three of
+On common categories the ensemble works as advertised (+0.082 F1 over the transformer). **On the rare
+tail it nets nothing** (F1 -0.004) — it buys 34.6 points of precision with 30.0 points of recall, cutting
+detections from 39/70 to 18/70. On five of the ten rarest categories it scores 0.000, and on three of
 those the transformer alone was finding something before the conjunction zeroed it out.
 
 **Deployment implication:** *Most Favored Nation* is in this tail and is a **High-risk** category — both
@@ -321,16 +323,16 @@ Micro-F1 treats all 41 categories equally; a signer does not. Splitting by the t
 
 | Band | Model | Precision | Recall | F1 | Found | Missed |
 |---|---|---|---|---|---|---|
-| **High** (8 cats, 176 pos.) | Transformer | 0.404 | **0.841** | 0.546 | 148 | **28** |
+| **High** (8 cats, 176 pos.) | Transformer | 0.392 | **0.841** | 0.534 | 148 | **28** |
 | | TF-IDF | 0.540 | 0.648 | 0.589 | 114 | 62 |
-| | **AND ensemble** | 0.585 | 0.625 | 0.604 | 110 | **66** |
-| | OR ensemble | 0.391 | **0.864** | 0.538 | 152 | **24** |
-| **Medium** (22 cats, 498 pos.) | **AND ensemble** | 0.647 | 0.673 | 0.659 | 335 | 163 |
-| **Low** (11 cats, 674 pos.) | **AND ensemble** | 0.924 | 0.901 | 0.912 | 607 | 67 |
+| | **AND ensemble** | 0.581 | 0.631 | 0.605 | 111 | **65** |
+| | OR ensemble | 0.379 | **0.858** | 0.526 | 151 | **25** |
+| **Medium** (22 cats, 498 pos.) | **AND ensemble** | 0.655 | 0.679 | 0.667 | 338 | 160 |
+| **Low** (11 cats, 674 pos.) | **AND ensemble** | 0.923 | 0.902 | 0.912 | 608 | 66 |
 
-**The headline configuration is the worst one for High-risk clauses.** AND misses **37.5%** of them;
-the transformer alone misses 15.9%; OR -- which finishes *last* on aggregate micro-F1 -- misses 13.6%.
-Choosing AND on micro-F1 costs a signer 42 of 176 High-risk clauses. Two thirds of the aggregate's mass
+**The headline configuration is the worst one for High-risk clauses.** AND misses **36.9%** of them;
+the transformer alone misses 15.9%; OR -- which ties for *last* on aggregate micro-F1 -- misses 14.2%.
+Choosing AND on micro-F1 costs a signer 40 of 176 High-risk clauses. Two thirds of the aggregate's mass
 is Low-risk (dates, party names, governing law), so **micro-F1 and user harm point in opposite
 directions**. We report this as a diagnosis, not a retuning: switching to OR after seeing the test set
 would be test-set selection.
@@ -341,16 +343,16 @@ The 0.5 threshold was never chosen -- it is the softmax default. Sweeping it pos
 
 | Model | F1 @ 0.5 | Best F1 | at threshold | High-risk recall at best |
 |---|---|---|---|---|
-| Transformer (max-pool) | 0.6943 | **0.7504** | 0.90 | 0.688 (down from 0.841) |
-| AND ensemble | **0.7761** | 0.7761 | 0.50 | 0.625 |
+| Transformer (max-pool) | 0.6924 | **0.7529** | 0.90 | 0.716 (down from 0.841) |
+| AND ensemble | **0.7789** | 0.7789 | 0.50 | 0.631 |
 
 So a meaningful part of the transformer's reported deficit is an un-chosen operating point rather than
 an inability to discriminate. We do not adopt 0.9 (that would be test-set tuning), but the qualification
 belongs on the finding.
 
-**Calibration.** The score the app displays as "confidence" has **ECE 0.201**, Brier 0.194, and is
+**Calibration.** The score the app displays as "confidence" has **ECE 0.205**, Brier 0.195, and is
 overconfident throughout: scores above 0.9 correspond to the clause being present ~73% of the time;
-scores in [0.5, 0.6) to ~20%. Max-pooling is not a probability-preserving operation. Platt scaling on a
+scores in [0.5, 0.6) to ~17%. Max-pooling is not a probability-preserving operation. Platt scaling on a
 validation split would fix this without retraining.
 
 ## Aggregation ablation (`analysis/pooling_ablation.py`)
@@ -382,8 +384,8 @@ baseline on 20 independent contract-level splits:
 | micro-F1 over 20 splits | 0.7829 | **0.0063** | 0.7702 | 0.7918 | 0.0216 |
 
 Split SD (0.0063) is the largest of the three uncertainties measured -- bigger than model-seed SD
-(0.0022) and ~4.5x the ensemble's +0.0014 margin. Our split (0.7747) sits *below* the mean, so it is not
-a draw that flatters the baseline. The transformer's 0.0805 deficit is ~13 split-SDs, so that finding is
+(0.0015) and ~1.5x the ensemble's +0.0042 margin. Our split (0.7747) sits *below* the mean, so it is not
+a draw that flatters the baseline. The transformer's 0.0824 deficit is ~13 split-SDs, so that finding is
 robust to the split too.
 
 ---
@@ -392,10 +394,10 @@ robust to the split too.
 
 | Stage | Model | Train split | Test split | Test metric | Score |
 |---|---|---|---|---|---|
-| **2A Presence** | AND-ensemble (TF-IDF + DistilBERT) | 408 contracts (80%) | 102 contracts (20%) | micro-F1 | **0.776** |
-| **2A Presence** | AND-ensemble | 408 contracts (80%) | 102 contracts (20%) | Accuracy | **85.49%** |
-| **2A Presence** | AND-ensemble | 408 contracts (80%) | 102 contracts (20%) | Precision | **77.18%** |
-| **2A Presence** | AND-ensemble | 408 contracts (80%) | 102 contracts (20%) | Recall | **78.04%** |
+| **2A Presence** | AND-ensemble (TF-IDF + DistilBERT) | 408 contracts (80%) | 102 contracts (20%) | micro-F1 | **0.779** |
+| **2A Presence** | AND-ensemble | 408 contracts (80%) | 102 contracts (20%) | Accuracy | **85.65%** |
+| **2A Presence** | AND-ensemble | 408 contracts (80%) | 102 contracts (20%) | Precision | **77.38%** |
+| **2A Presence** | AND-ensemble | 408 contracts (80%) | 102 contracts (20%) | Recall | **78.41%** |
 | **2B Span** | DistilBERT-QA | 408 contracts (80%) | 102 contracts (20%) | token-F1 | **0.763** |
 | **2B Span** | DistilBERT-QA | 408 contracts (80%) | 102 contracts (20%) | Exact Match | **35.5%** |
 | **2B Span** | DistilBERT-QA | 408 contracts (80%) | 102 contracts (20%) | token-F1 (window from 2A) | **0.386** |

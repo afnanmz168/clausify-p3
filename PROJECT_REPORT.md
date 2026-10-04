@@ -2,7 +2,7 @@
 
 **AI-Powered Legal Document Analysis System · BRAC University, Dept. of CSE**
 Afnan Mazumdar (24141229) · Shoyeb Hasan Sayem (22101386) · Jerin Aktar (22101279)
-Supervisor: Utsha Kumar Roy · Updated 2026-08-14
+Supervisor: Utsha Kumar Roy · Updated 2026-10-04 (all models re-trained and re-tested)
 
 A step-by-step account of everything done: data preparation, EDA, training of all three
 models, the 80/20 train/test split, testing, and the evaluation metrics (including the
@@ -16,7 +16,7 @@ We built a three-model pipeline on the full CUAD dataset (510 contracts, 41 clau
 
 | Stage | Model | Job | Test result (20% held-out) |
 |---|---|---|---|
-| **2A** | Presence classifier | Which of the 41 clause types are in a contract? | **micro-F1 0.776, Accuracy 85.49%** |
+| **2A** | Presence classifier | Which of the 41 clause types are in a contract? | **micro-F1 0.779, Accuracy 85.65%** |
 | **2B** | Span extractor | Locate the exact clause text | **token-F1 0.763** |
 | **1** | Summarizer | Rewrite a clause in plain English | **ROUGE-L 0.775** |
 
@@ -120,8 +120,8 @@ At inference we run **all** windows and **max-pool** (present if any window fire
 - Config: DistilBERT-base, 2 epochs, batch 16, LR 2e-5, max length 256.
 - Optimizer (read back from the saved `training_args.bin`): AdamW, **linear decay, no warmup**,
   gradient-norm clipping at **1.0**, 3,000 total steps. Schedule plotted by `analysis/lr_schedule.py`.
-- Training loss 0.319 → 0.261; validation loss 0.278 → 0.257; **~52 min** on Apple MPS.
-- Standalone test micro-F1: **0.694** (loses to the baseline — max-pooling inflates false positives:
+- Training loss 0.318 → 0.262; validation loss 0.275 → 0.254; **49.8 min** on Apple MPS (October 2026 re-training).
+- Standalone test micro-F1: **0.692** (loses to the baseline — max-pooling inflates false positives:
   the max is taken over every window, so one spurious window anywhere flips the whole contract).
 
 ### 5.4 The winning model — complementary AND-ensemble
@@ -131,43 +131,45 @@ keyword-heavy ones). Combined with parameter-free rules:
 
 | Model | micro-F1 (20% test) |
 |---|---|
-| **Ensemble AND (both must agree)** | **0.776** (best) |
+| **Ensemble AND (both must agree)** | **0.779** (best) |
 | TF-IDF baseline | 0.775 |
 | Ensemble AVG | 0.718 |
-| Transformer (max-pool) alone | 0.694 |
-| Ensemble OR | 0.696 |
+| Transformer (max-pool) alone | 0.692 |
+| Ensemble OR | 0.692 |
 
 The AND-rule filters each model's uncorrelated false positives → precision up → best F1.
 
 ### 5.5 How much of that ranking is statistically real?
 
-A 0.776-vs-0.775 margin on 102 contracts is one decision in a thousand, so we tested it rather than
+A 0.779-vs-0.775 margin on 102 contracts is a handful of decisions out of 4,182, so we tested it rather than
 asserting it. Method: **cluster bootstrap** — resample the 102 *contracts* with replacement (not the
 4,182 cells, which are correlated within a contract), recompute micro-F1 for both models on the same
-resample, 10,000 times. Script: `analysis/bootstrap_ci.py`, `analysis/extra_ci.py`.
+resample, 10,000 times. Script: `analysis/bootstrap_ci.py`, `analysis/extra_ci.py`; re-run on the re-trained model in
+`retrain/stage2a_bootstrap.json`.
 
 | Comparison | Difference in micro-F1 | 95% CI | P(>0) | Verdict |
 |---|---|---|---|---|
-| AND-ensemble vs TF-IDF baseline | +0.0014 | [-0.0068, +0.0089] | 0.626 | **tie — CI contains zero** |
-| TF-IDF baseline vs transformer | +0.0805 | [+0.0626, +0.0992] | 1.000 | **real** |
-| AND-ensemble vs transformer | +0.0818 | [+0.0654, +0.0987] | 1.000 | **real** |
+| AND-ensemble vs TF-IDF baseline | +0.0042 | [-0.0038, +0.0116] | 0.854 | **tie — CI contains zero** |
+| TF-IDF baseline vs transformer | +0.0824 | [+0.0645, +0.1013] | 1.000 | **real** |
+| AND-ensemble vs transformer | +0.0866 | [+0.0707, +0.1033] | 1.000 | **real** |
 
 **The two findings are not on equal footing, and this is the honest headline:**
 
 - **The ensemble's win over the baseline is not statistically real.** The interval straddles zero and the
-  ensemble leads in only 62.6% of resamples. Individually: AND 0.776 (95% CI [0.759, 0.792]), TF-IDF
-  0.775 (95% CI [0.758, 0.791]) — almost entirely overlapping. Read the top two rows of the table above
+  ensemble leads in 85.4% of resamples — short of the 97.5% a significant result needs. Individually: AND
+  0.779 (95% CI [0.762, 0.795]), TF-IDF 0.775 (95% CI [0.757, 0.791]) — almost entirely overlapping. Read the top two rows of the table above
   as a **tie**.
 - **The transformer's loss to the baseline is real.** The baseline wins in **all 10,000** resamples.
 
-This does not remove the reason for using the ensemble — that reason was never the 0.001 of micro-F1.
+This does not remove the reason for using the ensemble — that reason was never the 0.004 of micro-F1.
 The AND rule earns its place through the **error profile** it produces (balanced precision and recall,
 see §8.1), not through its rank.
 
 ### 5.6 Two controls the bootstrap cannot run
 
 A bootstrap asks "could this gap be sampling noise?" It cannot ask "was the transformer handicapped?"
-Both alternative explanations were tested (`analysis/presence_run.py`, `analysis/compare_runs.py`).
+Both alternative explanations were tested (`analysis/presence_run.py`, `analysis/compare_runs.py`; Control A
+uses the August 2026 runs).
 
 **Control A — training budget.** The baseline is fitted on all 408 contracts in full; the transformer saw
 24,000 of 53,662 windows. Retrained on **all 53,662** (140.7 min), everything else identical:
@@ -181,17 +183,18 @@ Difference **-0.0004**, CI [-0.0098, +0.0095]; gap to TF-IDF holds at **+0.0809*
 model fire *more*, not better — recall up, precision down — which is the max-pooling failure mode over
 ~35 windows. **The deficit is architectural, not a budget artifact.**
 
-**Control B — random seed.** Three runs at the 24,000 budget:
+**Control B — random seed.** Three runs at the 24,000 budget (seed 42 = the October re-training; seeds 43 and
+44 = August runs):
 
 | Model | Seed 42 | Seed 43 | Seed 44 | Mean | SD | Range |
 |---|---|---|---|---|---|---|
-| Transformer | 0.6943 | 0.6928 | 0.7082 | 0.6984 | 0.0085 | 0.0154 |
-| AND ensemble | 0.7761 | 0.7774 | 0.7803 | 0.7780 | 0.0022 | 0.0042 |
+| Transformer | 0.6924 | 0.6928 | 0.7082 | 0.6978 | 0.0090 | 0.0158 |
+| AND ensemble | 0.7789 | 0.7774 | 0.7803 | 0.7789 | 0.0015 | 0.0029 |
 
-The ensemble's SD (0.0022) and range (0.0042) both **exceed its +0.0014 margin** — reseeding moves the
-score further than the result being claimed for it. The baseline's lead over the transformer is 9.5 SDs.
-The ensemble is also 4x less seed-variable than the transformer alone, which is a better argument for it
-than its rank.
+The ensemble's margin (+0.0042) is now larger than its seed SD (0.0015) and range (0.0029), so reseeding
+alone no longer explains it — but it is still inside the bootstrap interval of §5.5 and below the split SD
+(0.0063), so it remains unestablished. The baseline's lead over the transformer is 8.5 SDs. The ensemble is
+also 6x less seed-variable than the transformer alone, which is a better argument for it than its rank.
 
 ### 5.7 Does the AND rule punish rare categories?
 
@@ -199,13 +202,13 @@ Splitting the 41 categories by training frequency (`analysis/rare_tail.py`):
 
 | Group | Model | Precision | Recall | F1 | TP | FN |
 |---|---|---|---|---|---|---|
-| **Rarest 10** (70 test pos.) | Transformer | 0.261 | 0.500 | 0.343 | 35 | 35 |
-| | **AND ensemble** | 0.586 | 0.243 | **0.343** | 17 | 53 |
-| **Other 31** (1,278 test pos.) | Transformer | 0.582 | 0.930 | 0.716 | 1,189 | 89 |
-| | **AND ensemble** | 0.776 | 0.810 | **0.792** | 1,035 | 243 |
+| **Rarest 10** (70 test pos.) | Transformer | 0.275 | 0.557 | 0.368 | 39 | 31 |
+| | **AND ensemble** | 0.621 | 0.257 | **0.364** | 18 | 52 |
+| **Other 31** (1,278 test pos.) | Transformer | 0.577 | 0.933 | 0.713 | 1,192 | 86 |
+| | **AND ensemble** | 0.777 | 0.813 | **0.795** | 1,039 | 239 |
 
-On common categories the conjunction gains +0.077 F1. **On the rare tail it nets exactly zero** — 32.5
-points of precision bought with 25.7 points of recall, detections cut from 35/70 to 17/70. All of the
+On common categories the conjunction gains +0.082 F1. **On the rare tail it nets nothing** (F1 -0.004) —
+34.6 points of precision bought with 30.0 points of recall, detections cut from 39/70 to 18/70. All of the
 ensemble's aggregate benefit comes from common categories. *Most Favored Nation* sits in this tail, is a
 **High-risk** category, and scores 0.000 — which matters more for a signer than the aggregate does.
 
@@ -234,18 +237,18 @@ AND-Ensemble evaluated on all **4,182 (contract x category) test predictions**:
 
 |  | Predicted **Absent** | Predicted **Present** |
 |---|---|---|
-| **Actually Absent** | TN = **2,523** | FP = **311** |
-| **Actually Present** | FN = **296** | TP = **1,052** |
+| **Actually Absent** | TN = **2,525** | FP = **309** |
+| **Actually Present** | FN = **291** | TP = **1,057** |
 
 **Metrics derived from the confusion matrix:**
 
 | Metric | Formula | Value |
 |---|---|---|
-| **Accuracy** | (TP+TN) / all | **85.49%** |
-| **Precision** | TP / (TP+FP) | **77.18%** |
-| **Recall (Sensitivity)** | TP / (TP+FN) | **78.04%** |
-| **Specificity** | TN / (TN+FP) | **89.03%** |
-| **F1 Score** | 2·P·R / (P+R) | **0.7761** |
+| **Accuracy** | (TP+TN) / all | **85.65%** |
+| **Precision** | TP / (TP+FP) | **77.38%** |
+| **Recall (Sensitivity)** | TP / (TP+FN) | **78.41%** |
+| **Specificity** | TN / (TN+FP) | **89.10%** |
+| **F1 Score** | 2·P·R / (P+R) | **0.7789** |
 
 **Per-category F1 (top of the table):**
 
@@ -253,20 +256,20 @@ AND-Ensemble evaluated on all **4,182 (contract x category) test predictions**:
 |---|---|---|---|---|
 | Document Name | 102 | 1.000 | 1.000 | 1.000 |
 | Parties | 101 | 0.990 | 1.000 | 0.995 |
-| Governing Law | 90 | 0.956 | 0.967 | 0.961 |
-| Agreement Date | 93 | 0.929 | 0.989 | 0.958 |
-| Expiration Date | 84 | 0.914 | 0.881 | 0.897 |
-| License Grant | 56 | 0.907 | 0.875 | 0.891 |
-| Anti-Assignment | 74 | 0.831 | 0.932 | 0.879 |
+| Agreement Date | 93 | 0.939 | 0.989 | 0.963 |
+| Governing Law | 90 | 0.964 | 0.900 | 0.931 |
+| License Grant | 56 | 0.925 | 0.875 | 0.899 |
+| Anti-Assignment | 74 | 0.850 | 0.919 | 0.883 |
+| Expiration Date | 84 | 0.921 | 0.833 | 0.875 |
+| Cap On Liability | 62 | 0.911 | 0.823 | 0.864 |
 | Effective Date | 73 | 0.831 | 0.877 | 0.853 |
-| Cap On Liability | 62 | 0.879 | 0.823 | 0.850 |
 
 Categories with <=7 test positives (e.g. Source Code Escrow, Most Favored Nation) score near 0 — too few
 examples to learn from in a 510-contract dataset, not a model failure.
 
-**Why the ensemble is worth keeping despite §5.5.** Precision (77.18%) and recall (78.04%) come out
+**Why the ensemble is worth keeping despite §5.5.** Precision (77.38%) and recall (78.41%) come out
 balanced, which is exactly what the AND rule was for: raw max-pooling trades precision away, and
-requiring agreement wins it back without costing recall. Specificity of 89.03% means the system rarely
+requiring agreement wins it back without costing recall. Specificity of 89.10% means the system rarely
 claims a clause that is not there — in a legal-review assistant that is the more damaging error.
 
 ### 8.2 Stage 2B — Span extractor
@@ -332,9 +335,9 @@ Mean token-F1 falls 0.763 → 0.386. Both causes are fixable without a larger mo
 
 | Stage | Model | Train | Test | Metric | Score |
 |---|---|---|---|---|---|
-| 2A Presence | AND-ensemble (TF-IDF + DistilBERT) | 408 contracts | 102 contracts | micro-F1 | **0.776** |
-| 2A Presence | AND-ensemble | 408 | 102 | Accuracy | **85.49%** |
-| 2A Presence | AND-ensemble | 408 | 102 | Precision / Recall | **77.18% / 78.04%** |
+| 2A Presence | AND-ensemble (TF-IDF + DistilBERT) | 408 contracts | 102 contracts | micro-F1 | **0.779** |
+| 2A Presence | AND-ensemble | 408 | 102 | Accuracy | **85.65%** |
+| 2A Presence | AND-ensemble | 408 | 102 | Precision / Recall | **77.38% / 78.41%** |
 | 2B Span | DistilBERT-QA | 408 | 102 | token-F1 (given the window) | **0.763** |
 | 2B Span | DistilBERT-QA | 408 | 102 | token-F1 (window from 2A) | **0.386** |
 | 2B Span | DistilBERT-QA | 408 | 102 | Exact Match | **35.5%** |
@@ -342,9 +345,9 @@ Mean token-F1 falls 0.763 → 0.386. Both causes are fixable without a larger mo
 | 1 Summarizer | FLAN-T5-small | 408 | 102 | ROUGE-L (clause-specific) | **0.116** |
 | **Full pipeline** | all three stages | 408 | 102 | gold clauses surviving | **21.7%** |
 
-> **Read the presence row with §5.5 in hand.** The AND-ensemble's 0.776 is not statistically separable
+> **Read the presence row with §5.5 in hand.** The AND-ensemble's 0.779 is not statistically separable
 > from the TF-IDF baseline's 0.775 on this test set. What *is* separable — and is the result we stand
-> behind — is that both beat the windowed transformer alone (0.694) by a wide, significant margin.
+> behind — is that both beat the windowed transformer alone (0.692) by a wide, significant margin.
 >
 > **And read the whole table with §8.4 in hand.** These are component scores measured with the other
 > stages held out of the way. End to end only **21.7%** of gold clauses survive all three stages. That
@@ -398,5 +401,6 @@ clausify-research/
 
 **Reproducing the numbers.** `notebooks/test.ipynb` loads the saved models from disk and regenerates
 every metric in this report. The bootstrap intervals in §5.5 come from `analysis/bootstrap_ci.py`,
-which independently reproduces the same point estimates (0.776 / 0.775 / 0.718 / 0.696 / 0.694) and
-the same confusion matrix (TN=2523, FP=311, FN=296, TP=1052) before resampling.
+which independently reproduces the same point estimates (0.779 / 0.775 / 0.718 / 0.692 / 0.692) and
+the same confusion matrix (TN=2525, FP=309, FN=291, TP=1057) before resampling. The October 2026
+re-training scripts, logs and results are in `retrain/`.

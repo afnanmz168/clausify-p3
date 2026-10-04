@@ -1,0 +1,41 @@
+=== bottom 10 categories by TRAINING frequency ===
+  Source Code Escrow                     train_pos= 11  test_pos= 2
+  Price Restrictions                     train_pos= 11  test_pos= 4
+  Unlimited/All-You-Can-Eat-License      train_pos= 15  test_pos= 2
+  Affiliate License-Licensor             train_pos= 20  test_pos= 3
+  Most Favored Nation                    train_pos= 21  test_pos= 7
+  Third Party Beneficiary                train_pos= 22  test_pos=10
+  Non-Disparagement                      train_pos= 27  test_pos=11
+  No-Solicit Of Customers                train_pos= 28  test_pos= 6
+  Joint Ip Ownership                     train_pos= 38  test_pos= 8
+  No-Solicit Of Employees                train_pos= 42  test_pos=17
+
+=== rare10 (10 categories) ===
+  AND    P=0.621 R=0.257 F1=0.364 (tp=18 fp=11 fn=52)
+  TRANS  P=0.275 R=0.557 F1=0.368 (tp=39 fp=103 fn=31)
+  TFIDF  P=0.429 R=0.300 F1=0.353 (tp=21 fp=28 fn=49)
+  AND vs TRANS: recall -0.300   precision +0.346   F1 -0.004
+
+=== common31 (31 categories) ===
+  AND    P=0.777 R=0.813 F1=0.795 (tp=1039 fp=298 fn=239)
+  TRANS  P=0.577 R=0.933 F1=0.713 (tp=1192 fp=874 fn=86)
+  TFIDF  P=0.753 R=0.838 F1=0.793 (tp=1071 fp=351 fn=207)
+  AND vs TRANS: recall -0.120   precision +0.200   F1 +0.082
+
+=== all41 (41 categories) ===
+  AND    P=0.774 R=0.784 F1=0.779 (tp=1057 fp=309 fn=291)
+  TRANS  P=0.558 R=0.913 F1=0.692 (tp=1231 fp=977 fn=117)
+  TFIDF  P=0.742 R=0.810 F1=0.775 (tp=1092 fp=379 fn=256)
+  AND vs TRANS: recall -0.129   precision +0.216   F1 +0.087
+
+                         category  train_pos  test_pos  TRANS_P  TRANS_R  TRANS_F1  TRANS_tp  AND_P  AND_R  AND_F1  AND_tp
+               Source Code Escrow         11         2    0.000    0.000     0.000         0  0.000  0.000   0.000       0
+               Price Restrictions         11         4    0.053    0.250     0.087         1  0.000  0.000   0.000       0
+Unlimited/All-You-Can-Eat-License         15         2    0.500    0.500     0.500         1  0.000  0.000   0.000       0
+       Affiliate License-Licensor         20         3    0.143    1.000     0.250         3  0.400  0.667   0.500       2
+              Most Favored Nation         21         7    0.000    0.000     0.000         0  0.000  0.000   0.000       0
+          Third Party Beneficiary         22        10    0.300    0.600     0.400         6  0.750  0.300   0.429       3
+                Non-Disparagement         27        11    0.500    0.182     0.267         2  1.000  0.091   0.167       1
+          No-Solicit Of Customers         28         6    0.200    0.833     0.323         5  0.000  0.000   0.000       0
+               Joint Ip Ownership         38         8    0.269    0.875     0.412         7  0.400  0.500   0.444       4
+          No-Solicit Of Employees         42        17    0.560    0.824     0.667        14  0.889  0.471   0.615       8

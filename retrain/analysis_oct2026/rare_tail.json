@@ -1,0 +1,270 @@
+{
+  "rare_categories": [
+    {
+      "category": "Source Code Escrow",
+      "train_pos": 11,
+      "test_pos": 2
+    },
+    {
+      "category": "Price Restrictions",
+      "train_pos": 11,
+      "test_pos": 4
+    },
+    {
+      "category": "Unlimited/All-You-Can-Eat-License",
+      "train_pos": 15,
+      "test_pos": 2
+    },
+    {
+      "category": "Affiliate License-Licensor",
+      "train_pos": 20,
+      "test_pos": 3
+    },
+    {
+      "category": "Most Favored Nation",
+      "train_pos": 21,
+      "test_pos": 7
+    },
+    {
+      "category": "Third Party Beneficiary",
+      "train_pos": 22,
+      "test_pos": 10
+    },
+    {
+      "category": "Non-Disparagement",
+      "train_pos": 27,
+      "test_pos": 11
+    },
+    {
+      "category": "No-Solicit Of Customers",
+      "train_pos": 28,
+      "test_pos": 6
+    },
+    {
+      "category": "Joint Ip Ownership",
+      "train_pos": 38,
+      "test_pos": 8
+    },
+    {
+      "category": "No-Solicit Of Employees",
+      "train_pos": 42,
+      "test_pos": 17
+    }
+  ],
+  "rare10": {
+    "AND": {
+      "tp": 18,
+      "fp": 11,
+      "fn": 52,
+      "precision": 0.6206896551724138,
+      "recall": 0.2571428571428571,
+      "f1": 0.36363636363636365
+    },
+    "TRANS": {
+      "tp": 39,
+      "fp": 103,
+      "fn": 31,
+      "precision": 0.2746478873239437,
+      "recall": 0.5571428571428572,
+      "f1": 0.36792452830188677
+    },
+    "TFIDF": {
+      "tp": 21,
+      "fp": 28,
+      "fn": 49,
+      "precision": 0.42857142857142855,
+      "recall": 0.3,
+      "f1": 0.3529411764705882
+    },
+    "recall_cost_vs_trans": 0.30000000000000004,
+    "precision_gain_vs_trans": 0.3460417678484701
+  },
+  "common31": {
+    "AND": {
+      "tp": 1039,
+      "fp": 298,
+      "fn": 239,
+      "precision": 0.7771129394166043,
+      "recall": 0.8129890453834115,
+      "f1": 0.7946462715105161
+    },
+    "TRANS": {
+      "tp": 1192,
+      "fp": 874,
+      "fn": 86,
+      "precision": 0.5769603097773476,
+      "recall": 0.9327073552425665,
+      "f1": 0.7129186602870814
+    },
+    "TFIDF": {
+      "tp": 1071,
+      "fp": 351,
+      "fn": 207,
+      "precision": 0.7531645569620253,
+      "recall": 0.8380281690140845,
+      "f1": 0.7933333333333334
+    },
+    "recall_cost_vs_trans": 0.11971830985915499,
+    "precision_gain_vs_trans": 0.20015262963925673
+  },
+  "all41": {
+    "AND": {
+      "tp": 1057,
+      "fp": 309,
+      "fn": 291,
+      "precision": 0.773792093704246,
+      "recall": 0.7841246290801187,
+      "f1": 0.7789240972733972
+    },
+    "TRANS": {
+      "tp": 1231,
+      "fp": 977,
+      "fn": 117,
+      "precision": 0.5575181159420289,
+      "recall": 0.9132047477744807,
+      "f1": 0.6923509561304836
+    },
+    "TFIDF": {
+      "tp": 1092,
+      "fp": 379,
+      "fn": 256,
+      "precision": 0.7423521414004078,
+      "recall": 0.8100890207715133,
+      "f1": 0.7747428166016318
+    },
+    "recall_cost_vs_trans": 0.12908011869436198,
+    "precision_gain_vs_trans": 0.21627397776221702
+  },
+  "per_category_rare": [
+    {
+      "category": "Source Code Escrow",
+      "train_pos": 11,
+      "test_pos": 2,
+      "TRANS_P": 0.0,
+      "TRANS_R": 0.0,
+      "TRANS_F1": 0.0,
+      "TRANS_tp": 0,
+      "AND_P": 0.0,
+      "AND_R": 0.0,
+      "AND_F1": 0.0,
+      "AND_tp": 0
+    },
+    {
+      "category": "Price Restrictions",
+      "train_pos": 11,
+      "test_pos": 4,
+      "TRANS_P": 0.053,
+      "TRANS_R": 0.25,
+      "TRANS_F1": 0.087,
+      "TRANS_tp": 1,
+      "AND_P": 0.0,
+      "AND_R": 0.0,
+      "AND_F1": 0.0,
+      "AND_tp": 0
+    },
+    {
+      "category": "Unlimited/All-You-Can-Eat-License",
+      "train_pos": 15,
+      "test_pos": 2,
+      "TRANS_P": 0.5,
+      "TRANS_R": 0.5,
+      "TRANS_F1": 0.5,
+      "TRANS_tp": 1,
+      "AND_P": 0.0,
+      "AND_R": 0.0,
+      "AND_F1": 0.0,
+      "AND_tp": 0
+    },
+    {
+      "category": "Affiliate License-Licensor",
+      "train_pos": 20,
+      "test_pos": 3,
+      "TRANS_P": 0.143,
+      "TRANS_R": 1.0,
+      "TRANS_F1": 0.25,
+      "TRANS_tp": 3,
+      "AND_P": 0.4,
+      "AND_R": 0.667,
+      "AND_F1": 0.5,
+      "AND_tp": 2
+    },
+    {
+      "category": "Most Favored Nation",
+      "train_pos": 21,
+      "test_pos": 7,
+      "TRANS_P": 0.0,
+      "TRANS_R": 0.0,
+      "TRANS_F1": 0.0,
+      "TRANS_tp": 0,
+      "AND_P": 0.0,
+      "AND_R": 0.0,
+      "AND_F1": 0.0,
+      "AND_tp": 0
+    },
+    {
+      "category": "Third Party Beneficiary",
+      "train_pos": 22,
+      "test_pos": 10,
+      "TRANS_P": 0.3,
+      "TRANS_R": 0.6,
+      "TRANS_F1": 0.4,
+      "TRANS_tp": 6,
+      "AND_P": 0.75,
+      "AND_R": 0.3,
+      "AND_F1": 0.429,
+      "AND_tp": 3
+    },
+    {
+      "category": "Non-Disparagement",
+      "train_pos": 27,
+      "test_pos": 11,
+      "TRANS_P": 0.5,
+      "TRANS_R": 0.182,
+      "TRANS_F1": 0.267,
+      "TRANS_tp": 2,
+      "AND_P": 1.0,
+      "AND_R": 0.091,
+      "AND_F1": 0.167,
+      "AND_tp": 1
+    },
+    {
+      "category": "No-Solicit Of Customers",
+      "train_pos": 28,
+      "test_pos": 6,
+      "TRANS_P": 0.2,
+      "TRANS_R": 0.833,
+      "TRANS_F1": 0.323,
+      "TRANS_tp": 5,
+      "AND_P": 0.0,
+      "AND_R": 0.0,
+      "AND_F1": 0.0,
+      "AND_tp": 0
+    },
+    {
+      "category": "Joint Ip Ownership",
+      "train_pos": 38,
+      "test_pos": 8,
+      "TRANS_P": 0.269,
+      "TRANS_R": 0.875,
+      "TRANS_F1": 0.412,
+      "TRANS_tp": 7,
+      "AND_P": 0.4,
+      "AND_R": 0.5,
+      "AND_F1": 0.444,
+      "AND_tp": 4
+    },
+    {
+      "category": "No-Solicit Of Employees",
+      "train_pos": 42,
+      "test_pos": 17,
+      "TRANS_P": 0.56,
+      "TRANS_R": 0.824,
+      "TRANS_F1": 0.667,
+      "TRANS_tp": 14,
+      "AND_P": 0.889,
+      "AND_R": 0.471,
+      "AND_F1": 0.615,
+      "AND_tp": 8
+    }
+  ]
+}
