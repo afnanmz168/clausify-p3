@@ -1,0 +1,45 @@
+false positives: 309   false negatives: 291
+Loading weights:   0%|          | 0/104 [00:00<?, ?it/s]Loading weights: 100%|██████████| 104/104 [00:00<00:00, 10503.94it/s]
+
+[FP] Parties | tfidf=1.00 trans=0.98 | window 0 score 0.98
+     Attachment C to Master Franchise Agreement MULTI-STATE ADDENDUM CALIFORNIA APPENDIX 1. California Business and Professions Code Sections 20000 through 20043 provide rights to you concerning termination or non-renewal of a franchise. If the Master Franchise Agreement contains provisions that are inconsistent with the law, the law
+
+[FP] Insurance | tfidf=0.82 trans=0.96 | window 19 score 0.96
+     reductions affecting the Product; (c) a fixed amount of [ * ] of gross sales to cover freight, postage, insurance costs on shipments to such Third Party, packing costs, and other transportation charges; and (d) sales and excise taxes, other consumption taxes, customs duties, and compulsory payments to Governmental Authorities, i
+
+[FP] Governing Law | tfidf=0.81 trans=0.95 | window 56 score 0.95
+     thereof or their rights and obligations thereunder, and by reasons thereof there shall arise the need to decide the question by what municipal or national law this Agreement or any part or provision thereof is governed, the following facts shall be excluded from consideration, namely that this Agreement was made in a particular 
+
+[FP] Change Of Control | tfidf=0.80 trans=0.94 | window 145 score 0.94
+     e rights of such Sublicensees with respect to the Product in relevant country or countries within the Ono Territory shall terminate upon the termination of Ono's rights with respect to the Ono Territory. Subject to Ono's Affiliates' and Sublicensees' obligations under Section 14.2(a)(ii) above, Ono shall ensure that its Affiliat
+
+[FN] Most Favored Nation | tfidf=0.22 trans=0.02
+     gold: The Sponsor acknowledges that Racing has arranged and may arrange in the future for other sponsors for the Racing Team. Racing agrees that, during the term of this Agreement, (i) Sponsor shall have the right to approve or disapprove any additional sponsor identified by Racing, and (ii) unless anothe
+
+[FN] Most Favored Nation | tfidf=0.33 trans=0.02
+     gold: If at any time on or prior to the earlier of (i) December 31, 2007, or (ii) the date on which Global Energy completes an initial public offering ("IPO") of its common stock, Global Energy sells additional common shares or other financial instruments convertible into its common shares, or enters into
+
+[FN] Liquidated Damages | tfidf=0.21 trans=0.02
+     gold: In the event that Oceanic Time Warner Cable removes the above content and or terminates this agreement prior to December 31, 2006, Oceanic Time Warner Cable agrees to pay a cancellation fee of Five Thousand Dollars ($5,000) per month multiplied by the number of months remain on the agreement.
+
+[FN] Third Party Beneficiary | tfidf=0.26 trans=0.02
+     gold: Notwithstanding the foregoing, UTK may assign this Agreement or any portion of its Compensation as outlined herein to its subsidiaries in its sole discretion.
+Loading weights:   0%|          | 0/102 [00:00<?, ?it/s]Loading weights: 100%|██████████| 102/102 [00:00<00:00, 7211.57it/s]
+
+[SPAN] Effective Date | window contains gold: False | token-F1 0.06
+   gold : The term of this Agreement shall be ten (10) years (the "Term") which shall commence on the date upon which the Company delivers to Distributor the last Sample, as defined hereinafter.
+   pred : 7th day of september, 1999
+
+[SPAN] Insurance | window contains gold: True | token-F1 0.20
+   gold : Company will carry a reasonable amount of product liability insurance through a reasonably acceptable products liability insurance company and will name the Distributor as an additional insured under that policy. Company will make
+   pred : in addition, company agrees to indemnify, defend and hold harmless distributor from and against all suits, claims, obligations, liabilities, damages, losses and the like ( including attorneys ' fees and costs ) arising out of or r
+
+[SPAN] License Grant | window contains gold: True | token-F1 0.15
+   gold : Company hereby appoints Distributor as Company's exclusive distributor within the Market and grants to Distributor the exclusive right to sell and distribute Products within the Market, and Distributor hereby accepts such appointm
+   pred : distributor may file with the appropriate state and local authorities assumed name certificates as required.
+
+[SPAN] Minimum Commitment | window contains gold: True | token-F1 0.00
+   gold : In order to maintain the exclusive rights to sell, lease, distribute and service Products in the Market, the Distributor must use all commercially reasonably efforts to purchase for sale to subdistributors the following minimum qu
+   pred : the
+
+wrote error_examples.json

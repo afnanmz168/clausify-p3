@@ -86,7 +86,29 @@ F1 score    & $2PR/(P+R)$                   & 0.7761\\
 
 Precision and recall come out balanced (77.2\% and 78.0\%), which tells us the AND rule did its job: raw max-pooling gives up precision, and requiring agreement wins it back without sacrificing recall. The specificity of 89.0\% means the system rarely claims a clause that is not there --- in a legal-review assistant, that is the more damaging kind of mistake.
 \subsubsection{Per-category behaviour}
-Figure~\ref{fig:percat} shows per-category F1 for the strongest categories. The frequent, formulaic ones are close to solved (\emph{Document Name} 1.000, \emph{Parties} 0.995, \emph{Governing Law} 0.961, \emph{Agreement Date} 0.958). At the other end, the five categories with at most seven test positives (\emph{Most Favored Nation}, \emph{No-Solicit of Customers}, \emph{Price Restrictions}, \emph{Source Code Escrow}, \emph{Unlimited License}) all score 0.000. That number needs context: with two positive examples in the test set, a score of zero means the model missed two contracts, not that it is broken. This tail is a property of the dataset rather than of any architecture, and it is why we quote micro- rather than macro-averaged numbers in our headline results.
+Figure~\ref{fig:percat} shows per-category F1 for the strongest categories. The frequent, formulaic ones are close to solved (\emph{Document Name} 1.000, \emph{Parties} 0.995, \emph{Agreement Date} 0.963, \emph{Governing Law} 0.931). At the other end, five categories with at most seven test positives score an F1 of 0.000 under the AND-ensemble. Table~\ref{tab:zerof1} shows exactly what that number means. In every case the ensemble predicted the category in \emph{no} test contract (no true and no false positives), so F1 = 0.000 is correct --- none of the 2--7 real clauses was found --- but precision is undefined ($0/0$) rather than zero. The transformer on its own does find some of these clauses; the conjunction removes those detections because the TF--IDF model never agrees (Section~\ref{sec:raretail}). With two to seven positives per category these scores are not reliable estimates in either direction. This tail is a property of the dataset rather than of any architecture, and it is why we quote micro- rather than macro-averaged numbers in our headline results.
+
+\begin{table}[ht]
+\centering
+\caption{The five categories with F1 = 0.000 under the AND-ensemble.}
+\label{tab:zerof1}
+\small
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Category} & \textbf{Test pos.} & \textbf{AND: TP / FN} & \textbf{AND precision} & \textbf{Transformer alone F1 (TP/FP/FN)} & \textbf{TF--IDF F1}\\
+\midrule
+Most Favored Nation              & 7 & 0 / 7 & n/a & 0.000 (0/0/7) & 0.000\\
+No-Solicit of Customers          & 6 & 0 / 6 & n/a & 0.323 (5/20/1) & 0.000\\
+Price Restrictions               & 4 & 0 / 4 & n/a & 0.087 (1/18/3) & 0.000\\
+Source Code Escrow               & 2 & 0 / 2 & n/a & 0.000 (0/0/2) & 0.000\\
+Unlimited/All-You-Can-Eat License & 2 & 0 / 2 & n/a & 0.500 (1/1/1) & 0.000\\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+
+{\footnotesize\singlespacing \emph{Note.} n/a: the model made no positive predictions, so precision $= 0/0$ is undefined. Threshold 0.5, October 2026 models.\par}
+\end{table}
 
 \begin{figure}[ht]
 \centering

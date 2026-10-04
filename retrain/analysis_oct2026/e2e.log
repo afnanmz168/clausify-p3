@@ -1,0 +1,25 @@
+rule=AND  gold pairs=1348  presence-detected=1057
+Loading weights:   0%|          | 0/104 [00:00<?, ?it/s]Loading weights: 100%|██████████| 104/104 [00:00<00:00, 10165.17it/s]
+scoring 51433 windows to locate the selected window
+  0/51433
+  12800/51433
+  25600/51433
+  38400/51433
+  51200/51433
+Loading weights:   0%|          | 0/102 [00:00<?, ?it/s]Loading weights: 100%|██████████| 102/102 [00:00<00:00, 8382.53it/s]
+  span 0/1057
+  span 200/1057
+  span 400/1057
+  span 600/1057
+  span 800/1057
+  span 1000/1057
+rule AND
+n_gold 1348
+n_presence 1057
+n_span_ok 296
+n_end_to_end 296
+presence_recall 0.7841246290801187
+span_given_presence 0.2800378429517502
+end_to_end 0.2195845697329377
+mean_token_f1_given_presence 0.3833940034628962
+end_to_end_ci [0.19831432156615078, 0.24189961418392208]

@@ -134,13 +134,26 @@ The baseline's lead over the transformer is 8.5 SDs, so that finding is seed-rob
 | Effective Date | 73 | 0.831 | 0.877 | 0.853 |
 | Insurance | 34 | 0.784 | 0.853 | 0.817 |
 | ... | | | | |
-| Most Favored Nation | 7 | 0.000 | 0.000 | 0.000 |
-| No-Solicit Of Customers | 6 | 0.000 | 0.000 | 0.000 |
-| Price Restrictions | 4 | 0.000 | 0.000 | 0.000 |
-| Source Code Escrow | 2 | 0.000 | 0.000 | 0.000 |
-| Unlimited/All-You-Can-Eat-License | 2 | 0.000 | 0.000 | 0.000 |
+| Most Favored Nation | 7 | n/a (no predictions) | 0.000 | 0.000 |
+| No-Solicit Of Customers | 6 | n/a (no predictions) | 0.000 | 0.000 |
+| Price Restrictions | 4 | n/a (no predictions) | 0.000 | 0.000 |
+| Source Code Escrow | 2 | n/a (no predictions) | 0.000 | 0.000 |
+| Unlimited/All-You-Can-Eat-License | 2 | n/a (no predictions) | 0.000 | 0.000 |
 
-Categories with 0.000 F1 have <=7 test positives — too few to learn reliably with 510 total contracts.
+**How to read the 0.000 rows.** For these five categories the AND-ensemble predicted "present" for
+**no** test contract (TP = 0, FP = 0). F1 = 0.000 is therefore correct — none of the 2–7 real clauses
+was found — but precision is *undefined* (0/0), not 0.000, so it is shown as n/a. The transformer on its
+own does find some of them, and the conjunction removes those detections:
+
+| Category | Test positives | AND-ensemble F1 (TP/FN) | Transformer alone F1 (TP/FP/FN) | TF-IDF alone F1 |
+|---|---|---|---|---|
+| Most Favored Nation | 7 | 0.000 (0/7) | 0.000 (0/0/7) | 0.000 |
+| No-Solicit Of Customers | 6 | 0.000 (0/6) | **0.323** (5/20/1) | 0.000 |
+| Price Restrictions | 4 | 0.000 (0/4) | **0.087** (1/18/3) | 0.000 |
+| Source Code Escrow | 2 | 0.000 (0/2) | 0.000 (0/0/2) | 0.000 |
+| Unlimited/All-You-Can-Eat-License | 2 | 0.000 (0/2) | **0.500** (1/1/1) | 0.000 |
+
+All five have at most 7 test positives — too few for a reliable per-category estimate.
 
 **Ensemble comparison (all on the same 20% test set):**
 

@@ -264,8 +264,11 @@ AND-Ensemble evaluated on all **4,182 (contract x category) test predictions**:
 | Cap On Liability | 62 | 0.911 | 0.823 | 0.864 |
 | Effective Date | 73 | 0.831 | 0.877 | 0.853 |
 
-Categories with <=7 test positives (e.g. Source Code Escrow, Most Favored Nation) score near 0 — too few
-examples to learn from in a 510-contract dataset, not a model failure.
+Five categories with <=7 test positives (Most Favored Nation, No-Solicit Of Customers, Price Restrictions,
+Source Code Escrow, Unlimited License) score F1 = 0.000. That value is correct: the AND-ensemble predicted
+none of them as present in any test contract (TP = 0, FP = 0), so it found none of the 2–7 real clauses.
+Their precision is undefined (0/0) rather than 0. The transformer alone does find some of them (F1 0.323,
+0.087 and 0.500 on the last three named) — the conjunction removes those detections (§5.7).
 
 **Why the ensemble is worth keeping despite §5.5.** Precision (77.38%) and recall (78.41%) come out
 balanced, which is exactly what the AND rule was for: raw max-pooling trades precision away, and
