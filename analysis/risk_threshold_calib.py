@@ -8,7 +8,7 @@ probabilities (no retraining):
 import os, sys, json
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
-FIG = os.path.expanduser("~/Desktop/final project p3/thesis/figures")
+FIG = os.path.expanduser("~/Desktop/final project p3/project_report/images")
 
 z = np.load(f"{HERE}/runs/base24k_seed42/probs.npz", allow_pickle=True)
 pt, pf, Y = z["proba_trans"], z["proba_tfidf"], z["Y"]

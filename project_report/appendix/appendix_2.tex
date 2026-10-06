@@ -87,7 +87,6 @@ comparisons in Chapters 5--8 against the analysis artifacts; prints \texttt{0 mi
 text and the data agree\\
 \texttt{python review/agreement.py <sheets>} & Reviewer agreement and Cohen's/Fleiss' $\kappa$ once
 the taxonomy review sheets are returned\\
-\texttt{tectonic thesis/main.tex} & The B.Sc. thesis version\\
 \texttt{tectonic project\_report/main.tex} & This project report\\
 \bottomrule
 \end{tabular}
@@ -105,23 +104,26 @@ the taxonomy review sheets are returned\\
 
 {\footnotesize
 \begin{verbatim}
-clausify-research/                    -- research deliverable
-|- PROJECT_REPORT.md / .pdf           -- step-by-step project report
-|- REPORT.md / .pdf                   -- findings & caveats report
-|- METHODOLOGY.md / .pdf              -- design-decision record
+clausify-p3/  (github.com/afnanmz168/clausify-p3)   -- research deliverable
+|- project_report/                    -- this report (LaTeX, CSE400 template)
+|  |- main.tex / main.pdf
+|  |- chapters/ core/ appendix/ bibliography/ images/
+|- paper/                             -- IEEE-format paper (LaTeX + figures)
+|- IEEE_Paper_Clausify.pdf
 |- data/
 |  |- train_80.csv                    -- 80% split (16,728 rows, 408 contracts)
 |  |- test_20.csv                     -- 20% split (4,182 rows, 102 contracts)
 |- notebooks/
 |  |- train.ipynb                     -- training notebook (EDA -> 3 models)
 |  |- test.ipynb                      -- STANDALONE evaluation notebook
-|  |- eda.ipynb                       -- original combined notebook
 |  |- build_artifacts.py              -- retrains & saves all artifacts
 |  |- artifacts/                      -- split.json, baseline.pkl
-|  |- outputs/                        -- three trained model checkpoints
-|- review/
-|  |- risk_taxonomy_review_sheet.csv  -- face-validity review instrument
-|  |- risk_taxonomy_review_sheet.md   -- printable version with instructions
+|  |- outputs/                        -- presence, span, summarizer checkpoints
+|- retrain/                           -- October 2026 re-training & re-testing
+|  |- README.md                       -- exact terminal commands
+|  |- stage2a_* stage2b_* stage1_*    -- train/test scripts, logs, results
+|  |- smoke_test.py, make_figures.py
+|  |- analysis_oct2026/               -- analyses re-run on the new models
 |- analysis/
 |  |- bootstrap_ci.py                 -- cluster bootstrap, presence models
 |  |- span_ci.py                      -- cluster bootstrap, span extraction
@@ -131,15 +133,18 @@ clausify-research/                    -- research deliverable
 |  |- presence_run.py                 -- presence training at any data budget
 |  |- longformer_bench.py             -- sparse-attention cost benchmark
 |  |- diverse_refs.json               -- 150 clause-specific pilot references
-|- thesis/                            -- thesis version (LaTeX)
-|- project_report/                    -- this project report (CSE400 template)
+|- review/
+|  |- risk_taxonomy_review_sheet.csv  -- face-validity review instrument
+|  |- agreement.py                    -- reviewer agreement (kappa)
+|- demo_clause.txt                    -- 18-clause demonstration contract
 
-clausify-app/                         -- Clausify demo application
+clausify-p3-app/  (github.com/afnanmz168/clausify-p3-app)   -- Clausify application
 |- app.py                             -- Streamlit UI
-|- model_utils.py                     -- inference + risk taxonomy
+|- model_utils.py                     -- inference: all four models, clause mode
+|- features.py                        -- file upload, highlighting, reports
+|- calibrate_clause_mode.py           -- clause-mode calibration (+ .json)
 |- cat_questions.json                 -- 41 category->question strings
-|- sample_contract.txt                -- real CUAD test contract
-|- test_contract.txt                  -- synthetic multi-clause contract
-|- APP_REPORT.md / .pdf               -- application report
+|- sample_contract.txt / test_contract.txt
+|- tests/test_app.py                  -- 38 end-to-end checks
 \end{verbatim}
 }

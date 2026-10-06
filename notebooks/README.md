@@ -2,15 +2,14 @@
 
 **AI-Powered Legal Document Analysis (CUAD) · BRAC University · Phase 3**
 
-Three notebooks are provided:
+Two notebooks are provided:
 
 | Notebook | Contents |
 |---|---|
 | **`train.ipynb`** | **Training** — data load, wide→long melt, EDA, the 80/20 split, and training of all three models (TF-IDF + DistilBERT presence, DistilBERT-QA span, FLAN-T5 summarizer). Keeps the training outputs. |
 | **`test.ipynb`** | **Testing** — everything measured on the held-out 20%: max-pool inference, AND-ensemble, the **confusion matrix** + metrics, span token-F1/EM, and summarizer ROUGE-L. Keeps the result outputs. **Run `train.ipynb` first in the same kernel.** |
-| **`eda.ipynb`** | The original combined notebook (all of the above end-to-end in one file). |
 
-The section below describes the combined `eda.ipynb`; `train.ipynb` and `test.ipynb` are the same cells split into the training half and the testing half.
+The section below describes the pipeline as one sequence; `train.ipynb` holds the training half of the cells and `test.ipynb` the testing half.
 
 This pipeline builds the complete three-model CUAD system **end-to-end on the full dataset** (510 contracts), starting from raw data, with exploratory analysis up front and an honest baseline-vs-transformer comparison at every stage. It was developed and run on an Apple-Silicon laptop (MPS).
 
@@ -22,7 +21,7 @@ This pipeline builds the complete three-model CUAD system **end-to-end on the fu
 
 ```bash
 pip install torch transformers datasets scikit-learn pandas numpy huggingface_hub
-jupyter notebook eda.ipynb
+jupyter notebook train.ipynb   # then test.ipynb
 ```
 
 Then **Run All**, top to bottom. The notebook downloads the CUAD dataset from Hugging Face automatically on first run (~40 MB JSON + a 4 MB CSV).

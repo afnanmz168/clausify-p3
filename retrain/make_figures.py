@@ -1,6 +1,6 @@
 """Redraw the report figures from the October 2026 re-training results.
 
-Writes into project_report/images/ (the August originals stay in thesis/figures/).
+Writes into project_report/images/.
 Run from anywhere:  python retrain/make_figures.py
 """
 import json, os

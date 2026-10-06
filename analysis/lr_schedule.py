@@ -10,7 +10,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-FIG = os.path.expanduser("~/Desktop/final project p3/thesis/figures")
+FIG = os.path.expanduser("~/Desktop/final project p3/project_report/images")
 
 runs = [
     ("Presence (MIL), DistilBERT", 24000, 16, 2, 2e-5, "#4C78A8"),

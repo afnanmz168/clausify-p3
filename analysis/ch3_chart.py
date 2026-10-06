@@ -6,7 +6,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 ROOT = os.path.expanduser("~/Desktop/final project p3")
-FIG = os.path.join(ROOT, "thesis/figures")
+FIG = os.path.join(ROOT, "project_report/images")
 
 tr = pd.read_csv(f"{ROOT}/data/train_80.csv")
 te = pd.read_csv(f"{ROOT}/data/test_20.csv")

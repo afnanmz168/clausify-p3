@@ -2,8 +2,7 @@
 
 Every script here is extracted from `notebooks/train.ipynb`, `notebooks/test.ipynb` and
 `notebooks/build_artifacts.py`, with the same settings as the report (seed 42, same 80/20
-contract-level split). Each **train** script overwrites the model in `notebooks/outputs/*/final/`;
-the August 2026 models are backed up in `notebooks/outputs/_prev_run_2026-08/`.
+contract-level split). Each **train** script overwrites the model in `notebooks/outputs/*/final/`.
 
 **Run every command from the `notebooks/` folder**, one at a time, and keep the terminal open
 until it finishes. Logs are written next to the scripts in `retrain/`.
@@ -102,4 +101,3 @@ python3 -u e2e.py TRANS 2>&1 | tee e2e_TRANS.log              # end-to-end, app 
 - Run one script at a time. Two trainings at once share the GPU and memory and can stall.
 - MPS training is not bit-reproducible: a rerun matches the reported scores to about the third
   decimal place, not exactly.
-- To go back to the August models, copy them back from `notebooks/outputs/_prev_run_2026-08/`.
