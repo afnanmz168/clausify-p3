@@ -62,7 +62,7 @@ Our objectives turn into five research questions, which the rest of this report 
   \item[RQ3] \emph{Does the summarizer really describe each specific clause in plain English?}\\
   \textbf{No.} For every input it copies one of 41 sentences we wrote in advance. Against clause-specific reference sentences, it scores no better than just printing that fixed sentence without any model (Section~\ref{sec:summ}).
   \item[RQ4] \emph{How do errors add up across the whole system?}\\
-  They multiply, and it is worse than the separate scores suggest: only 21.7\% of real clauses get through all three steps, compared with about $\approx$64\% that the separate scores would predict (Section~\ref{sec:e2e}).
+  They multiply, and it is worse than the separate scores suggest: only 21.7\% of real clauses get through all three steps, compared with the $\approx$64\% that the separate scores would predict (Section~\ref{sec:e2e}).
   \item[RQ5] \emph{Do the system's mistakes avoid the clauses that would hurt a signer most?}\\
   \textbf{No, the opposite.} The setup we report as our main result misses 37.5\% of High-risk clauses, while the model we call weaker misses only 15.9\% (Section~\ref{sec:riskeval}). The overall score and the harm to the user point in different directions.
 \end{description}
