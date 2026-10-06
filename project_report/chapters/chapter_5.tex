@@ -29,7 +29,7 @@ The system is a staged pipeline (Figure~\ref{fig:pipeline}). Contract text is wi
 \draw[arr] (e) -- (g);
 \end{tikzpicture}
 \end{adjustbox}
-\caption{The end-to-end pipeline; shaded stages are added by this work.}
+\caption{System pipeline}
 \label{fig:pipeline}
 \end{figure}
 
@@ -102,13 +102,13 @@ One qualification belongs with that number. What we measured is a ceiling on \em
 \node[anchor=north, font=\tiny, text=gray!45!black] at (140,-30.6) {100\%};
 \end{tikzpicture}
 \end{adjustbox}
-\caption{Why the measured retrieval ceiling settled the design.}
+\caption{Retrieval ceiling}
 \label{fig:ceiling}
 \end{figure}
 
 \begin{table}[ht]
 \centering
-\caption{Retrieval hit-rate on positive (contract, category) pairs.}
+\caption{Retrieval hit-rates}
 \label{tab:retrieval}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lcc}
@@ -182,7 +182,7 @@ To get rid of the ceiling we trained a \emph{window-level} classifier instead: g
   {continuing to $w_{21}$ for a median-length contract};
 \end{tikzpicture}
 \end{adjustbox}
-\caption{Sliding-window generation: 2{,}000-character windows, 1{,}500-character stride.}
+\caption{Sliding-window generation}
 \label{fig:windows}
 \end{figure}
 
@@ -239,7 +239,7 @@ At inference the model scores \emph{every} window of the contract, and the docum
   {one model, shared weights --- the input is the pair (category question $q_c$, window $w_i$)};
 \end{tikzpicture}
 \end{adjustbox}
-\caption{The multiple-instance learning rule: maximum over window scores.}
+\caption{Multiple-instance max-pooling}
 \label{fig:mil}
 \end{figure}
 
@@ -292,7 +292,7 @@ When we compared the two models category by category, they turned out to be \emp
    twice, independently, to survive.};
 \end{tikzpicture}
 \end{adjustbox}
-\caption{The conjunctive ensemble and its three parameter-free rules.}
+\caption{Ensemble rules}
 \label{fig:ensemble_rule}
 \end{figure}
 \subsection{Stage 2B: Span Extraction}
@@ -338,7 +338,7 @@ Two different window sizes are in play in this project, and it is worth being ex
    1{,}200 chars fits inside the 320-token limit; 2{,}000 does not.};
 \end{tikzpicture}
 \end{adjustbox}
-\caption{Presence window (Stage 2A) against focus window (Stage 2B).}
+\caption{Presence vs.\ focus window}
 \label{fig:focus}
 \end{figure}
 \subsection{Stage 1: Plain-Language Summarization}
@@ -425,7 +425,7 @@ A single reviewer would establish face validity; \emph{two or three, reviewing i
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.62\textwidth]{risk_distribution.png}
-\caption{The 41 clause categories across the three risk levels.}
+\caption{Risk-level distribution}
 \label{fig:riskdist}
 \end{figure}
 \subsection{Leakage Discipline}
@@ -492,7 +492,7 @@ Following the evaluation protocol set by our supervisor, we split the dataset \t
 
 \begin{table}[ht]
 \centering
-\caption{The contract-level 80/20 train/test split.}
+\caption{Train/test split}
 \label{tab:split}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrr}
@@ -513,7 +513,7 @@ The aggregate positive rates in Table~\ref{tab:split} are almost identical (32.0
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\textwidth]{split_distribution.png}
-\caption{Per-category positive rate in the training and test halves.}
+\caption{Per-category split balance}
 \label{fig:splitdist}
 \end{figure}
 
@@ -524,7 +524,7 @@ All models were trained on the 408 training contracts (80\%) only. Training ran 
 
 \begin{table}[ht]
 \centering
-\caption{Training configurations for the three models.}
+\caption{Training configurations}
 \label{tab:hyper}
 \small
 \begin{adjustbox}{max width=\textwidth}
@@ -567,7 +567,7 @@ Table~\ref{tab:valsets} states, per model, what was held out during training and
 
 \begin{table}[ht]
 \centering
-\caption{Validation arrangements during training.}
+\caption{Validation arrangements}
 \label{tab:valsets}
 \small
 \begin{adjustbox}{max width=\textwidth}
@@ -601,7 +601,7 @@ Two choices are worth defending. Skipping warmup is normally risky, but these ar
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\textwidth]{lr_schedule.png}
-\caption{Learning-rate schedules for the three training runs.}
+\caption{Learning-rate schedules}
 \label{fig:lrsched}
 \end{figure}
 
@@ -617,7 +617,7 @@ The window-level DistilBERT was trained on a stratified subsample of 24{,}000 wi
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.62\textwidth]{presence_loss.png}
-\caption{Training and validation loss of the presence classifier.}
+\caption{Presence classifier loss}
 \label{fig:presloss}
 \end{figure}
 \subsection{Training the Span Extractor}
@@ -629,7 +629,7 @@ FLAN-T5-small was fine-tuned on 4{,}000 clause--template pairs on CPU: about 8 m
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.62\textwidth]{summarizer_loss.png}
-\caption{Fine-tuning loss of the FLAN-T5-small summarizer.}
+\caption{Summarizer loss}
 \label{fig:sumloss}
 \end{figure}
 \subsection{Engineering Notes: Training on Consumer Hardware}
@@ -649,7 +649,7 @@ We instantiated Longformer-base at its published geometry --- 12 layers, 768 hid
 
 \begin{table}[ht]
 \centering
-\caption{Longformer-base against the DistilBERT configuration used here.}
+\caption{Longformer vs.\ DistilBERT cost}
 \label{tab:lfbench}
 \small
 \begin{adjustbox}{max width=\textwidth}
@@ -723,7 +723,7 @@ Figure~\ref{fig:pipeline} names the stages; Figure~\ref{fig:dataflow} adds what 
 \node[anchor=south west, font=\tiny, text=gray!45!black] at (50,5) {\textbf{data leaving that stage}};
 \end{tikzpicture}
 \end{adjustbox}
-\caption{Data shapes crossing each stage boundary.}
+\caption{Pipeline data flow}
 \label{fig:dataflow}
 \end{figure}
 \subsection{The Clausify Application}
@@ -740,7 +740,7 @@ The final deliverable is \emph{Clausify}, a Streamlit web application that runs 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.95\textwidth]{app_home.png}
-\caption{The Clausify input screen.}
+\caption{Clausify input screen}
 \label{fig:apphome}
 \end{figure}
 
@@ -754,21 +754,23 @@ Each clause card shows the category name with a colour-coded risk badge; the one
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.95\textwidth]{app_highlight.png}
-\caption{Highlighted contract view and missing-protection checklist. Each located clause is marked in its risk colour and tagged with its category; the renewal paragraph tagged \emph{Minimum Commitment} is a genuine locating error, left in rather than replaced by a cleaner example.}
+\caption{Highlighted contract and checklist}
 \label{fig:apphighlight}
 \end{figure}
+
+Figure~\ref{fig:apphighlight} shows the highlighted view and the checklist on the synthetic test contract. The renewal paragraph tagged \emph{Minimum Commitment} there is a genuine locating error by the model, left in deliberately rather than replaced by a cleaner example.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.95\textwidth]{app_results.png}
-\caption{Clausify results on the synthetic test contract: risk summary and the first High-risk card, including the warning shown when the summarizer's sentence belongs to a different category.}
+\caption{Clausify results view}
 \label{fig:appresults}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.95\textwidth]{app_cards.png}
-\caption{High-risk clause cards: the located paragraph is quoted and the span model's key phrase is highlighted inside it.}
+\caption{High-risk clause cards}
 \label{fig:appcards}
 \end{figure}
 \subsubsection{How the Models Run Inside the App}
@@ -799,7 +801,7 @@ Chapter~2 justified the choice of a distilled backbone partly on the grounds tha
 
 \begin{table}[ht]
 \centering
-\caption{Latency of the deployed pipeline.}
+\caption{Application latency}
 \label{tab:appbench}
 \small
 \begin{adjustbox}{max width=\textwidth}

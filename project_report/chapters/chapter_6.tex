@@ -10,7 +10,7 @@ Table~\ref{tab:ensemble} and Figure~\ref{fig:ensemble} compare all the presence 
 
 \begin{table}[ht]
 \centering
-\caption{Presence models on the 20\% test set.}
+\caption{Presence model comparison}
 \label{tab:ensemble}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lc}
@@ -36,7 +36,7 @@ Ensemble AND on that transformer            & 0.782\\
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.75\textwidth]{ensemble_comparison.png}
-\caption{micro-F1 of all presence models on the test set.}
+\caption{Presence model micro-F1}
 \label{fig:ensemble}
 \end{figure}
 \subsubsection{Confusion-matrix analysis}
@@ -44,7 +44,7 @@ Our evaluation protocol called for a full confusion-matrix analysis of the final
 
 \begin{table}[ht]
 \centering
-\caption{Confusion matrix of the AND-ensemble on the 20\% test set (4{,}182 decisions).}
+\caption{AND-ensemble confusion matrix}
 \label{tab:cm}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lcc}
@@ -60,7 +60,7 @@ Our evaluation protocol called for a full confusion-matrix analysis of the final
 
 \begin{table}[ht]
 \centering
-\caption{Test metrics derived from the confusion matrix.}
+\caption{Confusion-matrix metrics}
 \label{tab:metrics}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llc}
@@ -80,7 +80,7 @@ F1 score    & $2PR/(P+R)$                   & 0.7761\\
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.6\textwidth]{confusion_matrix.png}
-\caption{Confusion matrix of the AND-ensemble on the test set.}
+\caption{Confusion matrix heatmap}
 \label{fig:cm}
 \end{figure}
 
@@ -90,7 +90,7 @@ Figure~\ref{fig:percat} shows per-category F1 for the strongest categories. The 
 
 \begin{table}[ht]
 \centering
-\caption{The five categories with F1 = 0.000 under the AND-ensemble.}
+\caption{Categories with zero F1}
 \label{tab:zerof1}
 \small
 \begin{adjustbox}{max width=\textwidth}
@@ -113,7 +113,7 @@ Unlimited/All-You-Can-Eat License & 2 & 0 / 2 & n/a & 0.500 (1/1/1) & 0.000\\
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.85\textwidth]{per_category_f1.png}
-\caption{Per-category F1 for the twelve strongest categories.}
+\caption{Top-12 per-category F1}
 \label{fig:percat}
 \end{figure}
 \subsection{Span Extraction}
@@ -124,7 +124,7 @@ Section~\ref{sec:bootstrap} argued that a point estimate on 102 contracts should
 
 \begin{table}[ht]
 \centering
-\caption{Span extraction on the answer-bearing test windows.}
+\caption{Span extraction results}
 \label{tab:span}
 \small
 \begin{adjustbox}{max width=\textwidth}
@@ -165,7 +165,7 @@ Because the clauses are identical across the two conditions, the difference betw
 
 \begin{table}[ht]
 \centering
-\caption{ROUGE-L under two reference sets, same 150 clauses.}
+\caption{Summarizer ROUGE-L}
 \label{tab:sumeval}
 \small
 \begin{adjustbox}{max width=\textwidth}
@@ -196,7 +196,7 @@ Three things follow, and none of them is a hedge.
 
 \begin{table}[ht]
 \centering
-\caption{Fine-tuned vs.\ zero-shot summarizer on the same test clause (abridged).}
+\caption{Fine-tuned vs.\ zero-shot output}
 \label{tab:sumqual}
 \small
 \begin{adjustbox}{max width=\textwidth}
@@ -231,7 +231,7 @@ So we ran the pipeline end to end on all 102 test contracts and asked one questi
 
 \begin{table}[ht]
 \centering
-\caption{End-to-end survival of the 1{,}348 gold clauses.}
+\caption{End-to-end clause survival}
 \label{tab:e2e}
 \small
 \begin{adjustbox}{max width=\textwidth}
@@ -262,7 +262,7 @@ The collapse happens at stage 2B, and it has two distinct causes, which we separ
 
 \begin{table}[ht]
 \centering
-\caption{Decomposing the span-stage loss over the 1{,}052 clauses whose category was detected.}
+\caption{Span-stage loss breakdown}
 \label{tab:e2eattr}
 \small
 \begin{adjustbox}{max width=\textwidth}
@@ -301,7 +301,7 @@ Table~\ref{tab:riskeval} splits the 41 categories into the three risk bands of o
 
 \begin{table}[ht]
 \centering
-\caption{Presence performance within each risk band.}
+\caption{Results by risk band}
 \label{tab:riskeval}
 \small
 \begin{adjustbox}{max width=\textwidth}
@@ -352,7 +352,7 @@ The confusion matrix counts 311 false positives and 296 false negatives, and cou
 
 \begin{table}[ht]
 \centering
-\caption{Representative errors on held-out contracts.}
+\caption{Representative errors}
 \label{tab:errors}
 \scriptsize
 \renewcommand{\arraystretch}{1.25}
@@ -402,7 +402,7 @@ We split the 41 categories by \emph{training} frequency, took the bottom ten (11
 
 \begin{table}[ht]
 \centering
-\caption{The ensemble on the ten rarest categories versus the rest.}
+\caption{Rare vs.\ common categories}
 \label{tab:raretail}
 \small
 \begin{adjustbox}{max width=\textwidth}
@@ -443,7 +443,7 @@ Section~\ref{sec:mil} chose max-pooling because it \emph{is} the multiple-instan
 
 \begin{table}[ht]
 \centering
-\caption{Aggregation ablation on identical window scores.}
+\caption{Aggregation ablation}
 \label{tab:pooling}
 \small
 \begin{adjustbox}{max width=\textwidth}
@@ -485,7 +485,7 @@ Every presence decision in this project, and every clause card in Clausify, come
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\textwidth]{threshold_calibration.png}
-\caption{Threshold sweep and reliability diagram.}
+\caption{Threshold and calibration}
 \label{fig:threshcal}
 \end{figure}
 
@@ -516,7 +516,7 @@ The natural tool is a \textbf{bootstrap confidence interval}, but the resampling
 
 \begin{table}[ht]
 \centering
-\caption{Cluster bootstrap over the 102 test contracts.}
+\caption{Cluster bootstrap results}
 \label{tab:bootstrap}
 \small
 \begin{adjustbox}{max width=\textwidth}
@@ -549,7 +549,7 @@ This is easy to check and we had not checked it, so we retrained the presence tr
 
 \begin{table}[ht]
 \centering
-\caption{The presence transformer across three random seeds.}
+\caption{Seed variance}
 \label{tab:seeds}
 \small
 \begin{adjustbox}{max width=\textwidth}
@@ -583,7 +583,7 @@ The only way to settle it is to remove the confound, so we retrained the presenc
 
 \begin{table}[ht]
 \centering
-\caption{The presence transformer at two training budgets.}
+\caption{Training-budget control}
 \label{tab:budget}
 \small
 \begin{adjustbox}{max width=\textwidth}
@@ -620,7 +620,7 @@ Retraining the transformer on twenty splits is not affordable, but the TF--IDF b
 
 \begin{table}[ht]
 \centering
-\caption{The TF--IDF baseline refitted on 20 independent contract-level splits.}
+\caption{Split variance}
 \label{tab:splitvar}
 \small
 \begin{adjustbox}{max width=\textwidth}
@@ -649,7 +649,7 @@ Table~\ref{tab:scorecard} pulls together the held-out results of all three model
 
 \begin{table}[ht]
 \centering
-\caption{Final held-out test results (408 training / 102 test contracts).}
+\caption{Final test results}
 \label{tab:scorecard}
 \small
 \begin{adjustbox}{max width=\textwidth}
