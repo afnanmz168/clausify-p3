@@ -59,51 +59,54 @@ It also means our evaluation is missing the checks this literature calls for. We
 \label{sec:litgap}
 Existing CUAD work stops at locating clauses. A signer plausibly needs more than that: which clauses matter, how much, and what they mean in plain language. This project attempts that layer (a prototype per-category risk taxonomy, category-template plain-English text, and a demonstration application) while also re-examining, on a strict held-out evaluation, the common assumption that a transformer must beat classical lexical methods at the document-level presence decision. We should say at the outset that of the three added components, the empirical results support only the demonstration application as a working artefact; the risk taxonomy is unvalidated and the plain-English component emits category templates rather than summaries, so neither is a solved problem. What the added layer contributes is largely a measurement of how far it is from working.
 
-Table~\ref{tab:related} places this work beside the reference points above along the dimensions that separate them. Two differences are worth reading off it directly. The obvious one is scope: prior work ends at the span, whereas the output here is a risk-ranked, plain-English report, which is the part a non-lawyer can actually act on. The less obvious one is in the long-document column. Every system on CUAD has to make a choice about document length, but that choice is normally asserted; here it was measured before any training happened: the retrieval ceiling of 64.0\% in Section~\ref{sec:ceiling} is what ruled retrieval out and sent us to multiple-instance learning. Note also what the backbone column costs us: our distilled models (67M parameters) are roughly an order of magnitude smaller than the DeBERTa-xlarge model behind CUAD's best published result, so our absolute extraction scores are not comparable to theirs, and we do not present them as such.
+Table~\ref{tab:related} places this work beside the reference points above along the dimensions that separate them. Two differences are worth reading off it directly. The obvious one is scope: prior work ends at the span, whereas the output here is a risk-ranked, plain-English report, which is the part a non-lawyer can actually act on. The less obvious one is in the ``Long inputs'' column. Every system on CUAD has to make a choice about document length, but that choice is normally asserted; here it was measured before any training happened: the retrieval ceiling of 64.0\% in Section~\ref{sec:ceiling} is what ruled retrieval out and sent us to multiple-instance learning. Note also what the Model column costs us: our distilled models (67M parameters) are roughly an order of magnitude smaller than the DeBERTa-xlarge model behind CUAD's best published result, so our absolute extraction scores are not comparable to theirs, and we do not present them as such.
 
 \begin{table}[!ht]
 \centering
 \caption{Related work}
 \label{tab:related}
-\scriptsize
-\setlength{\tabcolsep}{2.5pt}
-\renewcommand{\arraystretch}{1.2}
-\newcolumntype{R}[1]{>{\raggedright\arraybackslash}p{#1}}
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.25}
+\hyphenpenalty=10000
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcommand{\ds}[1]{\newline{\scriptsize\color{gray!70!black}#1}}
 \begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{@{}R{21mm} R{15mm} R{20mm} R{21mm} R{24mm} R{16mm} R{15mm} R{23mm}@{}}
+\begin{tabular}{@{}L{25mm} L{25mm} L{21mm} L{25mm} L{15mm} L{14mm} L{25mm}@{}}
 \toprule
-\textbf{Work} & \textbf{Dataset} & \textbf{Task} & \textbf{Model} & \textbf{Long-doc method} & \textbf{Risk} & \textbf{Plain lang.} & \textbf{Evaluation}\\
+\textbf{Work \textnormal{(data)}} & \textbf{Task} & \textbf{Model} & \textbf{Long inputs} & \textbf{Risk} & \textbf{Plain English} & \textbf{Evaluation}\\
 \midrule
-Hendrycks et al.\ \cite{hendrycks2021cuad}
- & CUAD (510) & Span extraction & DeBERTa-xlarge & Full-doc QA, large model & No & No & Held-out; precision @ 80\% recall\\
+Hendrycks et al.\ \cite{hendrycks2021cuad}\ds{CUAD, 510 contracts}
+ & Span extraction & DeBERTa-xlarge & Full-document QA with a large model & No & No & Held-out; precision at 80\% recall\\
 \addlinespace
-Chalkidis et al.\ \cite{chalkidis2020legalbert}
- & Multiple legal corpora & Domain pretraining $+$ classification & LEGAL-BERT & 512-token truncation & No & No & Per-task held-out\\
+Chalkidis et al.\ \cite{chalkidis2020legalbert}\ds{several legal corpora}
+ & Domain pre-training and classification & LEGAL-BERT & Truncation to 512 tokens & No & No & Per-task held-out\\
 \addlinespace
-Chalkidis et al.\ \cite{chalkidis2022lexglue}
- & LexGLUE (7 tasks) & Legal language understanding benchmark & BERT\slash RoBERTa family & Task-dependent & Indirect (task labels) & No & Benchmark, multi-task\\
+Chalkidis et al.\ \cite{chalkidis2022lexglue}\ds{LexGLUE, 7 tasks}
+ & Legal language understanding & BERT and RoBERTa models & Depends on the task & Indirect (task labels) & No & Multi-task benchmark\\
 \addlinespace
-Manor \& Li \cite{manor2019plain}
- & TL;DR-Legal style & Plain-English summarization & Seq2seq & Section-level inputs & No & \textbf{Yes} & ROUGE $+$ manual\\
+Manor and Li \cite{manor2019plain}\ds{TL;DR-Legal style}
+ & Plain-English summarization & Seq2seq & Section-level inputs & No & \textbf{Yes} & ROUGE and manual review\\
 \addlinespace
-Beltagy et al.\ \cite{beltagy2020longformer}
- & Long-doc benchmarks & Architecture & Longformer & Sparse attention, 4{,}096 tok & No & No & Task benchmarks\\
+Beltagy et al.\ \cite{beltagy2020longformer}\ds{long-document benchmarks}
+ & New architecture & Longformer & Sparse attention, 4{,}096 tokens & No & No & Task benchmarks\\
 \addlinespace
-Retrieval--QA pipelines (generic)
- & Varies & Span extraction & Varies & Retrieval $+$ reader (ceiling usually assumed) & No & No & Varies\\
+Retrieval--QA pipelines\ds{various}
+ & Span extraction & Various & Retrieval then reader (ceiling usually assumed) & No & No & Various\\
 \midrule
-\textbf{This project}
- & \textbf{CUAD (510)}
- & \textbf{Presence $+$ span $+$ category risk $+$ template text}
- & \textbf{DistilBERT $+$ FLAN-T5-small}
- & \textbf{MIL sliding window; ceiling \emph{measured}, sparse attention \emph{benchmarked}}
- & \textbf{Category-level (prototype, unvalidated)}
- & \textbf{Template} (not abstractive)
- & \textbf{Contract-level held-out; cluster bootstrap; seed, budget, split controls; \emph{end-to-end}}\\
+\rowcolor{blue!6}
+\textbf{This project}\ds{CUAD, 510 contracts}
+ & Presence, span, category risk and template text
+ & DistilBERT and FLAN-T5 (small)
+ & Sliding-window MIL; ceiling \emph{measured}, sparse attention \emph{benchmarked}
+ & \textbf{Yes} (category level, prototype)
+ & \textbf{Yes} (template based)
+ & Contract-level held-out; cluster bootstrap; seed, budget and split controls; end-to-end\\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
 
-{\footnotesize\singlespacing \emph{Note.} ``Long-doc method'' is how each work handles inputs longer than the encoder window; ``Evaluation'' notes the level at which results are reported.\par}
+\vspace{4pt}
+{\footnotesize\singlespacing \emph{Note.} ``Long inputs'' is how each work handles documents longer than the encoder window; ``Evaluation'' is the level at which results are reported.\par}
 \end{table}
 
