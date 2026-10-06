@@ -1,0 +1,33 @@
+device: mps
+test contracts: 102
+windowed 510 contracts
+Loading weights:   0%|          | 0/190 [00:00<?, ?it/s]Loading weights: 100%|██████████| 190/190 [00:00<00:00, 6492.36it/s]
+[transformers] The tied weights mapping and config for this model specifies to tie shared.weight to lm_head.weight, but both are present in the checkpoints with different values, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning.
+fine-tuned summarizer ROUGE-L on 150 test clauses : 0.775
+Loading weights:   0%|          | 0/190 [00:00<?, ?it/s]Loading weights: 100%|██████████| 190/190 [00:00<00:00, 22306.38it/s]
+[transformers] The tied weights mapping and config for this model specifies to tie shared.weight to lm_head.weight, but both are present in the checkpoints with different values, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning.
+--- clause 1 ---
+clause    : New Process Technologies that have been developed by Eutectix, alone or with a third party, shall be solely owned by Eutectix, and, if permitted, Eutectix shall
+gold      : This grants permission to use the other side's intellectual property.
+fine-tuned: This grants permission to use the other side's intellectual property.
+zero-shot : New Process Technologies that have been developed by Eutectix, alone or with a third party, shall be solely owned by Eutectix and, if permitted, Eutect
+
+--- clause 2 ---
+clause    : KPN Telecom B.V.
+gold      : This identifies who is signing the contract and the role each side plays.
+fine-tuned: This identifies who is signing the contract and the role each side plays.
+zero-shot : KPN Telecom B.V.
+
+--- clause 3 ---
+clause    : PaperExchange hereby grants VerticalNet an exclusive license to use, modify, enhance, reproduce, display, perform and transmit the PaperExchange Content, subjec
+gold      : This grants permission to use the other side's intellectual property.
+fine-tuned: This makes one side the only allowed source or buyer for something.
+zero-shot : PaperExchange shall grant VerticalNet an exclusive license to use, modify, enhance, reproduce, display, perform and transmit the PaperExchange Content, subject to and in accordance with the terms,
+
+--- clause 4 ---
+clause    : Licensor
+gold      : This identifies who is signing the contract and the role each side plays.
+fine-tuned: This identifies who is signing the contract and the role each side plays.
+zero-shot : a licensor
+
+{'n': 150, 'rouge_l_templates': 0.775}

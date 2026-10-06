@@ -223,7 +223,8 @@ ensemble's aggregate benefit comes from common categories. *Most Favored Nation*
 - Clause → one plain-English sentence. CUAD has no plain-language targets, so we built a **41-template seed**
   (one hand-written gold summary per category, weaker-party framing).
 - FLAN-T5-small, **11,156 pairs** (trained on 4,000); 2 epochs, batch 8, LR 3e-4.
-- Training loss 0.141 → 0.085; validation loss 0.096 → 0.075; **~8 min on CPU** (`use_cpu=True` to avoid MPS OOM).
+- Re-trained October 2026 exactly as deployed (no evaluation set): training loss 1.17 → 0.08, **12.7 min on CPU**
+  (`use_cpu=True` to avoid MPS OOM; ~8 min originally). Test ROUGE-L unchanged at 0.775.
 
 ---
 

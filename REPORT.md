@@ -93,8 +93,9 @@ The baseline's lead over the transformer is 8.5 SDs, so that finding is seed-rob
 
 - FLAN-T5-small, 4,000 training examples (from 11,156 total train)
 - 2 epochs, batch 8, LR 3e-4
-- Training loss: 0.141 → 0.085; validation loss: 0.096 → 0.075
-- Training time: ~8 min on CPU (`use_cpu=True` to avoid MPS OOM)
+- Re-trained October 2026 exactly as deployed (`build_artifacts.py`, no evaluation set): training loss 1.17 → 0.08,
+  12.7 min on CPU (`use_cpu=True` to avoid MPS OOM; ~8 min originally). Test ROUGE-L unchanged at 0.775.
+- The original notebook run's "validation" loss (0.096 → 0.075) was measured on test clauses and is not used.
 
 ---
 

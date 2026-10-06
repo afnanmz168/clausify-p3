@@ -120,7 +120,7 @@ Stage & Model & Job & Test result (20\% held-out) \\
 \midrule
 \endhead
 \textbf{2A} & Presence classifier & Which of the 41 clause types are in a
-contract? & \textbf{micro-F1 0.776, Accuracy 85.49\%} \\
+contract? & \textbf{micro-F1 0.779, Accuracy 85.65\%} \\
 \textbf{2B} & Span extractor & Locate the exact clause text & \textbf{token-F1
 0.763} \\
 \textbf{1} & Summarizer & Rewrite a clause in plain English & \textbf{ROUGE-L
@@ -305,10 +305,10 @@ window fires), which removes the ceiling.
   \textbf{linear decay, no warmup}, gradient-norm clipping at \textbf{1.0},
   3,000 total steps. Schedule plotted by \texttt{analysis/lr\_schedule.py}.
 \item
-  Training loss 0.319 → 0.261; validation loss 0.278 → 0.257;
-  \textbf{\textasciitilde52 min} on Apple MPS.
+  Training loss 0.318 → 0.262; validation loss 0.275 → 0.254; \textbf{49.8 min}
+  on Apple MPS (October 2026 re-training).
 \item
-  Standalone test micro-F1: \textbf{0.694} (loses to the baseline ---
+  Standalone test micro-F1: \textbf{0.692} (loses to the baseline ---
   max-pooling inflates false positives: the max is taken over every window, so
   one spurious window anywhere flips the whole contract).
 \end{itemize}
@@ -323,11 +323,11 @@ categories, baseline on keyword-heavy ones). Combined with parameter-free rules:
 Model & micro-F1 (20\% test) \\
 \midrule
 \endhead
-\textbf{Ensemble AND (both must agree)} & \textbf{0.776} (best) \\
+\textbf{Ensemble AND (both must agree)} & \textbf{0.779} (best) \\
 TF-IDF baseline & 0.775 \\
 Ensemble AVG & 0.718 \\
-Transformer (max-pool) alone & 0.694 \\
-Ensemble OR & 0.696 \\
+Transformer (max-pool) alone & 0.692 \\
+Ensemble OR & 0.692 \\
 \bottomrule
 \end{longtable}
 
@@ -336,12 +336,13 @@ best F1.
 
 \subsubsection{5.5 How much of that ranking is statistically real?}
 
-A 0.776-vs-0.775 margin on 102 contracts is one decision in a thousand, so we
-tested it rather than asserting it. Method: \textbf{cluster bootstrap} ---
+A 0.779-vs-0.775 margin on 102 contracts is a handful of decisions out of 4,182,
+so we tested it rather than asserting it. Method: \textbf{cluster bootstrap} ---
 resample the 102 \emph{contracts} with replacement (not the 4,182 cells, which
 are correlated within a contract), recompute micro-F1 for both models on the
 same resample, 10,000 times. Script: \texttt{analysis/bootstrap\_ci.py},
-\texttt{analysis/extra\_ci.py}.
+\texttt{analysis/extra\_ci.py}; re-run on the re-trained model in
+\texttt{retrain/stage2a\_bootstrap.json}.
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.20}}
@@ -353,11 +354,11 @@ same resample, 10,000 times. Script: \texttt{analysis/bootstrap\_ci.py},
 Comparison & Difference in micro-F1 & 95\% CI & P(\textgreater0) & Verdict \\
 \midrule
 \endhead
-AND-ensemble vs TF-IDF baseline & +0.0014 & {[}-0.0068, +0.0089{]} & 0.626 &
+AND-ensemble vs TF-IDF baseline & +0.0042 & {[}-0.0038, +0.0116{]} & 0.854 &
 \textbf{tie --- CI contains zero} \\
-TF-IDF baseline vs transformer & +0.0805 & {[}+0.0626, +0.0992{]} & 1.000 &
+TF-IDF baseline vs transformer & +0.0824 & {[}+0.0645, +0.1013{]} & 1.000 &
 \textbf{real} \\
-AND-ensemble vs transformer & +0.0818 & {[}+0.0654, +0.0987{]} & 1.000 &
+AND-ensemble vs transformer & +0.0866 & {[}+0.0707, +0.1033{]} & 1.000 &
 \textbf{real} \\
 \bottomrule
 \end{longtable}
@@ -369,17 +370,18 @@ headline:}
 \tightlist
 \item
   \textbf{The ensemble's win over the baseline is not statistically real.} The
-  interval straddles zero and the ensemble leads in only 62.6\% of resamples.
-  Individually: AND 0.776 (95\% CI {[}0.759, 0.792{]}), TF-IDF 0.775 (95\% CI
-  {[}0.758, 0.791{]}) --- almost entirely overlapping. Read the top two rows of
-  the table above as a \textbf{tie}.
+  interval straddles zero and the ensemble leads in 85.4\% of resamples ---
+  short of the 97.5\% a significant result needs. Individually: AND 0.779 (95\%
+  CI {[}0.762, 0.795{]}), TF-IDF 0.775 (95\% CI {[}0.757, 0.791{]}) --- almost
+  entirely overlapping. Read the top two rows of the table above as a
+  \textbf{tie}.
 \item
   \textbf{The transformer's loss to the baseline is real.} The baseline wins in
   \textbf{all 10,000} resamples.
 \end{itemize}
 
 This does not remove the reason for using the ensemble --- that reason was never
-the 0.001 of micro-F1. The AND rule earns its place through the \textbf{error
+the 0.004 of micro-F1. The AND rule earns its place through the \textbf{error
 profile} it produces (balanced precision and recall, see §8.1), not through its
 rank.
 
@@ -387,7 +389,8 @@ rank.
 
 A bootstrap asks ``could this gap be sampling noise?'' It cannot ask ``was the
 transformer handicapped?'' Both alternative explanations were tested
-(\texttt{analysis/presence\_run.py}, \texttt{analysis/compare\_runs.py}).
+(\texttt{analysis/presence\_run.py}, \texttt{analysis/compare\_runs.py}; Control
+A uses the August 2026 runs).
 
 \textbf{Control A --- training budget.} The baseline is fitted on all 408
 contracts in full; the transformer saw 24,000 of 53,662 windows. Retrained on
@@ -409,23 +412,25 @@ recall up, precision down --- which is the max-pooling failure mode over
 \textasciitilde35 windows. \textbf{The deficit is architectural, not a budget
 artifact.}
 
-\textbf{Control B --- random seed.} Three runs at the 24,000 budget:
+\textbf{Control B --- random seed.} Three runs at the 24,000 budget (seed 42 =
+the October re-training; seeds 43 and 44 = August runs):
 
 \begin{longtable}[]{@{}lllllll@{}}
 \toprule
 Model & Seed 42 & Seed 43 & Seed 44 & Mean & SD & Range \\
 \midrule
 \endhead
-Transformer & 0.6943 & 0.6928 & 0.7082 & 0.6984 & 0.0085 & 0.0154 \\
-AND ensemble & 0.7761 & 0.7774 & 0.7803 & 0.7780 & 0.0022 & 0.0042 \\
+Transformer & 0.6924 & 0.6928 & 0.7082 & 0.6978 & 0.0090 & 0.0158 \\
+AND ensemble & 0.7789 & 0.7774 & 0.7803 & 0.7789 & 0.0015 & 0.0029 \\
 \bottomrule
 \end{longtable}
 
-The ensemble's SD (0.0022) and range (0.0042) both \textbf{exceed its +0.0014
-margin} --- reseeding moves the score further than the result being claimed for
-it. The baseline's lead over the transformer is 9.5 SDs. The ensemble is also 4x
-less seed-variable than the transformer alone, which is a better argument for it
-than its rank.
+The ensemble's margin (+0.0042) is now larger than its seed SD (0.0015) and
+range (0.0029), so reseeding alone no longer explains it --- but it is still
+inside the bootstrap interval of §5.5 and below the split SD (0.0063), so it
+remains unestablished. The baseline's lead over the transformer is 8.5 SDs. The
+ensemble is also 6x less seed-variable than the transformer alone, which is a
+better argument for it than its rank.
 
 \subsubsection{5.7 Does the AND rule punish rare categories?}
 
@@ -437,21 +442,21 @@ Splitting the 41 categories by training frequency
 Group & Model & Precision & Recall & F1 & TP & FN \\
 \midrule
 \endhead
-\textbf{Rarest 10} (70 test pos.) & Transformer & 0.261 & 0.500 & 0.343 & 35 &
-35 \\
-& \textbf{AND ensemble} & 0.586 & 0.243 & \textbf{0.343} & 17 & 53 \\
-\textbf{Other 31} (1,278 test pos.) & Transformer & 0.582 & 0.930 & 0.716 &
-1,189 & 89 \\
-& \textbf{AND ensemble} & 0.776 & 0.810 & \textbf{0.792} & 1,035 & 243 \\
+\textbf{Rarest 10} (70 test pos.) & Transformer & 0.275 & 0.557 & 0.368 & 39 &
+31 \\
+& \textbf{AND ensemble} & 0.621 & 0.257 & \textbf{0.364} & 18 & 52 \\
+\textbf{Other 31} (1,278 test pos.) & Transformer & 0.577 & 0.933 & 0.713 &
+1,192 & 86 \\
+& \textbf{AND ensemble} & 0.777 & 0.813 & \textbf{0.795} & 1,039 & 239 \\
 \bottomrule
 \end{longtable}
 
-On common categories the conjunction gains +0.077 F1. \textbf{On the rare tail
-it nets exactly zero} --- 32.5 points of precision bought with 25.7 points of
-recall, detections cut from 35/70 to 17/70. All of the ensemble's aggregate
-benefit comes from common categories. \emph{Most Favored Nation} sits in this
-tail, is a \textbf{High-risk} category, and scores 0.000 --- which matters more
-for a signer than the aggregate does.
+On common categories the conjunction gains +0.082 F1. \textbf{On the rare tail
+it nets nothing} (F1 -0.004) --- 34.6 points of precision bought with 30.0
+points of recall, detections cut from 39/70 to 18/70. All of the ensemble's
+aggregate benefit comes from common categories. \emph{Most Favored Nation} sits
+in this tail, is a \textbf{High-risk} category, and scores 0.000 --- which
+matters more for a signer than the aggregate does.
 
 \subsection{Step 6 --- Training Stage 2B: Span extractor}
 
@@ -478,9 +483,9 @@ for a signer than the aggregate does.
   FLAN-T5-small, \textbf{11,156 pairs} (trained on 4,000); 2 epochs, batch 8, LR
   3e-4.
 \item
-  Training loss 0.141 → 0.085; validation loss 0.096 → 0.075;
-  \textbf{\textasciitilde8 min on CPU} (\texttt{use\_cpu=True} to avoid MPS
-  OOM).
+  Re-trained October 2026 exactly as deployed (no evaluation set): training loss
+  1.17 → 0.08, \textbf{12.7 min on CPU} (\texttt{use\_cpu=True} to avoid MPS
+  OOM; \textasciitilde8 min originally). Test ROUGE-L unchanged at 0.775.
 \end{itemize}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
@@ -500,8 +505,8 @@ predictions}:
 & Predicted \textbf{Absent} & Predicted \textbf{Present} \\
 \midrule
 \endhead
-\textbf{Actually Absent} & TN = \textbf{2,523} & FP = \textbf{311} \\
-\textbf{Actually Present} & FN = \textbf{296} & TP = \textbf{1,052} \\
+\textbf{Actually Absent} & TN = \textbf{2,525} & FP = \textbf{309} \\
+\textbf{Actually Present} & FN = \textbf{291} & TP = \textbf{1,057} \\
 \bottomrule
 \end{longtable}
 
@@ -512,11 +517,11 @@ predictions}:
 Metric & Formula & Value \\
 \midrule
 \endhead
-\textbf{Accuracy} & (TP+TN) / all & \textbf{85.49\%} \\
-\textbf{Precision} & TP / (TP+FP) & \textbf{77.18\%} \\
-\textbf{Recall (Sensitivity)} & TP / (TP+FN) & \textbf{78.04\%} \\
-\textbf{Specificity} & TN / (TN+FP) & \textbf{89.03\%} \\
-\textbf{F1 Score} & 2·P·R / (P+R) & \textbf{0.7761} \\
+\textbf{Accuracy} & (TP+TN) / all & \textbf{85.65\%} \\
+\textbf{Precision} & TP / (TP+FP) & \textbf{77.38\%} \\
+\textbf{Recall (Sensitivity)} & TP / (TP+FN) & \textbf{78.41\%} \\
+\textbf{Specificity} & TN / (TN+FP) & \textbf{89.10\%} \\
+\textbf{F1 Score} & 2·P·R / (P+R) & \textbf{0.7789} \\
 \bottomrule
 \end{longtable}
 
@@ -529,24 +534,28 @@ Category & Test positives & Precision & Recall & F1 \\
 \endhead
 Document Name & 102 & 1.000 & 1.000 & 1.000 \\
 Parties & 101 & 0.990 & 1.000 & 0.995 \\
-Governing Law & 90 & 0.956 & 0.967 & 0.961 \\
-Agreement Date & 93 & 0.929 & 0.989 & 0.958 \\
-Expiration Date & 84 & 0.914 & 0.881 & 0.897 \\
-License Grant & 56 & 0.907 & 0.875 & 0.891 \\
-Anti-Assignment & 74 & 0.831 & 0.932 & 0.879 \\
+Agreement Date & 93 & 0.939 & 0.989 & 0.963 \\
+Governing Law & 90 & 0.964 & 0.900 & 0.931 \\
+License Grant & 56 & 0.925 & 0.875 & 0.899 \\
+Anti-Assignment & 74 & 0.850 & 0.919 & 0.883 \\
+Expiration Date & 84 & 0.921 & 0.833 & 0.875 \\
+Cap On Liability & 62 & 0.911 & 0.823 & 0.864 \\
 Effective Date & 73 & 0.831 & 0.877 & 0.853 \\
-Cap On Liability & 62 & 0.879 & 0.823 & 0.850 \\
 \bottomrule
 \end{longtable}
 
-Categories with \textless=7 test positives (e.g.~Source Code Escrow, Most
-Favored Nation) score near 0 --- too few examples to learn from in a
-510-contract dataset, not a model failure.
+Five categories with \textless=7 test positives (Most Favored Nation, No-Solicit
+Of Customers, Price Restrictions, Source Code Escrow, Unlimited License) score
+F1 = 0.000. That value is correct: the AND-ensemble predicted none of them as
+present in any test contract (TP = 0, FP = 0), so it found none of the 2--7 real
+clauses. Their precision is undefined (0/0) rather than 0. The transformer alone
+does find some of them (F1 0.323, 0.087 and 0.500 on the last three named) ---
+the conjunction removes those detections (§5.7).
 
-\textbf{Why the ensemble is worth keeping despite §5.5.} Precision (77.18\%) and
-recall (78.04\%) come out balanced, which is exactly what the AND rule was for:
+\textbf{Why the ensemble is worth keeping despite §5.5.} Precision (77.38\%) and
+recall (78.41\%) come out balanced, which is exactly what the AND rule was for:
 raw max-pooling trades precision away, and requiring agreement wins it back
-without costing recall. Specificity of 89.03\% means the system rarely claims a
+without costing recall. Specificity of 89.10\% means the system rarely claims a
 clause that is not there --- in a legal-review assistant that is the more
 damaging error.
 
@@ -648,10 +657,10 @@ Stage & Model & Train & Test & Metric & Score \\
 \midrule
 \endhead
 2A Presence & AND-ensemble (TF-IDF + DistilBERT) & 408 contracts & 102 contracts
-& micro-F1 & \textbf{0.776} \\
-2A Presence & AND-ensemble & 408 & 102 & Accuracy & \textbf{85.49\%} \\
-2A Presence & AND-ensemble & 408 & 102 & Precision / Recall & \textbf{77.18\% /
-78.04\%} \\
+& micro-F1 & \textbf{0.779} \\
+2A Presence & AND-ensemble & 408 & 102 & Accuracy & \textbf{85.65\%} \\
+2A Presence & AND-ensemble & 408 & 102 & Precision / Recall & \textbf{77.38\% /
+78.41\%} \\
 2B Span & DistilBERT-QA & 408 & 102 & token-F1 (given the window) &
 \textbf{0.763} \\
 2B Span & DistilBERT-QA & 408 & 102 & token-F1 (window from 2A) &
@@ -667,10 +676,10 @@ Stage & Model & Train & Test & Metric & Score \\
 \end{longtable}
 
 \begin{quote}
-\textbf{Read the presence row with §5.5 in hand.} The AND-ensemble's 0.776 is
+\textbf{Read the presence row with §5.5 in hand.} The AND-ensemble's 0.779 is
 not statistically separable from the TF-IDF baseline's 0.775 on this test set.
 What \emph{is} separable --- and is the result we stand behind --- is that both
-beat the windowed transformer alone (0.694) by a wide, significant margin.
+beat the windowed transformer alone (0.692) by a wide, significant margin.
 
 \textbf{And read the whole table with §8.4 in hand.} These are component scores
 measured with the other stages held out of the way. End to end only
@@ -743,8 +752,9 @@ clausify-research/
 \textbf{Reproducing the numbers.} \texttt{notebooks/test.ipynb} loads the saved
 models from disk and regenerates every metric in this report. The bootstrap
 intervals in §5.5 come from \texttt{analysis/bootstrap\_ci.py}, which
-independently reproduces the same point estimates (0.776 / 0.775 / 0.718 / 0.696
-/ 0.694) and the same confusion matrix (TN=2523, FP=311, FN=296, TP=1052) before
-resampling.
+independently reproduces the same point estimates (0.779 / 0.775 / 0.718 / 0.692
+/ 0.692) and the same confusion matrix (TN=2525, FP=309, FN=291, TP=1057) before
+resampling. The October 2026 re-training scripts, logs and results are in
+\texttt{retrain/}.
 
 \end{document}

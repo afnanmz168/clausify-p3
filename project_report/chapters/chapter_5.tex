@@ -1,7 +1,7 @@
 \section{Design Process or Methodology Overview}
 The design followed the objectives and constraints of Chapter~3 through an evaluate-first process with four rules: (i) build a strong, simple baseline before any complex model; (ii) measure the feasibility ceiling of a design before spending training time on it; (iii) fix the contract-level train/test split once and reuse it everywhere, never tuning on the test set; and (iv) evaluate each stage on its own and then the whole pipeline end to end. The resulting system is a three-stage pipeline with a risk layer on top.
 
-The system is a staged pipeline (Figure~\ref{fig:pipeline}). Contract text is windowed; a presence stage decides which of the 41 categories the contract contains; a span stage extracts the exact clause text for each detected category; a risk layer attaches the detected \emph{category's} High\slash Medium\slash Low level; and a text-generation stage attaches a plain-English sentence. The final output is a risk-prioritized report. (The deployed Clausify application runs the presence, span and risk stages only; Section~\ref{sec:clausify}.) Section~\ref{sec:summ} shows that the last stage does not in fact summarize the clause in front of it --- it selects among 41 pre-written category sentences --- so the pipeline is better described as classification-to-template than as summarization. Figure~\ref{fig:pipeline} names the stages and the models behind them; Figure~\ref{fig:dataflow} at the end of this chapter repeats the same chain with the concrete data object that crosses each boundary, which is the version to consult when reading the implementation.
+The system is a staged pipeline (Figure~\ref{fig:pipeline}). Contract text is windowed; a presence stage decides which of the 41 categories the contract contains; a span stage extracts the exact clause text for each detected category; a risk layer attaches the detected \emph{category's} High\slash Medium\slash Low level; and a text-generation stage attaches a plain-English sentence. The final output is a risk-prioritized report. (The deployed Clausify application runs every stage; Section~\ref{sec:clausify}.) Section~\ref{sec:summ} shows that the last stage does not in fact summarize the clause in front of it --- it selects among 41 pre-written category sentences --- so the pipeline is better described as classification-to-template than as summarization. Figure~\ref{fig:pipeline} names the stages and the models behind them; Figure~\ref{fig:dataflow} at the end of this chapter repeats the same chain with the concrete data object that crosses each boundary, which is the version to consult when reading the implementation.
 
 \begin{figure}[ht]
 \centering
@@ -540,7 +540,7 @@ Epochs              & 2 & 2 & 2\\
 Batch size          & 16 & 16 & 8\\
 Learning rate       & $2\times10^{-5}$ & $3\times10^{-5}$ & $3\times10^{-4}$\\
 Device              & MPS & MPS & CPU\\
-Wall-clock          & $\approx$49--52 min & $\approx$23 min & $\approx$8 min\\
+Wall-clock          & $\approx$50--52 min & $\approx$23--26 min & $\approx$8--13 min\\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
@@ -588,11 +588,11 @@ Summarizer (deployed checkpoint) & None & The checkpoint used in every reported 
 \end{table}
 
 \subsubsection{One thing we got wrong}
-The exploratory notebook run of the summarizer --- the run whose loss curve is plotted in Figure~\ref{fig:sumloss} --- used 300 clauses \emph{drawn from the test split} as its evaluation set. That is the wrong data to monitor on, and we should not have done it.
+The exploratory notebook run of the summarizer --- the run whose loss curve appeared in earlier drafts of this report --- used 300 clauses \emph{drawn from the test split} as its evaluation set. That is the wrong data to monitor on, and we should not have done it.
 
 Two things limit the damage, and we state them without treating either as an excuse. First, the run was configured with \texttt{save\_strategy="no"} and no early stopping, so the numbers it printed could not select a checkpoint; nothing about the model depended on them. Second, the deployed summarizer was rebuilt by \texttt{build\_artifacts.py} with \emph{no} evaluation set at all, and it is that checkpoint --- not the notebook's --- that produced every summarization result in Chapter~5. So no reported score was computed by a model that had been selected using test data.
 
-What remains is that the validation loss quoted in Section~\ref{sec:sumtrain} (0.096 $\to$ 0.075) is a loss on held-out \emph{test} clauses mislabelled as validation, and a reader should discount it accordingly. We have left the figure in place with this correction attached rather than quietly regenerating it, because the mistake is more instructive than a clean curve would be: with a small dataset and three models it is easy to reach for ``the other split'' when a validation set is needed, and the discipline that catches it is writing down, per model, exactly what was held out --- which is what Table~\ref{tab:valsets} now does.
+What remained was that the validation loss printed by that run (0.096 $\to$ 0.075) was a loss on held-out \emph{test} clauses mislabelled as validation, and should be discounted. The October 2026 re-training rebuilt the summarizer exactly as it is deployed --- with no evaluation set --- and Figure~\ref{fig:sumloss} now plots that run's training loss, so no test data appears in it. We record the mistake rather than drop it, because it is more instructive than a clean curve would be: with a small dataset and three models it is easy to reach for ``the other split'' when a validation set is needed, and the discipline that catches it is writing down, per model, exactly what was held out --- which is what Table~\ref{tab:valsets} now does.
 \subsection{Optimization Schedule}
 Table~\ref{tab:hyper} gives the peak learning rates, but a peak rate on its own does not describe how a run behaved --- the schedule that decays it does. All three models use the same optimizer configuration: AdamW with a \textbf{linear decay} schedule, \textbf{no warmup}, and gradient-norm clipping at 1.0. Figure~\ref{fig:lrsched} plots the three resulting schedules. The presence and span settings were read back from the \texttt{training\_args.bin} saved beside each checkpoint rather than from our notes, so what is plotted is what actually ran.
 
@@ -624,7 +624,7 @@ The window-level DistilBERT was trained on a stratified subsample of 24{,}000 wi
 The QA model trained on 8{,}000 focused-window examples for two epochs. Before training we decode the token-labelled spans back into text for a few examples and check they match the gold answers --- SQuAD-style pipelines make it very easy to get the character-to-token offset conversion silently wrong, and this small sanity check catches that.
 \subsection{Training the Summarizer}
 \label{sec:sumtrain}
-FLAN-T5-small fine-tuned on 4{,}000 clause--template pairs in roughly eight minutes on CPU. The loss collapsed quickly (0.141$\to$0.085 train, 0.096$\to$0.075 validation; Figure~\ref{fig:sumloss}). In hindsight this rapid collapse was the first hint of the template-memorization behaviour we analyse in Chapter~5 --- with only 41 unique targets, the task is simply easy to fit.
+FLAN-T5-small was fine-tuned on 4{,}000 clause--template pairs on CPU: about 8 minutes originally, and 12.7 minutes in the October 2026 re-training (run while the machine was busy with other jobs). The training loss collapsed quickly, from 1.17 at step 100 to 0.08 by the end of the second epoch (Figure~\ref{fig:sumloss}); there is no validation curve because the deployed configuration uses no evaluation set (Table~\ref{tab:valsets}). The re-trained model scores ROUGE-L 0.775 against the templates on the 150 test clauses, identical to the original. In hindsight this rapid collapse was the first hint of the template-memorization behaviour we analyse in Chapter~5 --- with only 41 unique targets, the task is simply easy to fit.
 
 \begin{figure}[ht]
 \centering
@@ -729,12 +729,12 @@ Figure~\ref{fig:pipeline} names the stages; Figure~\ref{fig:dataflow} adds what 
 \subsection{The Clausify Application}
 \label{sec:clausify}
 \subsubsection{Purpose and Design}
-The final deliverable is \emph{Clausify}, a Streamlit web application that runs the two trained transformer models live on any contract the user provides and presents the findings as a risk-prioritized report --- the pipeline of Figure~\ref{fig:pipeline}, made usable. The design goal is simple: a non-lawyer should see the ``watch out before signing'' items first. Detected clauses are grouped \textcolor{riskhigh}{\textbf{High}} $\rightarrow$ \textcolor{riskmed}{\textbf{Medium}} $\rightarrow$ \textcolor{risklow}{\textbf{Low}} and sorted by model confidence within each group.
+The final deliverable is \emph{Clausify}, a Streamlit web application that runs all of the project's trained models live on any contract the user provides --- the DistilBERT presence classifier, the TF--IDF baseline (for the optional AND-ensemble), the span extractor and the FLAN-T5 summarizer --- and presents the findings as a risk-prioritized report --- the pipeline of Figure~\ref{fig:pipeline}, made usable. The design goal is simple: a non-lawyer should see the ``watch out before signing'' items first. Detected clauses are grouped \textcolor{riskhigh}{\textbf{High}} $\rightarrow$ \textcolor{riskmed}{\textbf{Medium}} $\rightarrow$ \textcolor{risklow}{\textbf{Low}} and sorted by model confidence within each group.
 \subsubsection{User Workflow}
 \begin{enumerate}[itemsep=2pt]
-  \item \textbf{Add a contract.} A toggle offers two input modes --- paste the contract text directly, or upload a \texttt{.txt} file (Figure~\ref{fig:apphome}). A confidence-threshold slider (default 0.50) controls how conservative detection should be.
-  \item \textbf{Analyze.} One click runs both models end-to-end; a progress bar tracks the presence scan across the 41 categories.
-  \item \textbf{Read the report.} A summary bar counts the detected clauses per risk level (Figure~\ref{fig:appresults}), and below it each detected clause appears as a card. On the synthetic test contract the bar reports 7 High, 15 Medium and 8 Low risk clauses --- 30 of the 41 categories detected.
+  \item \textbf{Add a contract.} Paste the text, or upload a \texttt{.pdf}, \texttt{.docx} or \texttt{.txt} file; text is extracted locally (Figure~\ref{fig:apphome}). The user chooses \emph{Whole contract}, \emph{Separate clauses} (Section~\ref{sec:clausemode}) or \emph{Auto}; a settings panel selects the detection rule --- DistilBERT alone (default) or the AND-ensemble --- and turns the plain-English lines on or off. Detection uses the fixed 0.5 threshold of the reported evaluation.
+  \item \textbf{Analyze.} One click runs the models end to end; a progress bar tracks the scan across the 41 categories and then the summarizer.
+  \item \textbf{Read the report.} A summary bar counts the detected clauses per risk level (Figure~\ref{fig:appresults}), and below it each detected clause appears as a card. On the synthetic test contract the bar reports 7 High, 14 Medium and 9 Low risk clauses --- 30 of the 41 categories detected (October 2026 models, DistilBERT detection).
 \end{enumerate}
 
 \begin{figure}[ht]
@@ -744,19 +744,31 @@ The final deliverable is \emph{Clausify}, a Streamlit web application that runs 
 \label{fig:apphome}
 \end{figure}
 
-Each clause card shows four things: the category name with a colour-coded risk badge; the one-line plain-English reason that category carries its risk (from the taxonomy in Appendix~\ref{app:taxonomy}); the presence model's confidence drawn as a bar; and the exact clause text the span model extracted, quoted from the user's own contract (Figure~\ref{fig:appcards}). An expandable table lists all 41 categories with their risk level and raw presence score, so nothing the models computed is hidden from the user.
+Each clause card shows the category name with a colour-coded risk badge; the one-line reason that category carries its risk (from the taxonomy in Appendix~\ref{app:taxonomy}); the summarizer's plain-English sentence, flagged when it is another category's template; the detection score drawn as a bar, with both the DistilBERT and TF--IDF scores; and the located clause quoted from the user's own contract with the span model's key phrase highlighted (Figure~\ref{fig:appcards}). Below the cards the application adds three views:
+\begin{itemize}[itemsep=2pt]
+  \item \textbf{Highlighted contract.} The full text, with every located clause marked in its risk colour and tagged with its category; each card links to its place in the text.
+  \item \textbf{Missing-protection checklist.} Protective clauses the models did \emph{not} detect --- a cap on liability, termination for convenience, governing law, an expiration date, a warranty period, insurance, and (when the contract renews) a notice period to stop renewal --- each with a sentence on why its absence matters. The view states that ``not detected'' can be a model miss.
+  \item \textbf{Downloadable report.} A PDF report (summary, every clause with its reason, plain-English line, scores and quoted text, and the checklist) and a CSV of the same rows.
+\end{itemize}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\textwidth]{app_highlight.png}
+\caption{Highlighted contract view and missing-protection checklist. Each located clause is marked in its risk colour and tagged with its category; the renewal paragraph tagged \emph{Minimum Commitment} is a genuine locating error, left in rather than replaced by a cleaner example.}
+\label{fig:apphighlight}
+\end{figure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.95\textwidth]{app_results.png}
-\caption{Clausify results view on the synthetic test contract.}
+\caption{Clausify results on the synthetic test contract: risk summary and the first High-risk card, including the warning shown when the summarizer's sentence belongs to a different category.}
 \label{fig:appresults}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.95\textwidth]{app_cards.png}
-\caption{High-risk clause cards in Clausify.}
+\caption{High-risk clause cards: the located paragraph is quoted and the span model's key phrase is highlighted inside it.}
 \label{fig:appcards}
 \end{figure}
 \subsubsection{How the Models Run Inside the App}
@@ -765,10 +777,12 @@ The application reproduces the inference path from training exactly:
   \item \textbf{Windowing.} The contract is cut into 2{,}000-character windows with a 1{,}500-character stride --- the same scheme used in training --- capped at 30 windows so very long documents stay responsive.
   \item \textbf{Model 1 --- presence.} For each of the 41 categories, the exact CUAD question the model was trained on is paired with every window and scored by the window-level DistilBERT. The per-category document score is the max-pooled window probability; categories above the threshold are reported present, and the best-scoring window is remembered.
   \item \textbf{Locating the clause.} Within that best window, the presence model scores each paragraph against the category question and the highest-scoring paragraph is the text quoted on the card; the DistilBERT-QA span model then highlights the key span inside it. An earlier version let the span model choose the text from the whole window, and on test inputs it returned the same sentence for nearly every category: the span model favours text near the position where answers sat during training (Section~\ref{sec:e2e}), so it is used only inside the paragraph the presence model selected.
+  \item \textbf{Optional AND-ensemble.} With the ensemble setting, the TF--IDF baseline scores the whole contract and a category is reported only when both models' scores reach 0.5, exactly as evaluated in Section~\ref{sec:bootstrap}.
   \item \textbf{Risk layer.} The detected category is looked up in the fixed 8/22/11 taxonomy for its level and reason.
+  \item \textbf{Summarizer.} FLAN-T5-small receives each quoted clause with the training prompt and decoding settings and returns one plain-English sentence.
 \end{enumerate}
 
-All inference runs on CPU so the app works on any machine; a median-length contract takes about 27 seconds once the models are loaded (Table~\ref{tab:appbench}). The app loads the actual trained checkpoints saved by the training pipeline (\texttt{presence\_mil/final} and \texttt{span/final}), and a single environment variable redirects it if the models are moved.
+All inference runs on CPU so the app works on any machine; a median-length contract takes about 27 seconds once the models are loaded (Table~\ref{tab:appbench}). The app loads the actual trained checkpoints saved by the training pipeline (\texttt{presence\_mil}, \texttt{span}, \texttt{summarizer} and the TF--IDF \texttt{baseline.pkl}); when they are not present locally --- as on a cloud host --- it downloads the same files once from a public Hugging Face model repository.
 \subsubsection{Implementation Notes}
 The interface is a single-page Streamlit application (\texttt{app.py}) sitting on a small inference module (\texttt{model\_utils.py}) that owns model loading, windowing, max-pooling, span extraction, and the risk table. Two test contracts ship with the app: a genuine CUAD contract, and a synthetic ``Master Software License and Distribution Agreement'' that we wrote specifically to exercise a wide spread of the 41 categories. On that synthetic contract the app detects clauses across all three risk bands and puts \emph{Uncapped Liability}, \emph{IP Ownership Assignment}, \emph{Exclusivity}, and \emph{Liquidated Damages} at the top of the report --- exactly the before-you-sign warnings the design aims for.
 \subsubsection{Clause-by-Clause Mode}
