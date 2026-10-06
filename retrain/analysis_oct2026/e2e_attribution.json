@@ -1,0 +1,10 @@
+{
+ "n": 1057,
+ "window_correct": 730,
+ "window_correct_rate": 0.6906338694418165,
+ "both": 289,
+ "span_ok_given_window_correct": 0.3958904109589041,
+ "window_wrong": 327,
+ "span_ok_given_window_wrong": 7,
+ "method": "window contains first 80 chars of a gold span (same rule that reproduces the August attribution 718/285/334/8)"
+}
