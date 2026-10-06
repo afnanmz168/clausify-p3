@@ -39,7 +39,7 @@ Note & The repository's default \texttt{load\_dataset()} configuration exposes o
 \section*{Seeds and splits}
 \begin{itemize}[itemsep=2pt]
   \item Global seed 42 for the split, all three trainings, and every bootstrap.
-  \item The split is \emph{drawn once} from \texttt{numpy.random.default\_rng(42).permutation}, saved to \texttt{artifacts/split.json}, and loaded from disk by every subsequent script --- so no script re-derives it.
+  \item The split is \emph{drawn once} from \texttt{numpy.random.default\_rng(42).permutation}, saved to \texttt{artifacts/split.json}, and loaded from disk by every subsequent script, so no script re-derives it.
   \item Additional presence-model seeds 43 and 44 (Section~\ref{sec:seeds}); dataset-split seeds 0--19 for Section~\ref{sec:splitvar}.
   \item Bootstrap: 10{,}000 resamples, \texttt{default\_rng(42)}, resampling unit = contract.
 \end{itemize}
