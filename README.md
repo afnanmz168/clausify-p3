@@ -4,7 +4,7 @@
 B.Sc. Final Year Project (CSE400) · Department of Computer Science and Engineering · BRAC University
 
 Jerin Aktar (22101279) · Afnan Mazumdar (24141229) · Shoyeb Hasan Sayem (22101386)
-Supervisor: Utsho Kumar Roy
+Supervisor: Utsha Kumar Roy
 
 ---
 

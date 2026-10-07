@@ -10,7 +10,7 @@ Every number here is taken from the thesis report as submitted. Where the slide 
 
 Good morning, respected members of the panel.
 
-We are group P25301051. I am Afnan Mazumdar, and with me are Jerin Aktar and Shoyeb Hasan Sayem. Our supervisor is Utsho Kumar Roy sir.
+We are group P25301051. I am Afnan Mazumdar, and with me are Jerin Aktar and Shoyeb Hasan Sayem. Our supervisor is Utsha Kumar Roy sir.
 
 Our thesis is titled *AI-Powered Legal Document Analysis System: Clause Detection, Category-Level Risk Prioritization and Plain-Language Explanation on CUAD.*
 
@@ -171,9 +171,9 @@ If your slot for slides 1–7 is shorter than the cut version, slide 4's model r
 
 ---
 
-## Three sentences the speech deliberately says differently from the slides
+## Three notes on wording
 
-- **Slide 1:** say "Utsho Kumar Roy" (the slide spells it "Utsha").
+- **Slide 1:** say "Utsha Kumar Roy", as on the slide.
 - **Slide 5:** say "the **baseline's** macro-F1 is 0.572". The slide places 0.572 next to the ensemble's 0.776, but 0.572 belongs to the TF-IDF baseline (report §5.3).
 - **Slide 7:** say "about 35 windows". The slide prints "-35".
 

@@ -11,7 +11,7 @@ Every number here is taken from the thesis report as submitted. Where the slide 
 - Good morning, respected members of the panel.
 - We are group **P25301051**.
 - I am Afnan Mazumdar, with Jerin Aktar and Shoyeb Hasan Sayem.
-- Our supervisor is **Utsho** Kumar Roy sir.
+- Our supervisor is **Utsha** Kumar Roy sir.
 - We built a **three-model pipeline** on the CUAD dataset.
 - It **finds** the important clauses in a contract, **extracts** their text, gives each a **risk level**, and adds a **plain-English** sentence.
 - Everything is tested on contracts the models **never saw**.
@@ -180,9 +180,9 @@ Every number here is taken from the thesis report as submitted. Where the slide 
 
 ---
 
-## Three things the speech says differently from the slides
+## Three notes on wording
 
-- **Slide 1:** say "Utsho Kumar Roy" (the slide spells it "Utsha").
+- **Slide 1:** say "Utsha Kumar Roy", as on the slide.
 - **Slide 5:** say "the **baseline's** macro-F1 is 0.572". The slide puts 0.572 next to the ensemble's 0.776, but it belongs to the TF-IDF baseline (report §5.3).
 - **Slide 7:** say "about 35 windows". The slide prints "-35".
 
