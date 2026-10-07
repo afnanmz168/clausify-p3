@@ -1,33 +1,44 @@
 \chapter*{Nomenclature}
-The next list describes several symbols \& abbreviation that will be later used within the body of the document
+The list below gives the abbreviations used in this report.
 
 \vspace{0.5cm}
 \begin{tabular}{p{3cm} p{11cm}}
+BERT & Bidirectional Encoder Representations from Transformers\\
+CI & Confidence Interval\\
+CPU / GPU & Central Processing Unit / Graphics Processing Unit\\
 CUAD & Contract Understanding Atticus Dataset\\
+ECE & Expected Calibration Error\\
 EM & Exact Match\\
 FN / FP & False Negative / False Positive\\
 IP & Intellectual Property\\
+LLM & Large Language Model\\
 LR & Logistic Regression\\
 MIL & Multiple-Instance Learning\\
 MPS & Metal Performance Shaders (Apple GPU backend)\\
 NLP & Natural Language Processing\\
 QA & Question Answering\\
 ROUGE & Recall-Oriented Understudy for Gisting Evaluation\\
+RQ & Research Question\\
+SD & Standard Deviation\\
+SEC & US Securities and Exchange Commission\\
 SQuAD & Stanford Question Answering Dataset\\
 TF--IDF & Term Frequency--Inverse Document Frequency\\
 TN / TP & True Negative / True Positive\\
-BERT & Bidirectional Encoder Representations from Transformers\\
-ECE & Expected Calibration Error\\
 \end{tabular}
 
 \clearpage
 \textbf{Glossary of terms}
 \begin{description}[itemsep=4pt]
-  \item[Clause category] One of the 41 types of contractual provision annotated in CUAD (e.g., \emph{Governing Law}, \emph{Non-Compete}, \emph{Cap on Liability}).
-  \item[Contract-level split] A train/test partition that assigns whole contracts to one side, so no clause from a training contract can appear in the test set.
+  \item[AND-ensemble] A rule that reports a clause category only when both the TF--IDF model and the DistilBERT model say it is present.
+  \item[Bootstrap] A way to measure uncertainty: the test contracts are drawn again at random, with repeats, many times, and the score is recomputed each time.
+  \item[Calibration] Whether a model's score can be read as a real chance. A well-calibrated score of 0.8 is right about 80\% of the time.
+  \item[Clause category] One of the 41 types of contract clause labelled in CUAD (for example \emph{Governing Law}, \emph{Non-Compete}, \emph{Cap on Liability}).
+  \item[Contract-level split] A train/test split that puts each whole contract on one side, so no clause from a training contract can appear in the test set.
+  \item[Max-pooling (over windows)] Scoring every window of a document and using the highest window score as the score for the whole document.
+  \item[Micro-F1] One F1 score computed over all (contract, category) decisions together, so every decision counts the same.
   \item[Presence classification] Deciding, for each clause category, whether a contract contains at least one clause of that category.
-  \item[Span extraction] Locating the exact character span of a clause inside the contract text, formulated as extractive question answering.
-  \item[Max-pooling (over windows)] Scoring every sliding window of a document and taking the maximum window score as the document-level prediction.
-  \item[Retrieval ceiling] The upper bound that a retrieval step imposes on a downstream model's recall: clauses in windows the retriever never selects can never be found.
-  \item[Weaker party] The contract signer with less bargaining power, from whose perspective the risk taxonomy is scored.
+  \item[Retrieval ceiling] The most a ``search first'' design can ever find: a clause in a window that the search never picks can never be found.
+  \item[Span extraction] Finding the exact text of a clause inside the contract, treated as a question-answering task.
+  \item[Token-F1] How much the extracted text overlaps the real clause, word by word (1.0 means a perfect match).
+  \item[Weaker party] The person or company signing the contract with less bargaining power; the risk table is written from their side.
 \end{description}

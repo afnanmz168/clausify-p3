@@ -8,7 +8,7 @@ Everything in this chapter is measured on the 20\% test set: the same 102 unseen
 \subsubsection{Model comparison}
 Table~\ref{tab:ensemble} and Figure~\ref{fig:ensemble} compare all the presence models on the 4{,}182 (contract, category) test decisions. Two things stand out. First, the window-based transformer \emph{loses on its own} to the simple TF--IDF model that reads the whole document (0.692 vs.\ 0.775). Legal wording is distinctive enough that word evidence from the whole document beats meaning-based evidence from small windows, and taking the maximum window score creates too many false alarms, just as Section~\ref{sec:mil} predicted. Second, the AND-ensemble, which reports a clause only when \emph{both} models agree, removes many of each model's false alarms and comes out on top (0.779). The lead over the simple model is small on 102 test contracts, so we do not rely on it: Section~\ref{sec:bootstrap} measures exactly how small it is and finds that this gap cannot be told apart from zero. The conclusion we stand behind is about method: \emph{simple word-based models are strong at deciding which clauses a contract contains, and the transformer is useful as a filter that removes false alarms, not as a replacement}.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \caption{Presence model comparison}
 \label{tab:ensemble}
@@ -33,7 +33,7 @@ Ensemble AND on that transformer            & 0.782\\
 {\footnotesize\singlespacing \emph{Note.} micro-F1 over all 4{,}182 test decisions. The transformer (0.6924) is just ahead of OR (0.6916).\par}
 \end{table}
 
-\begin{figure}[ht]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.75\textwidth]{ensemble_comparison.png}
 \caption{Presence model micro-F1}
@@ -42,7 +42,7 @@ Ensemble AND on that transformer            & 0.782\\
 \subsubsection{Confusion-matrix analysis}
 Our test plan required a full confusion-matrix analysis of the final model. Table~\ref{tab:cm} gives the matrix for the AND-ensemble over all test decisions, Figure~\ref{fig:cm} shows the same matrix as a heatmap, and Table~\ref{tab:metrics} lists every score taken from it.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \caption{AND-ensemble confusion matrix}
 \label{tab:cm}
@@ -58,7 +58,7 @@ Our test plan required a full confusion-matrix analysis of the final model. Tabl
 \end{adjustbox}
 \end{table}
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \caption{Confusion-matrix metrics}
 \label{tab:metrics}
@@ -77,7 +77,7 @@ F1 score    & $2PR/(P+R)$                   & 0.7789\\
 \end{adjustbox}
 \end{table}
 
-\begin{figure}[ht]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.6\textwidth]{confusion_matrix.png}
 \caption{Confusion matrix heatmap}
@@ -88,21 +88,22 @@ Precision and recall are balanced (77.4\% and 78.4\%), which shows the AND rule 
 \subsubsection{Per-category behaviour}
 Figure~\ref{fig:percat} shows the per-category F1 for the strongest categories. The common, standard categories are almost solved (\emph{Document Name} 1.000, \emph{Parties} 0.995, \emph{Agreement Date} 0.963, \emph{Governing Law} 0.931). At the other end, five categories with at most seven test examples score an F1 of 0.000 with the AND-ensemble. Table~\ref{tab:zerof1} shows exactly what this means. In every case the ensemble marked the category as present in \emph{no} test contract (no true and no false positives), so F1 = 0.000 is correct: none of the 2--7 real clauses was found. But precision is undefined ($0/0$) rather than zero. The transformer on its own does find some of these clauses; the AND rule removes them because the TF--IDF model never agrees (Section~\ref{sec:raretail}). With only two to seven examples per category, these scores are not reliable either way. This weakness comes from the dataset, not from any particular model, and it is why our main results use micro-averaged rather than macro-averaged scores.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \caption{Categories with zero F1}
 \label{tab:zerof1}
 \small
 \begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{lccccc}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{>{\raggedright\arraybackslash}p{3.7cm}cccc c}
 \toprule
-\textbf{Category} & \textbf{Test pos.} & \textbf{AND: TP / FN} & \textbf{AND precision} & \textbf{Transformer alone F1 (TP/FP/FN)} & \textbf{TF--IDF F1}\\
+\textbf{Category} & \shortstack{\textbf{Test}\\\textbf{examples}} & \shortstack{\textbf{AND}\\\textbf{TP / FN}} & \shortstack{\textbf{AND}\\\textbf{precision}} & \shortstack{\textbf{Transformer alone}\\\textbf{F1 (TP/FP/FN)}} & \shortstack{\textbf{TF--IDF}\\\textbf{F1}}\\
 \midrule
 Most Favored Nation              & 7 & 0 / 7 & n/a & 0.000 (0/0/7) & 0.000\\
 No-Solicit of Customers          & 6 & 0 / 6 & n/a & 0.323 (5/20/1) & 0.000\\
 Price Restrictions               & 4 & 0 / 4 & n/a & 0.087 (1/18/3) & 0.000\\
 Source Code Escrow               & 2 & 0 / 2 & n/a & 0.000 (0/0/2) & 0.000\\
-Unlimited/All-You-Can-Eat License & 2 & 0 / 2 & n/a & 0.500 (1/1/1) & 0.000\\
+Unlimited\slash All-You-Can-Eat License & 2 & 0 / 2 & n/a & 0.500 (1/1/1) & 0.000\\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
@@ -110,7 +111,7 @@ Unlimited/All-You-Can-Eat License & 2 & 0 / 2 & n/a & 0.500 (1/1/1) & 0.000\\
 {\footnotesize\singlespacing \emph{Note.} n/a: the model never said ``present'', so precision is $0/0$ and has no value. Threshold 0.5, October 2026 models.\par}
 \end{table}
 
-\begin{figure}[ht]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{per_category_f1.png}
 \caption{Top-12 per-category F1}
@@ -122,7 +123,7 @@ We tested the question-answering model on all 2{,}667 test windows that contain 
 
 Section~\ref{sec:bootstrap} argues that a score on 102 contracts should always be read together with its confidence interval, and that is just as true here. So we ran the \emph{same} bootstrap over contracts. Here the clauses are even more linked to each other than in the presence task: the 2{,}667 span decisions come from only 102 contracts, and a contract with unusual writing (numbered sub-clauses, many defined terms) moves all of its clauses in the same direction. So Table~\ref{tab:span} gives two intervals for each score: one that resamples \emph{contracts} (the correct way) and one that resamples \emph{clauses} one by one (the naive way), because the difference between them is itself useful.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \caption{Span extraction results}
 \label{tab:span}
@@ -163,7 +164,7 @@ We test the fine-tuned FLAN-T5-small on 150 test clauses (chosen with seed 42) a
 
 Because the clauses are the same in both tests, the difference between the two scores shows exactly one thing: how much of the ROUGE-L score comes from the reference sentences all being the same, rather than from real summarizing. Table~\ref{tab:sumeval} shows the result. The October 2026 re-trained summarizer gives exactly the same scores as the original.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \caption{Summarizer ROUGE-L}
 \label{tab:sumeval}
@@ -194,7 +195,7 @@ Three conclusions follow, and we state them plainly.
 
 \textbf{Fine-tuning made the model worse at the real task.} Against the clause-specific references, the \emph{original} model (before fine-tuning) scores 0.299, more than twice the fine-tuned model's 0.116. This does not mean the original FLAN-T5 is a good legal summarizer: it is not. As Table~\ref{tab:sumqual} shows, it mostly repeats the source text, and repeating the source raises a word-overlap score against a reference that uses the same words as the clause. The honest conclusion is narrower but still uncomfortable: our fine-tuning removed whatever clause-specific content the original model had, and replaced it with smooth, general sentences that score well only against references made of the same sentences.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \caption{Fine-tuned vs.\ zero-shot output}
 \label{tab:sumqual}
@@ -229,7 +230,7 @@ Every number so far measured one step on its own, with the other steps out of th
 
 So we ran the whole system on all 102 test contracts and asked one question about each of the 1{,}348 real clauses: does it get through \emph{all three} steps? A clause counts only if (i) the presence step finds its category, (ii) the span step, reading the window the presence step chose (never a window chosen using the real answer), returns text that overlaps the real clause with token-F1 $\geq$ 0.5, and (iii) the risk level given is the correct one. Table~\ref{tab:e2e} shows how many clauses are lost at each step.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \caption{End-to-end clause survival}
 \label{tab:e2e}
@@ -260,7 +261,7 @@ The risk step is the one place where nothing is lost: the level is a fixed looku
 \subsubsection{Where the clauses are lost}
 The big loss happens at the span step, and it has two separate causes. We separated them by checking, for every clause whose category was found, whether the window chosen by the presence model really contained the clause.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \caption{Span-stage loss breakdown}
 \label{tab:e2eattr}
@@ -299,7 +300,7 @@ Micro-F1 over 4{,}182 decisions treats every decision as equally important. A pe
 
 Table~\ref{tab:riskeval} splits the 41 categories into the three risk levels of our own risk table and scores each model within each level.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \caption{Results by risk band}
 \label{tab:riskeval}
@@ -350,7 +351,7 @@ Finally, this is one more reason to take Section~\ref{sec:taxvalid} seriously. E
 \label{sec:errorexamples}
 The confusion matrix counts 309 false positives and 291 false negatives, but counts alone do not show whether the model fails for silly or understandable reasons. Table~\ref{tab:errors} shows real cases from the test contracts: false positives sorted by the model's own confidence, because a system's most confident mistakes are the most revealing.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \caption{Representative errors}
 \label{tab:errors}
@@ -400,7 +401,7 @@ Section~\ref{sec:bootstrap} supports the AND-ensemble because of the kind of mis
 
 We sorted the 41 categories by how often they appear in the \emph{training} data, took the ten rarest (11 to 42 positive training contracts, 70 positive test decisions in total), and compared the AND rule with the transformer alone on these ten and on the other 31 categories separately. Table~\ref{tab:raretail} gives the result, and the two halves tell different stories.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \caption{Rare vs.\ common categories}
 \label{tab:raretail}
@@ -441,7 +442,7 @@ Two design choices made before training, max-pooling as the aggregation rule and
 \label{sec:pooling}
 Section~\ref{sec:mil} chose max-pooling because it \emph{is} the multiple-instance decision rule \cite{maron1998mil}, a bag is positive if any instance is, and Sections~\ref{sec:mil} and~\ref{sec:budget} then blamed max-pooling for the transformer's inflated false positives. Both statements were made without ever trying an alternative, which is not good enough for a claim the project leans on. We therefore scored every window once and compared aggregation functions on \emph{identical} window scores, so the only thing varying is the rule.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \caption{Aggregation ablation}
 \label{tab:pooling}
@@ -482,7 +483,7 @@ A caveat on how far this ablation goes. It varies only the function applied to w
 
 Every presence decision in this project, and every clause card in Clausify, comes from comparing a score with 0.5. Section~\ref{sec:valprotocol} notes that this threshold was never chosen: it is simply the default for a two-class model. This raises two questions we had not asked: is 0.5 a good place to draw the line, and does the score being compared with it mean anything? Figure~\ref{fig:threshcal} answers both.
 
-\begin{figure}[ht]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=\textwidth]{threshold_calibration.png}
 \caption{Threshold and calibration}
@@ -514,7 +515,7 @@ Table~\ref{tab:ensemble} is a ranking, and a ranking tempts the reader to treat 
 
 The natural tool is a \textbf{bootstrap confidence interval}, but what we resample matters. The 4{,}182 test decisions are not independent: 41 of them come from the same contract, and an unusual contract (very long, or oddly written) moves all 41 together. Resampling single (contract, category) decisions would ignore this and give intervals that are far too narrow. So we resample whole \emph{contracts} with replacement (a cluster bootstrap): we draw 102 contracts from the 102 we have, recompute micro-F1 for both models, and repeat 10{,}000 times. Both models are scored on exactly the same resample each time, so the difference is \emph{paired}, which makes the interval for the difference much narrower than the two separate intervals would suggest.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \caption{Cluster bootstrap results}
 \label{tab:bootstrap}
@@ -524,9 +525,9 @@ The natural tool is a \textbf{bootstrap confidence interval}, but what we resamp
 \toprule
 \textbf{Comparison} & \textbf{Difference in micro-F1} & \textbf{95\% CI} & \textbf{$P(>0)$}\\
 \midrule
-AND-ensemble vs.\ TF--IDF baseline & $+0.0042$ & $[-0.0038,\ +0.0116]$ & 0.854\\
-TF--IDF baseline vs.\ transformer  & $+0.0824$ & $[+0.0645,\ +0.1013]$ & 1.000\\
-AND-ensemble vs.\ transformer      & $+0.0866$ & $[+0.0707,\ +0.1033]$ & 1.000\\
+AND-ensemble vs.\ TF--IDF baseline & $+0.0042$ & $[-0.0037,\ +0.0115]$ & 0.855\\
+TF--IDF baseline vs.\ transformer  & $+0.0824$ & $[+0.0647,\ +0.1013]$ & 1.000\\
+AND-ensemble vs.\ transformer      & $+0.0866$ & $[+0.0705,\ +0.1035]$ & 1.000\\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
@@ -536,9 +537,9 @@ AND-ensemble vs.\ transformer      & $+0.0866$ & $[+0.0707,\ +0.1033]$ & 1.000\\
 
 The three comparisons do not come out the same way, and that difference is the point.
 
-\textbf{The ensemble's win over the baseline is not proven.} The interval is $[-0.0038, +0.0116]$, which includes zero, and the ensemble is ahead in 85.4\% of resamples: more often than not, but well short of the 97.5\% a clear win would need. On their own the two models score 0.779 (95\% CI $[0.762, 0.795]$) and 0.775 (95\% CI $[0.757, 0.791]$), and these intervals almost completely overlap. On this test set we cannot tell the AND-ensemble and the TF--IDF baseline apart, and we state this as a measured fact, not as a hedge. The top two rows of Table~\ref{tab:ensemble} should be read as a tie.
+\textbf{The ensemble's win over the baseline is not proven.} The interval is $[-0.0037, +0.0115]$, which includes zero, and the ensemble is ahead in 85.5\% of resamples: more often than not, but well short of the 97.5\% a clear win would need. On their own the two models score 0.779 (95\% CI $[0.762, 0.795]$) and 0.775 (95\% CI $[0.758, 0.791]$), and these intervals almost completely overlap. On this test set we cannot tell the AND-ensemble and the TF--IDF baseline apart, and we state this as a measured fact, not as a hedge. The top two rows of Table~\ref{tab:ensemble} should be read as a tie.
 
-\textbf{The transformer's loss, on the other hand, is real.} The baseline beats the window-based transformer by 0.0824, with an interval of $[+0.0645, +0.1013]$ that is nowhere near zero, and it wins in all 10{,}000 resamples. This matters because the project's two main claims do not stand on equal ground. The finding we trust most, that a whole-document word model beats a window-based DistilBERT at deciding which clauses a contract contains, passes the test easily. The finding we were already careful about, that the AND-ensemble is ahead of the baseline, does not pass. It is good that our caution pointed the right way, but it needed to be checked, not assumed.
+\textbf{The transformer's loss, on the other hand, is real.} The baseline beats the window-based transformer by 0.0824, with an interval of $[+0.0647, +0.1013]$ that is nowhere near zero, and it wins in all 10{,}000 resamples. This matters because the project's two main claims do not stand on equal ground. The finding we trust most, that a whole-document word model beats a window-based DistilBERT at deciding which clauses a contract contains, passes the test easily. The finding we were already careful about, that the AND-ensemble is ahead of the baseline, does not pass. It is good that our caution pointed the right way, but it needed to be checked, not assumed.
 
 None of this weakens the case for the ensemble, because that case never rested on 0.004 of micro-F1. The AND rule earns its place by the \emph{kind of mistakes} it makes, not by its rank: it turns the transformer's many false alarms into balanced precision and recall (Table~\ref{tab:metrics}). Sections~\ref{sec:seeds} and~\ref{sec:raretail} look at what this costs.
 \subsection{How much of this moves if we only change the random seed?}
@@ -547,7 +548,7 @@ Section~\ref{sec:bootstrap} measured one kind of uncertainty: how much the score
 
 This is easy to check, so we trained the presence transformer three times with 24{,}000 training examples, changing nothing but the seed (42, 43 and 44), and tested each run on the same 102 contracts. Seed 42 is the October 2026 run used everywhere else in this chapter; seeds 43 and 44 were trained in August 2026 with the same settings. Table~\ref{tab:seeds} shows the spread.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \caption{Seed variance}
 \label{tab:seeds}
@@ -581,7 +582,7 @@ There is one objection to Section~\ref{sec:bootstrap} that the bootstrap cannot 
 
 The only way to settle this is to remove the difference, so in August 2026 we retrained the presence transformer on \textbf{all 53{,}662 training windows}, with every other setting the same: same windows, same negative sampling, same settings, same seed, same test. The run took 140.7 minutes on the same laptop, against about 50 minutes for the smaller version. Table~\ref{tab:budget} shows the result. Both runs in this table are from August 2026, so they are compared with each other, not with the October numbers.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \caption{Training-budget control}
 \label{tab:budget}
@@ -618,7 +619,7 @@ Sections~\ref{sec:budget} and~\ref{sec:seeds} tested two things that could move 
 
 Retraining the transformer on twenty splits is too expensive, but the TF--IDF baseline retrains in under a minute. Since every comparison in this project is made against it, its spread across splits shows how much the comparison itself could move. We made \textbf{20 separate contract-level 80/20 splits} and retrained the baseline on each.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \caption{Split variance}
 \label{tab:splitvar}
@@ -647,7 +648,7 @@ What we cannot say anything about is the stability of \emph{individual categorie
 \section{Comparisons and Relationships}
 Table~\ref{tab:scorecard} brings together the test results of all three models. Every number was produced by the separate test notebook running on the saved models trained on the 80/20 split.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \caption{Final test results}
 \label{tab:scorecard}
@@ -687,7 +688,7 @@ Putting the chapter together, the results fall into three groups, and it matters
   \item For \emph{summarization}, a 41-sentence template seed turns the task into classification. The fine-tuned model reproduces a template verbatim on 100\% of test clauses, and against clause-specific references it scores no better than the template alone (Section~\ref{sec:summ}). A high automatic metric should not be believed until the outputs have been read.
 \end{enumerate}
 
-\textbf{A claim we withdrew.} The AND-ensemble's first place in Table~\ref{tab:ensemble} is not a proven result. Its lead over the baseline is $+0.0042$. Seed noise alone (SD $0.0015$) would not wipe it out, but the bootstrap over contracts puts it inside $[-0.0038, +0.0116]$ (Section~\ref{sec:bootstrap}), and a different split moves the baseline by $0.0063$ (Section~\ref{sec:splitvar}). Two of the three checks say the top two rows of that table are a tie. What the ensemble does earn is balanced mistakes and about six times less seed variance than the transformer alone.
+\textbf{A claim we withdrew.} The AND-ensemble's first place in Table~\ref{tab:ensemble} is not a proven result. Its lead over the baseline is $+0.0042$. Seed noise alone (SD $0.0015$) would not wipe it out, but the bootstrap over contracts puts it inside $[-0.0037, +0.0115]$ (Section~\ref{sec:bootstrap}), and a different split moves the baseline by $0.0063$ (Section~\ref{sec:splitvar}). Two of the three checks say the top two rows of that table are a tie. What the ensemble does earn is balanced mistakes and about six times less seed variance than the transformer alone.
 
 \textbf{Costs we did not see until we looked for them.} Two results in this chapter came from questions we had not thought to ask at first, and both are unflattering.
 \begin{itemize}[itemsep=2pt]

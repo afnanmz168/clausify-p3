@@ -1,0 +1,16 @@
+Loading weights:   0%|          | 0/190 [00:00<?, ?it/s]Loading weights: 100%|██████████| 190/190 [00:00<00:00, 5755.87it/s]
+[transformers] The tied weights mapping and config for this model specifies to tie shared.weight to lm_head.weight, but both are present in the checkpoints with different values, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning.
+Loading weights:   0%|          | 0/190 [00:00<?, ?it/s]Loading weights: 100%|██████████| 190/190 [00:00<00:00, 6042.29it/s]
+[transformers] The tied weights mapping and config for this model specifies to tie shared.weight to lm_head.weight, but both are present in the checkpoints with different values, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning.
+  0/150
+  25/150
+  50/150
+  75/150
+  100/150
+  125/150
+ft_vs_template {'mean': 0.7750217601665172, 'ci': [0.7178434271653324, 0.8328028592587672]}
+ft_vs_diverse {'mean': 0.11625864612671573, 'ci': [0.10473663446616588, 0.12824461669758946]}
+zs_vs_diverse {'mean': 0.29865257796459604, 'ci': [0.2752683330526226, 0.32236534216678026]}
+template_vs_diverse {'mean': 0.11503186283377848, 'ci': [0.1039238680497347, 0.1266322086659941]}
+exact_template_rate 0.7
+n 150

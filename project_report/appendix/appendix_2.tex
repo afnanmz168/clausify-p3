@@ -61,36 +61,40 @@ The first 16 characters of the SHA-256 hash of each file (October 2026 models), 
 \end{adjustbox}
 
 \section*{Commands, and which table each regenerates}
+The four \texttt{stage} scripts are run from the \texttt{notebooks/} folder, exactly as listed in \texttt{retrain/README.md}; every other command works from the project folder. Rows marked ``August'' are the August 2026 control runs.
 
-\begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{l >{\raggedright\arraybackslash}p{7.4cm}}
+{\small
+\begin{longtable}{>{\raggedright\arraybackslash}p{7.6cm} >{\raggedright\arraybackslash}p{6.4cm}}
 \toprule
 \textbf{Command} & \textbf{Regenerates}\\
 \midrule
-\texttt{python notebooks/build\_artifacts.py} & All three checkpoints, the split and the fitted baseline ($\approx$85 min)\\
-\texttt{jupyter run notebooks/test.ipynb} & Tables 6.1--6.5 (presence, confusion matrix, span, summarizer)\\
-\texttt{python analysis/bootstrap\_ci.py} & Table 6.2 (cluster bootstrap)\\
-\texttt{python analysis/presence\_run.py -{}-tag full53k -{}-max-train 0} & Table~\ref{tab:budget} (full-data control, $\approx$140 min train $+$ 50 min eval)\\
-\texttt{python analysis/presence\_run.py -{}-tag s43 -{}-seed 43} & Table~\ref{tab:seeds} (seed variance; repeat for 44)\\
-\texttt{python analysis/compare\_runs.py} & Tables~\ref{tab:budget} and~\ref{tab:seeds} contrasts\\
-\texttt{python analysis/span\_ci.py} & Table~\ref{tab:span} (span intervals)\\
-\texttt{python analysis/rare\_tail.py} & Table~\ref{tab:raretail}\\
-\texttt{python analysis/risk\_threshold\_calib.py} & Table~\ref{tab:riskeval}, Figure~\ref{fig:threshcal}\\
-\texttt{python analysis/split\_variance.py} & Table~\ref{tab:splitvar}\\
-\texttt{python analysis/e2e.py AND} & Tables~\ref{tab:e2e} and~\ref{tab:e2eattr}\\
-\texttt{python analysis/summ\_pilot.py} & Table~\ref{tab:sumeval}\\
-\texttt{python analysis/error\_examples.py} & Table~\ref{tab:errors}\\
-\texttt{python analysis/lf\_one.py longformer 4096 1 train} & Table~\ref{tab:lfbench} (one row per invocation)\\
-\texttt{python analysis/app\_bench.py} & Table~\ref{tab:appbench}\\
-\texttt{python analysis/verify\_numbers.py} & Cross-checks all 84 reported figures and 17 derived
-comparisons in Chapters 5--8 against the analysis artifacts; prints \texttt{0 mismatched} when the
-text and the data agree\\
-\texttt{python review/agreement.py <sheets>} & Reviewer agreement and Cohen's/Fleiss' $\kappa$ once
-the taxonomy review sheets are returned\\
-\texttt{tectonic project\_report/main.tex} & This project report\\
+\endhead
+\texttt{python3 ../retrain/smoke\_test.py} & Checks that the four saved models load and run\\
+\texttt{python3 ../retrain/stage2a\_presence\_train.py} & Split, TF--IDF baseline and presence transformer ($\approx$50 min)\\
+\texttt{python3 ../retrain/stage2a\_presence\_test.py} & Tables~\ref{tab:ensemble}--\ref{tab:zerof1}, Figures~\ref{fig:ensemble}--\ref{fig:percat} ($\approx$50 min)\\
+\texttt{python3 ../retrain/stage2b\_span\_train.py}, then \texttt{\_test.py} & Span model and its scores in Table~\ref{tab:span} ($\approx$25 + 2 min)\\
+\texttt{python3 ../retrain/stage1\_summarizer\_train.py}, then \texttt{\_test.py} & Summarizer and its template score in Table~\ref{tab:sumeval} ($\approx$13 + 3 min)\\
+\texttt{python3 retrain/analysis\_oct2026/\allowbreak make\_probs.py} & Saves the presence scores in the form the analysis scripts below read (run once after the presence test)\\
+\texttt{python3 retrain/analysis\_oct2026/\allowbreak span\_ci.py} & Intervals in Table~\ref{tab:span}\\
+\texttt{python3 retrain/analysis\_oct2026/\allowbreak summ\_pilot.py} & Tables~\ref{tab:sumeval} and~\ref{tab:sumqual}\\
+\texttt{python3 retrain/analysis\_oct2026/\allowbreak e2e.py} & Tables~\ref{tab:e2e} and~\ref{tab:e2eattr}\\
+\texttt{python3 retrain/analysis\_oct2026/\allowbreak risk\_threshold\_calib.py} & Table~\ref{tab:riskeval}, Figure~\ref{fig:threshcal}\\
+\texttt{python3 retrain/analysis\_oct2026/\allowbreak error\_examples.py} & Table~\ref{tab:errors}\\
+\texttt{python3 retrain/analysis\_oct2026/\allowbreak rare\_tail.py} & Table~\ref{tab:raretail}\\
+\texttt{python3 retrain/analysis\_oct2026/\allowbreak pooling\_ablation.py} & Table~\ref{tab:pooling} ($\approx$55 min)\\
+\texttt{python3 retrain/analysis\_oct2026/\allowbreak bootstrap\_ci.py} & Table~\ref{tab:bootstrap}\\
+\texttt{python3 analysis/presence\_run.py -{}-tag s43 -{}-seed 43} & Seeds 43 and 44 in Table~\ref{tab:seeds} (August; repeat for 44)\\
+\texttt{python3 analysis/presence\_run.py -{}-tag full53k -{}-max-train 0} & Table~\ref{tab:budget} (August; $\approx$140 min)\\
+\texttt{python3 analysis/compare\_runs.py} & Differences in Table~\ref{tab:budget} (August)\\
+\texttt{python3 analysis/split\_variance.py} & Table~\ref{tab:splitvar}\\
+\texttt{python3 analysis/lf\_one.py longformer 4096 1 train} & Table~\ref{tab:lfbench} (one row per run)\\
+\texttt{python3 analysis/app\_bench.py} & Table~\ref{tab:appbench}\\
+\texttt{python3 retrain/verify\_report.py} & Checks the reported numbers in this report against the result files; prints \texttt{0 mismatched} when they agree\\
+\texttt{python3 review/agreement.py <sheets>} & Reviewer agreement and Cohen's/Fleiss' $\kappa$ once the risk-table review sheets are returned\\
+\texttt{tectonic project\_report/main.tex} & This report\\
 \bottomrule
-\end{tabular}
-\end{adjustbox}
+\end{longtable}
+}
 
 \section*{Known determinism caveats}
 \begin{itemize}[itemsep=2pt]
@@ -102,7 +106,7 @@ the taxonomy review sheets are returned\\
 \chapter{Repository and Artifact Layout}
 \label{app:repo}
 
-{\footnotesize
+{\scriptsize
 \begin{verbatim}
 clausify-p3/  (github.com/afnanmz168/clausify-p3)   -- research deliverable
 |- project_report/                    -- this report (LaTeX, CSE400 template)
@@ -124,6 +128,7 @@ clausify-p3/  (github.com/afnanmz168/clausify-p3)   -- research deliverable
 |  |- stage2a_* stage2b_* stage1_*    -- train/test scripts, logs, results
 |  |- smoke_test.py, make_figures.py
 |  |- analysis_oct2026/               -- analyses re-run on the new models
+|  |- verify_report.py                -- checks report numbers against results
 |- analysis/
 |  |- bootstrap_ci.py                 -- cluster bootstrap, presence models
 |  |- span_ci.py                      -- cluster bootstrap, span extraction
@@ -138,7 +143,7 @@ clausify-p3/  (github.com/afnanmz168/clausify-p3)   -- research deliverable
 |  |- agreement.py                    -- reviewer agreement (kappa)
 |- demo_clause.txt                    -- 18-clause demonstration contract
 
-clausify-p3-app/  (github.com/afnanmz168/clausify-p3-app)   -- Clausify application
+clausify-p3-app/  (github.com/afnanmz168/clausify-p3-app)
 |- app.py                             -- Streamlit UI
 |- model_utils.py                     -- inference: all four models, clause mode
 |- features.py                        -- file upload, highlighting, reports
