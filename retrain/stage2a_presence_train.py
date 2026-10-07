@@ -136,7 +136,7 @@ for j in range(len(cats)):
 supp   = Y_test.sum(0)
 common = supp >= 10
 summary = pd.DataFrame([
-    {"metric": "micro-F1  (all 3,116 cells equal)",
+    {"metric": f"micro-F1  (all {Y_test.size:,} cells equal)",
      "value": round(f1_score(Y_test.ravel(), P.ravel(), zero_division=0), 3)},
     {"metric": "weighted-F1  (by support)",
      "value": round(f1_score(Y_test, P, average="weighted", zero_division=0), 3)},
@@ -249,8 +249,8 @@ strategies = [
     ("category name   (top3)", {c: c for c in cats},                      3),
     ("name+question   (top3)", {c: c + " " + cat_question[c] for c in cats}, 3),
 ]
-pd.DataFrame([{"strategy": s, "topk": k, "hit_rate": round(hit_rate(q, k), 3)}
-              for s, q, k in strategies])
+print(pd.DataFrame([{"strategy": s, "topk": k, "hit_rate": round(hit_rate(q, k), 3)}
+                    for s, q, k in strategies]).to_string())   # Table 4.1 of the report
 
 # === Cell 17: build window-level training examples (MIL, TRAIN split only) ===
 import random as _random

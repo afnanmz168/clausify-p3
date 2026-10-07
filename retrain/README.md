@@ -100,6 +100,7 @@ python3 -u risk_threshold_calib.py 2>&1 | tee risk_threshold_calib.log   # Table
 python3 -u error_examples.py 2>&1 | tee error_examples.log      # Table 5.11
 python3 -u rare_tail.py 2>&1 | tee rare_tail.log                # Table 5.12
 caffeinate -i python3 -u pooling_ablation.py 2>&1 | tee pooling_ablation.log  # Table 5.13 (~55 min; keep the Mac awake)
+python3 -u app_bench.py 2>&1 | tee app_bench.log                # Table 4.6, app speed with the current app (~3 min)
 ```
 
 Finally, check every number in the report against these result files (from the project folder):

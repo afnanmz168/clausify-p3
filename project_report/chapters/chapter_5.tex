@@ -596,7 +596,7 @@ The ``validation'' loss printed by that run (0.096 $\to$ 0.075) was really a los
 \subsection{Optimization Schedule}
 Table~\ref{tab:hyper} gives the highest learning rate of each model, but the schedule that lowers it over time matters as much. All three models use the same optimizer setup: AdamW with a linear decay schedule, no warm-up, and gradient clipping at 1.0. Figure~\ref{fig:lrsched} plots the three schedules. We read the presence and span settings from the \texttt{training\_args.bin} file saved next to each model, so the plot shows what actually ran.
 
-Two of these choices need a reason. Skipping warm-up is usually risky, but these are short fine-tuning runs (1{,}000--3{,}000 steps) that start from pre-trained weights with small learning rates. Warm-up mainly keeps the first updates of a randomly started model stable, which hardly applies here, and the smooth loss curves in Figures~\ref{fig:presloss} and~\ref{fig:sumloss} show no early problems. Gradient clipping at 1.0 stayed on throughout. On the MPS backend this matters, because it stops a single bad batch from causing the kind of breakdown we saw with DeBERTa-v3 (Section~\ref{sec:engineering}).
+Two of these choices need a reason. Skipping warm-up is usually risky, but these are short fine-tuning runs (1{,}000--3{,}000 steps) that start from pre-trained weights with small learning rates. Warm-up mainly keeps the first updates of a randomly started model stable, which hardly applies here, and the smooth loss curves in Figures~\ref{fig:presloss} and~\ref{fig:sumloss} show no early problems. Gradient clipping at 1.0 stayed on throughout. Clipping is important on the MPS backend, because it stops a single bad batch from causing the kind of breakdown we saw with DeBERTa-v3 (Section~\ref{sec:engineering}).
 
 \begin{figure}[ht]
 \centering
@@ -605,9 +605,9 @@ Two of these choices need a reason. Skipping warm-up is usually risky, but these
 \label{fig:lrsched}
 \end{figure}
 
-One limitation here we could only partly fix. A record of the gradient size at every step would show directly that training stayed healthy, instead of inferring it from the loss. We did not keep it for the three original runs: the temporary checkpoint folders were deleted after training, so only the final models and the loss values below remain.
+A record of the gradient size during training shows directly whether training stayed healthy, instead of leaving us to infer it from the loss. The original August runs did not keep it, because their temporary checkpoint folders were deleted after training. The October 2026 re-training logged it every 100 steps for all three models, and so did the August full-data presence run in Section~\ref{sec:budget}.
 
-We did keep it for the full-data presence run in Section~\ref{sec:budget}, which uses exactly the same optimizer setup, and it shows something the loss curves do not. Across the 63 logged points the gradient size ranges from 0.55 to 11.97 with a median of 4.66, and 98.4\% of logged steps are above the clipping limit of 1.0. Nothing broke: there are no NaN values or large spikes, and the loss falls smoothly throughout. But clipping was active on almost every step, so the update size was cut back all the time, and the learning rate of $2\times10^{-5}$ overstates the real step size. This weakens the warm-up argument above a little, since part of what kept the early updates stable was almost certainly the clipping as well as the small learning rate. Our smooth loss curves are not good evidence that skipping warm-up is safe in general. Re-running the span and summarizer training with the same logging would close this gap in about half an hour.
+These logs show something the loss curves do not. In the October runs the gradient size ranges from 1.45 to 10.60 (median 4.30) for the presence model and from 10.11 to 20.92 (median 12.72) for the span model, so every logged step of both runs is above the clipping limit of 1.0. The August full-data presence run looks the same: across its 63 logged points the gradient size ranges from 0.55 to 11.96 with a median of 4.65, and 98.4\% of the points are above 1.0. The summarizer's gradients are much smaller (0.55 to 1.38, median 1.07, with 70\% of points above 1.0). Nothing broke in any run: there are no NaN values or large spikes, and the losses fall smoothly. For the two DistilBERT models, however, clipping was active on almost every step, so the update size was cut back all the time and the learning rates in Table~\ref{tab:hyper} overstate the real step size. This weakens the warm-up argument above a little, since part of what kept the early updates stable was almost certainly the clipping as well as the small learning rate. Our smooth loss curves are not good evidence that skipping warm-up is safe in general.
 \subsection{Training the Presence Classifier}
 \label{sec:prestrain}
 The TF--IDF + logistic-regression baseline trains in under a minute. On the 20\% test set it reaches micro-F1 0.775, weighted-F1 0.777, macro-F1 0.572 over all 41 categories, and 0.666 over the 34 categories with at least ten test positives. The gap between micro and macro scores comes from the rare categories with very few examples.
@@ -636,10 +636,10 @@ FLAN-T5-small was fine-tuned on 4{,}000 clause--template pairs on the CPU. This 
 \label{sec:engineering}
 A few practical lessons may save time for anyone repeating this work on Apple-Silicon computers:
 \begin{itemize}[itemsep=2pt]
-  \item \textbf{DeBERTa-v3 is unstable on MPS.} Our first-choice model produced NaN (broken) gradients on the MPS backend and was far too slow on the CPU (about 89 seconds per step). We switched to DistilBERT; the method stays the same, and on a CUDA machine the model name can simply be changed back.
-  \item \textbf{MPS memory is not freed inside one program.} After two transformer trainings in the same session, the summarizer ran out of MPS memory even after we deleted objects and cleared the cache. What actually works is restarting the kernel or training the (small) summarizer on the CPU, which is what we did.
-  \item \textbf{Library changes.} \texttt{transformers} 5.x renamed \texttt{Trainer(tokenizer=\dots)} to \texttt{processing\_class=\dots}. We also turned off mixed precision (\texttt{fp16=bf16=False}) and converted the loss logits to fp32 to avoid data-type problems on MPS.
-  \item \textbf{Repeatability.} Everything needed (the split in \texttt{artifacts/split.json}, the baseline in \texttt{artifacts/baseline.pkl}, and the three trained models) is saved to disk, and a separate test notebook recreates every number in Chapter~5 from those files alone.
+  \item DeBERTa-v3 is unstable on MPS. Our first-choice model produced NaN (broken) gradients on the MPS backend and was far too slow on the CPU (about 89 seconds per step). We switched to DistilBERT; the method stays the same, and on a CUDA machine the model name can simply be changed back.
+  \item MPS memory is not freed inside one program. After two transformer trainings in the same session, the summarizer ran out of MPS memory even after we deleted objects and cleared the cache. What actually works is restarting the kernel or training the (small) summarizer on the CPU, which is what we did.
+  \item Library changes. \texttt{transformers} 5.x renamed \texttt{Trainer(tokenizer=\dots)} to \texttt{processing\_class=\dots}. We also turned off mixed precision (\texttt{fp16=bf16=False}) and converted the loss logits to fp32 to avoid data-type problems on MPS.
+  \item Repeatability. Everything needed (the split in \texttt{artifacts/split.json}, the baseline in \texttt{artifacts/baseline.pkl}, and the three trained models) is saved to disk, and a separate test notebook recreates every number in Chapter~5 from those files alone.
 \end{itemize}
 \subsection{Measured: What Sparse Attention Would Have Cost}
 \label{sec:lfbench}
@@ -784,7 +784,7 @@ The app follows the same steps that were used in testing:
   \item Summarizer. FLAN-T5-small receives each quoted clause with the same prompt and settings as in testing and returns one plain-English sentence.
 \end{enumerate}
 
-All the models run on the CPU, so the app works on any computer, and a typical contract takes about 27 seconds once the models are loaded (Table~\ref{tab:appbench}). The app loads the trained models saved by the training code (\texttt{presence\_mil}, \texttt{span}, \texttt{summarizer} and the TF--IDF \texttt{baseline.pkl}). When they are not on the computer, as on a cloud server, it downloads the same files once from a public Hugging Face model repository.
+All the models run on the CPU, so the app works on any computer, and a typical contract takes about 30 seconds once the models are loaded (Table~\ref{tab:appbench}). The app loads the trained models saved by the training code (\texttt{presence\_mil}, \texttt{span}, \texttt{summarizer} and the TF--IDF \texttt{baseline.pkl}). When they are not on the computer, as on a cloud server, it downloads the same files once from a public Hugging Face model repository.
 \subsubsection{Implementation Notes}
 The app is a single-page Streamlit program (\texttt{app.py}) built on two small modules. \texttt{model\_utils.py} loads the models and handles windows, scoring, clause finding, the summarizer and the risk table, and \texttt{features.py} reads uploaded files, builds the highlighted view and creates the reports. Two test contracts come with the app: a real CUAD contract, and a made-up ``Master Software License and Distribution Agreement'' that we wrote to cover many of the 41 categories. On the made-up contract the app finds clauses at all three risk levels and puts High-risk clauses such as \emph{Liquidated Damages}, \emph{Exclusivity}, \emph{IP Ownership Assignment} and \emph{Uncapped Liability} at the top of the report, which are the before-you-sign warnings the design aims for.
 \subsubsection{Clause-by-Clause Mode}
@@ -809,21 +809,21 @@ Chapter~2 explained that we chose a small model partly because the app must resp
 \toprule
 \textbf{Contract} & \textbf{Characters} & \textbf{Windows scored} & \textbf{Time} & \textbf{Peak RSS}\\
 \midrule
-Shortest in test set & 1{,}283 & 1 & 2.1\,s & 1.06\,GB\\
-25th percentile & 18{,}104 & 12 & 13.3\,s & 1.19\,GB\\
-Median & 35{,}136 & 24 & 27.1\,s & 1.50\,GB\\
-75th percentile & 65{,}547 & 30 (capped) & 32.4\,s & 1.51\,GB\\
-Longest in test set & 289{,}615 & 30 (capped) & 32.0\,s & 1.52\,GB\\
+Shortest in test set & 1{,}283 & 1 & 2.7\,s & 1.13\,GB\\
+25th percentile & 18{,}104 & 12 & 15.0\,s & 1.21\,GB\\
+Median & 35{,}136 & 24 & 30.1\,s & 1.35\,GB\\
+75th percentile & 65{,}547 & 30 (capped) & 32.7\,s & 1.35\,GB\\
+Longest in test set & 289{,}615 & 30 (capped) & 34.8\,s & 1.35\,GB\\
 \midrule
-\multicolumn{3}{l}{\emph{median 27.1\,s \quad mean 21.4\,s \quad worst case 32.4\,s}} & & \\
+\multicolumn{3}{l}{\emph{median 30.1\,s \quad mean 23.1\,s \quad worst case 34.8\,s}} & & \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
 
-{\footnotesize\singlespacing \emph{Note.} Measured through the application's own \texttt{analyze()} entry point. CPU only, Apple M4, models already loaded (cold load adds 0.4\,s). Peak RSS is the whole Python process, both models resident.\par}
+{\footnotesize\singlespacing \emph{Note.} Measured in October 2026 through the application's own \texttt{analyze()} entry point, with the October 2026 models. CPU only, Apple M4, models already loaded (loading adds 0.6\,s). Peak RSS is the memory of the whole Python process.\par}
 \end{table}
 
-An earlier draft said a contract takes ``roughly 5--15 seconds''. That was a guess from watching the demo on short inputs, and it was wrong: a typical contract takes 27.1 seconds.
+An earlier draft said a contract takes ``roughly 5--15 seconds''. That was a guess from watching the demo on short inputs, and it was wrong: a typical contract takes about 30 seconds.
 
 Two design effects show in the numbers. Time grows in proportion to the number of windows, because most of the work is 41 categories $\times$ windows passes through DistilBERT, with each (category, window) pair scored once and nothing reused between categories. The 30-window limit keeps the worst case short. Without it the longest test contract would take several minutes, but with it every contract longer than about 45{,}500 characters is cut at the same point. The limit buys speed with a hidden cost in recall: clauses after the cut cannot be found, and no Chapter~5 number shows this, because those tests read the full document. It is a limit of the app and not of the method, and Section~\ref{sec:demolimits} says so.
 

@@ -2,18 +2,18 @@
 \subsection{Functional requirements}
 \begin{enumerate}[label=\textbf{FR\arabic*}, itemsep=2pt, leftmargin=1.4cm]
   \item The system shall accept a contract as pasted text or as an uploaded \texttt{.pdf}, \texttt{.docx} or \texttt{.txt} file.
-  \item For each of the 41 CUAD clause categories, the system shall decide whether the contract has a clause of that type and show a score.
+  \item For each of the 41 CUAD clause categories, the system shall decide whether the contract has a clause of that type, and shall show the detection score of each type it finds.
   \item For each category found, the system shall show the clause text from the user's own contract.
   \item The system shall give every clause found a High, Medium or Low risk level and a one-line reason in plain English.
   \item The system shall show the clauses grouped by risk level (High first) and sorted by score within each group.
-  \item The system shall let the user analyze either a whole contract or a list of separate clauses, and shall show the score of all 41 categories.
+  \item The system shall let the user analyze either a whole contract or a list of separate clauses, with one card per clause in the second case.
 \end{enumerate}
 
 \subsection{Non-functional requirements}
 \begin{itemize}[itemsep=2pt]
   \item Privacy: all models shall run on the user's own computer, and no contract text shall be sent to another service or saved to disk.
   \item Hardware: all models shall train and run on one ordinary laptop without a CUDA GPU.
-  \item Speed: analyzing a typical contract shall take no more than tens of seconds on a CPU (measured: median 27.1\,s, worst case 32.4\,s; Table~\ref{tab:appbench}).
+  \item Speed: analyzing a typical contract shall take no more than tens of seconds on a CPU (measured: median 30.1\,s, worst case 34.8\,s; Table~\ref{tab:appbench}).
   \item Fair testing: every reported score shall come from contracts the models never saw during training (split by contract), and no setting shall be chosen by looking at the test set.
   \item Repeatability: the split, the baseline model and all trained models shall be saved, and a separate notebook shall recreate every reported number from them.
   \item Openness: the app shall say that it is not legal advice, and every risk level shall come with a written reason (Appendix~\ref{app:taxonomy}).
@@ -58,7 +58,7 @@ The system is not legal advice, and it says so. Its biggest risk to society is f
 CUAD contains US business contracts written in English. Risk levels that make sense under US law may not apply in other countries, and contracts are written differently in different places. The work was inspired by the situation in Bangladesh, but we tested no Bangladeshi contract, so we cannot yet claim these benefits there.
 
 \section{Environmental Impact}
-The project was designed to need little computing power. All models are small (DistilBERT with 67M parameters and FLAN-T5-small). Training the three models used in the app took about 1.5 hours on a laptop, and the app runs on a CPU with at most about 1.5\,GB of memory (Table~\ref{tab:appbench}).
+The project was designed to need little computing power. All models are small (DistilBERT with 67M parameters and FLAN-T5-small). Training the three models used in the app took about 1.5 hours on a laptop, and the app runs on a CPU with at most about 1.4\,GB of memory (Table~\ref{tab:appbench}).
 
 Including the extra test runs (the full-data presence run of 140.7 minutes, two extra seeds, the evaluation runs and the Longformer test), the whole project used about ten hours of laptop computing. If a laptop draws 20--30\,W under load (an estimate, not a measurement), that is well under one kilowatt-hour of electricity, very little compared with the many-GPU training often used for large legal language models.
 
@@ -179,7 +179,7 @@ Users over-trusting the application & High & Not-legal-advice notice; risk badge
 \section{Economic Analysis}
 Developing the system cost no money: the data, models and software are free, and the laptop was already owned (Section~\ref{sec:pm}). The real cost was the team's time and about ten hours of laptop computing.
 
-Running it is also cheap. The models run on a CPU with about 1.5\,GB of memory, so the system can run on ordinary hardware with no cost per contract. Table~\ref{tab:econ} compares this with the two options a user has today.
+Running it is also cheap. The models run on a CPU with about 1.4\,GB of memory, so the system can run on ordinary hardware with no cost per contract. Table~\ref{tab:econ} compares this with the two options a user has today.
 
 \begin{table}[!htbp]
 \centering

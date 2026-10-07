@@ -162,6 +162,24 @@ if pool:
     C("pooling top-3 gain at 0.5", f3(pool["top-3 mean"]["f1_at_05"] - pool["max (thesis)"]["f1_at_05"]))
     C("pooling best gain", f3(pool["max (thesis)"]["best_f1"] - pool["max (thesis)"]["f1_at_05"]))
 
+# ---- app latency (current app, October models) ---------------------------
+ab = J(A, "app_bench.json")
+for r in ab["rows"]:
+    C(f"latency {r['bucket']}", f"{r['chars']:,} {r['windows_after_cap']} {r['seconds']:.1f} {r['peak_rss_gb']:.2f}", "tab:appbench")
+C("latency summary", f"median {ab['median']:.1f} mean {ab['mean']:.1f} worst case {ab['max']:.1f}", "tab:appbench")
+
+# ---- gradient sizes logged during training --------------------------------
+import statistics as _st
+def _g(path):
+    rows = json.load(open(path)); rows = rows if isinstance(rows, list) else rows.get("log_history", rows)
+    return [r["grad_norm"] for r in rows if "grad_norm" in r]
+for nm in ("presence", "span", "summarizer"):
+    g = _g(os.path.join(HERE, f"{nm}_log_history.json"))
+    C(f"grad {nm} range", f"{min(g):.2f} to {max(g):.2f}")
+    C(f"grad {nm} median", f"median {_st.median(g):.2f}")
+g = _g(os.path.join(P, "analysis", "run_full53k_log_history.json"))
+C("grad full53k", f"{len(g)} logged points the gradient size ranges from {min(g):.2f} to {max(g):.2f} with a median of {_st.median(g):.2f}, and {100 * sum(x > 1 for x in g) / len(g):.1f}%")
+
 # ---- run ------------------------------------------------------------------
 def found(s, hay):
     """Values must appear in the given order, separated only by non-numeric table
