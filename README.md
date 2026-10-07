@@ -23,7 +23,7 @@ and **what it means and how risky it is** for the signer, and ships it as the **
 
 All numbers come from a **contract-level 80/20 split** (408 training / 102 test contracts) and the
 October 2026 re-training. The full evaluation — confidence intervals, seed/budget/split controls,
-end-to-end survival (21.7%), risk-weighted results and every caveat — is in the report.
+end-to-end survival (22.0%), risk-weighted results and every caveat — is in the report.
 
 ---
 
@@ -34,8 +34,8 @@ end-to-end survival (21.7%), risk-weighted results and every caveat — is in th
 | **`project_report/`** | **The full project report** (LaTeX, BRAC CSE400 template) — `main.pdf`, ~100 pages |
 | `paper/`, `IEEE_Paper_Clausify.pdf` | Conference-style paper |
 | `notebooks/` | `train.ipynb`, `test.ipynb`, `build_artifacts.py`; `artifacts/` (split, TF-IDF baseline); `outputs/` (trained models) |
-| `retrain/` | Re-training and re-testing scripts with **exact terminal commands** (`retrain/README.md`), logs and results; `smoke_test.py` checks every model |
-| `analysis/` | Scripts behind every statistic in the report (bootstrap, seeds, end-to-end, risk-weighted, ablations) |
+| `retrain/` | Re-training and re-testing scripts with **exact terminal commands** (`retrain/README.md`), logs and results; `analysis_oct2026/` re-runs every analysis on the new models; `smoke_test.py` checks every model; `verify_report.py` checks every reported number |
+| `analysis/` | August 2026 control runs (seeds, training budget, split variance, Longformer cost, app speed) |
 | `data/` | The 80/20 split as CSV |
 | `review/` | Risk-taxonomy review sheet and agreement script for legal reviewers |
 | `demo_clause.txt` | 18-clause demonstration contract (used by the app's tests) |

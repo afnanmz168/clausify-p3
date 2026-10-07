@@ -1,0 +1,21 @@
+Loading weights:   0%|          | 0/104 [00:00<?, ?it/s]Loading weights: 100%|██████████| 104/104 [00:00<00:00, 10229.05it/s]
+scoring 150224 pairs
+  0/150224 0.0m eta 3069.6m
+  25600/150224 11.2m eta 54.6m
+  51200/150224 21.6m eta 41.8m
+  76800/150224 32.8m eta 31.3m
+  102400/150224 43.0m eta 20.1m
+  128000/150224 53.2m eta 9.2m
+scored in 61.931395411491394 min
+
+=== aggregation ablation (transformer alone, and AND with TF-IDF) ===
+pooling         F1@0.5  P@0.5  R@0.5  bestF1   @th  AND F1
+max (thesis)    0.6924  0.558  0.913  0.7529  0.90  0.7789
+mean            0.1636  0.924  0.090  0.7110  0.10  0.1607
+top-3 mean      0.7115  0.662  0.769  0.7253  0.40  0.7428
+top-5 mean      0.6603  0.714  0.614  0.7218  0.30  0.6722
+noisy-OR        0.5908  0.424  0.975  0.7038  0.95  0.7735
+2nd highest     0.6774  0.657  0.700  0.6951  0.40  0.7074
+TF-IDF          0.7747
+
+wrote pooling_ablation.json

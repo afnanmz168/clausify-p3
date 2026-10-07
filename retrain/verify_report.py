@@ -158,7 +158,9 @@ if pool:
     for name, r in pool.items():
         if isinstance(r, dict):
             C(f"pooling {name}", f"{f4(r['f1_at_05'])} {f3(r['precision_at_05'])} {f3(r['recall_at_05'])} "
-                                  f"{f4(r['best_f1'])} {r['best_threshold']:.2f}", "tab:pooling")
+                                  f"{f4(r['best_f1'])} {r['best_threshold']:.2f} {f4(r['and_f1_at_05'])}", "tab:pooling")
+    C("pooling top-3 gain at 0.5", f3(pool["top-3 mean"]["f1_at_05"] - pool["max (thesis)"]["f1_at_05"]))
+    C("pooling best gain", f3(pool["max (thesis)"]["best_f1"] - pool["max (thesis)"]["f1_at_05"]))
 
 # ---- run ------------------------------------------------------------------
 def found(s, hay):

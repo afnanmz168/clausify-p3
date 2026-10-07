@@ -4,9 +4,9 @@ We set out to turn CUAD's clause-finding benchmark into something a person signi
 Those are scores for separate parts, and the most useful thing this project can say is that the scores of the parts are not the score of the system. Answering our five research questions (Section~\ref{sec:rqs}) gave three negative results, and they are our main contribution:
 
 \begin{itemize}[itemsep=3pt]
-  \item \textbf{The windowed transformer does not beat the lexical baseline} (RQ1), and it does not lose for any of the reasons we could have blamed. Not the training budget: the full 53{,}662-window run moves micro-F1 by $-0.0004$. Not the seed: three runs put the gap at 9.5 standard deviations. Not the aggregation rule: six alternatives, each at its own best threshold, all stay behind. The threshold accounts for part of it, an un-chosen 0.5 costs 0.056 micro-F1, and that qualification belongs on the finding, but even the best cell we could construct remains below the baseline.
-  \item \textbf{The summarizer does not summarize} (RQ3). It emits a category template verbatim on every input, and a constant lookup table matches its score against clause-specific references. This is a proof-of-concept classification-to-template component and we describe it that way everywhere.
-  \item \textbf{The pipeline loses most of what its parts find} (RQ4). 21.7\% end-to-end survival against $\approx$64\% predicted, localized to a window-selection failure and a train/inference mismatch: both fixable without a larger model.
+  \item \textbf{The window-based transformer does not beat the simple word model} (RQ1), and it does not lose for any of the reasons we could have blamed. Not the training data: the run on all 53{,}662 windows changes micro-F1 by only $-0.0004$. Not the seed: across three runs the gap is 9.2 standard deviations. Not the way window scores are combined: six rules, each at its own best threshold, all stay behind. The threshold explains part of it, since the unchosen 0.5 costs 0.061 micro-F1, and that belongs next to the finding, but even the best setting we could find (0.753) stays below the baseline (0.775).
+  \item \textbf{The summarizer does not summarize} (RQ3). It outputs a category template word for word for every input, and a fixed lookup table matches its score against clause-specific references. It is a proof-of-concept ``find the category, show its template'' component, and we describe it that way everywhere.
+  \item \textbf{The system loses most of what its parts find} (RQ4). Only 22.0\% of real clauses get through all three steps, against about 65\% predicted from the separate scores. The loss comes from a wrong choice of window and from a mismatch between training and real use, and both can be fixed without a larger model.
 \end{itemize}
 
 RQ5 gave the result we least expected and think is the most important for anyone building a system like this. Our evaluation score and our stated goal never matched: the AND-ensemble wins on micro-F1 but misses 36.9\% of High-risk clauses, while the OR rule, which comes last on micro-F1, misses only 14.2\%. Half of the clauses behind the overall score are Low-risk: dates, party names, governing law. A system built to warn a signer before signing was being chosen by a score dominated by the clauses that matter least.
@@ -41,7 +41,7 @@ The main contributions of this work are:
 \label{sec:threats}
 The results in Chapter~5 depend on choices that could change the conclusions if they were wrong. We list them under the four usual headings, and in each case we say whether we \emph{measured} the threat or only \emph{note} it.
 
-\subsection{Internal validity: could our own procedure have produced these numbers?}
+\subsection{Internal Validity: Could Our Own Method Have Produced These Numbers?}
 \textbf{Settings were never tuned} (Section~\ref{sec:valprotocol}). This removes the usual threat, since no setting was chosen by trying versions on the test set, but it creates the opposite one: the transformer competes with standard default settings against a baseline that has almost no settings to get wrong. Section~\ref{sec:threshold} shows this is a real effect: the unchosen 0.5 threshold costs the transformer 0.061 micro-F1, so part of the main gap comes from the threshold, not from the model. \emph{We think this is the most serious threat, and it limits our main finding.}
 
 \textbf{An early test run of the summarizer tracked its loss on test-split clauses} (Section~\ref{sec:valprotocol}). No model was chosen from that run, and the final model was trained again without any evaluation set, so no reported score depends on it. But it was the wrong practice, and the ``validation'' loss it printed should be ignored. Figure~\ref{fig:sumloss} now shows the October 2026 re-training, which used no evaluation set.
@@ -50,7 +50,7 @@ The results in Chapter~5 depend on choices that could change the conclusions if 
 
 \textbf{No seed variation for the span model and the summarizer.} Only the presence model was re-run with new seeds (Section~\ref{sec:seeds}). The span model and the summarizer were each trained again with the same seed and gave the same scores to within 0.001, so their seed variance is still unmeasured.
 
-\subsection{Construct validity: do our metrics measure what we claim?}
+\subsection{Construct Validity: Do Our Scores Measure What We Claim?}
 \textbf{ROUGE-L does not measure summary quality here, and we can show it.} Against our 41 templates it gives 0.775; against clause-specific references it gives 0.116, and a fixed lookup table scores almost the same, 0.115 (Section~\ref{sec:summ}). We report both numbers because the first one on its own would give a false picture. We still have no measure of \emph{faithfulness} or readability (Section~\ref{sec:lit_faith}), so even 0.116 does not show that the output keeps the legal meaning.
 
 \textbf{Micro-F1 does not measure harm to the user.} Section~\ref{sec:riskeval} shows the two can point in opposite directions: the setup that wins on micro-F1 misses 36.9\% of High-risk clauses, while a setup that comes last misses 14.2\%. Half of the clauses behind the overall score are Low-risk: dates, party names, governing law. Any claim like ``this system is 77.9\% good'' has this problem.
@@ -61,10 +61,10 @@ The results in Chapter~5 depend on choices that could change the conclusions if 
 
 \textbf{Token-F1 against one marked span assumes the clause has clear edges.} Section~\ref{sec:span} notes that the edges of legal clauses are often debatable, and Section~\ref{sec:errorexamples} shows at least one ``false negative'' that looks like a disagreement with the labels rather than a model mistake.
 
-\subsection{External validity, where do these results transfer?}
+\subsection{External Validity: Where Do These Results Apply?}
 Every number comes from CUAD: \textbf{510 US business contracts taken from SEC filings, in English}. We have not tested a single contract from outside that dataset. So we have no evidence about: other legal traditions or countries, including \textbf{Bangladeshi contracts}, which are the setting that motivated this work; consumer or employment contracts, which are built differently and have a different weaker party; contracts not in English; contracts much shorter or much longer than CUAD's; and recent machine-written contracts. The risk table has one more threat of this kind: whether a non-compete can be enforced depends on the country or state, so a level that is right in one place may be wrong in another. Because CUAD comes from SEC filings, it also leans towards large-company contracts where both sides have lawyers, which is close to the opposite of the small businesses and individuals the system is meant for.
 
-\subsection{Statistical conclusion validity: are the intervals trustworthy?}
+\subsection{Statistical Conclusion Validity: Can the Intervals Be Trusted?}
 \textbf{We measured three sources of variation}, and they differ in size: the bootstrap over contracts gives an interval half-width of about 0.008 (Section~\ref{sec:bootstrap}); the model-seed SD of the ensemble is 0.0015 over three runs (Section~\ref{sec:seeds}); and the split SD is 0.0063 over twenty splits (Section~\ref{sec:splitvar}). The bootstrap and the split variation are both larger than the ensemble's $+0.0042$ lead, which is why we call it a tie. The split variation is the largest, and we could measure it only for the baseline.
 
 \textbf{Three seeds is a small sample} for estimating a standard deviation; the uncertainty around 0.0015 is itself large.

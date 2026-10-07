@@ -428,7 +428,7 @@ One reviewer would give a basic check; \emph{two or three reviewing separately} 
 \caption{Risk-level distribution}
 \label{fig:riskdist}
 \end{figure}
-\subsection{Leakage Discipline}
+\subsection{Avoiding Data Leakage}
 \label{sec:leakage}
 With such a small dataset, data leakage is the most dangerous way to fool ourselves, so we followed one clear rule throughout: \emph{the answers may be used to create training targets, but never to shape what a model reads or what is chosen when the app runs}. In practice: the split is by contract; searches use only the category or its question; the marked answer positions label training windows but are never used to build inputs or choose windows when the app runs; and the ensemble rules have no settings, so the test set cannot tune them.
 
@@ -545,7 +545,7 @@ Wall-clock          & $\approx$50--52 min & $\approx$23--26 min & $\approx$8--13
 \end{tabular}
 \end{adjustbox}
 \end{table}
-\subsection{Validation Protocol, and Where the Hyperparameters Came From}
+\subsection{How We Validated, and Where the Settings Came From}
 \label{sec:valprotocol}
 A reader may fairly ask how the settings in Table~\ref{tab:hyper} were chosen. If any of them had been chosen by trying several options and keeping the one that scored best on the 20\% test set, every number in Chapter~5 would be too optimistic and the test set would no longer be truly unseen. This section answers that question directly, including one place where we did not do as well as we should have.
 
@@ -624,7 +624,7 @@ The window-level DistilBERT was trained on a balanced sample of 24{,}000 window 
 The question-answering model was trained on 8{,}000 focus-window examples for two epochs. Before training, we turn the labelled token positions back into text for a few examples and check that they match the marked answers. In SQuAD-style systems it is very easy to get the character-to-token conversion wrong without noticing, and this small check catches that.
 \subsection{Training the Summarizer}
 \label{sec:sumtrain}
-FLAN-T5-small was fine-tuned on 4{,}000 clause--template pairs on the CPU: about 8 minutes originally, and 12.7 minutes in the October 2026 re-training (which ran while the laptop was busy with other jobs). The training loss dropped quickly, from 1.17 at step 100 to 0.08 by the end of the second epoch (Figure~\ref{fig:sumloss}). There is no validation curve because the model used in the app is trained with no evaluation set (Table~\ref{tab:valsets}). The re-trained model scores ROUGE-L 0.775 against the templates on the 150 test clauses, the same as the original. Looking back, this fast drop was the first sign of the template-copying behaviour we analyse in Chapter~5: with only 41 different targets, the task is simply easy to learn.
+FLAN-T5-small was fine-tuned on 4{,}000 clause--template pairs on the CPU: about 8 minutes originally, and 12.7 minutes in the October 2026 re-training (which ran while the laptop was busy with other jobs). The training loss dropped quickly, from 1.17 at step 100 to 0.08 by the end of the second epoch (Figure~\ref{fig:sumloss}). There is no validation curve because the model used in the app is trained with no evaluation set (Table~\ref{tab:valsets}). The re-trained model scores ROUGE-L 0.775 against the templates on the 150 test clauses, the same as the original. Looking back, this fast drop was the first sign of the template-copying behaviour we analyze in Chapter~5: with only 41 different targets, the task is simply easy to learn.
 
 \begin{figure}[ht]
 \centering

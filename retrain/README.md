@@ -87,13 +87,26 @@ python3 ../retrain/smoke_test.py
 python3 ../retrain/make_figures.py
 ```
 
-Optional analyses that use the new models (run from `retrain/analysis_oct2026/`):
+The analyses behind every Chapter 5 table (run from `retrain/analysis_oct2026/`, one at a time):
 
 ```bash
 cd ../retrain/analysis_oct2026
-python3 -u summ_pilot.py 2>&1 | tee summ_pilot.log            # summarizer vs clause-specific references (~5 min)
-python3 -u pooling_ablation.py 2>&1 | tee pooling_ablation.log  # aggregation rules (~50 min)
-python3 -u e2e.py TRANS 2>&1 | tee e2e_TRANS.log              # end-to-end, app configuration (~40 min)
+python3 make_probs.py                                           # once: reshape the presence scores for the scripts below
+python3 bootstrap_ci.py                                         # Table 5.14, cluster bootstrap (seconds)
+python3 -u span_ci.py 2>&1 | tee span_ci.log                    # Table 5.5 intervals
+python3 -u summ_pilot.py 2>&1 | tee summ_pilot.log              # Tables 5.6-5.7 (~5 min)
+python3 -u e2e.py AND 2>&1 | tee e2e.log                        # Tables 5.8-5.9 (~40 min)
+python3 -u risk_threshold_calib.py 2>&1 | tee risk_threshold_calib.log   # Table 5.10, Figure 5.4
+python3 -u error_examples.py 2>&1 | tee error_examples.log      # Table 5.11
+python3 -u rare_tail.py 2>&1 | tee rare_tail.log                # Table 5.12
+caffeinate -i python3 -u pooling_ablation.py 2>&1 | tee pooling_ablation.log  # Table 5.13 (~55 min; keep the Mac awake)
+```
+
+Finally, check every number in the report against these result files (from the project folder):
+
+```bash
+cd ~/Desktop/"final project p3"
+python3 retrain/verify_report.py        # expected last line: "... checks, 0 mismatched"
 ```
 
 ## Notes
