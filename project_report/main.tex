@@ -34,9 +34,12 @@
 \usepackage[normalem]{ulem} % underlining
 
 % ---- additional packages needed by the project content ----
+\usepackage{float}
 \usepackage{booktabs}     % \toprule, \midrule, \bottomrule, \addlinespace
 \usepackage{adjustbox}    % shrink wide tables to the text width
-\setlength{\emergencystretch}{3em} % fewer overfull lines
+\setlength{\emergencystretch}{3em}
+\widowpenalty=10000
+\clubpenalty=10000 % fewer overfull lines
 \usepackage{longtable}    % multi-page tables (risk taxonomy)
 \usepackage{multirow}
 \usepackage{enumitem}     % compact lists

@@ -181,7 +181,11 @@ Developing the system cost no money: the data, models and software are free, and
 
 Running it is also cheap. The models run on a CPU with about 1.4\,GB of memory, so the system can run on ordinary hardware with no cost per contract. Table~\ref{tab:econ} compares this with the two options a user has today.
 
-\begin{table}[!htbp]
+The main benefit is quick sorting: the system points the reader to the parts of a long contract that most likely matter and explains them in plain language, at almost no cost. Expert time in this field is expensive (the CUAD labels alone are said to represent about two million US dollars of lawyers' time \cite{hendrycks2021cuad}), so even saving part of the time needed to find key clauses is worth something.
+
+The benefit is limited by how reliable the system is. Only 22.0\% of real clauses get through the whole system, and the main setup misses 36.9\% of High-risk clauses (Section~\ref{sec:riskeval}). The system is a free first look at a contract and cannot replace a lawyer.
+
+\begin{table}[H]
 \centering
 \caption{Cost--benefit comparison}
 \label{tab:econ}
@@ -200,8 +204,4 @@ Legal standing & Legal advice & None & None\\
 \end{tabular}
 \end{adjustbox}
 \end{table}
-
-The main benefit is quick sorting: the system points the reader to the parts of a long contract that most likely matter and explains them in plain language, at almost no cost. Expert time in this field is expensive (the CUAD labels alone are said to represent about two million US dollars of lawyers' time \cite{hendrycks2021cuad}), so even saving part of the time needed to find key clauses is worth something.
-
-The benefit is limited by how reliable the system is. Only 22.0\% of real clauses get through the whole system, and the main setup misses 36.9\% of High-risk clauses (Section~\ref{sec:riskeval}). The system is a free first look at a contract and cannot replace a lawyer.
 
