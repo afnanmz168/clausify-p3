@@ -230,6 +230,9 @@ if os.path.exists(os.path.join(V, "runs", "L512", "results.json")):
     C("calibration raw ECE", f"{cal['transformer_raw']['ece']:.3f}"); C("calibration iso ECE", f"{cal['transformer_isotonic']['ece']:.3f}")
     C("calibration Brier", f"{cal['transformer_raw']['brier']:.3f} to {cal['transformer_isotonic']['brier']:.3f}")
     C("calibration Platt", f"Platt scaling, which fits a single logistic curve, reaches an Expected Calibration Error of {cal['transformer_platt']['ece']:.3f} and a Brier score of {cal['transformer_platt']['brier']:.3f}")
+    for nm, lab in (("BALANCED", "for the balanced ensemble"), ("RECALL", "for the app's recall-first default")):
+        r = ds["overall"][nm]
+        C(f"final cm {nm}", f"TP {r['tp']:,}, FP {r['fp']}, FN {r['fn']} and TN {4182 - r['tp'] - r['fp'] - r['fn']:,} {lab}")
     C("app errors", f"{ds['errors']['n_false_positives']} false positives and only {ds['errors']['n_false_negatives']} misses")
     if os.path.exists(os.path.join(V, "truncation_256.json")):
         tr = J(V, "truncation_256.json")
@@ -327,7 +330,7 @@ if os.path.exists(CE):
     C("clause v2 test", f"it gives the right category {pc(tc['acc41'])} of the time, against {pc(ce['old_presence_zscore']['acc41'])} before, the right one in its top three {pc(tc['top3'])} of the time, and the right risk level {pc(tc['risk_level_acc'])}")
     C("clause v2 any label", f"it is right {pc(tc['acc_any_label'])} of the time")
     C("clause v2 none", f"It calls only {pc(tc['clauses_called_none'])} of real clauses")
-    C("clause v2 none lines", f"of {tc['n_none']} test lines that belong to no clause, it recognises {pc(tc['none_acc'], 0)}")
+    C("clause v2 none lines", f"of {tc['n_none']} test lines that belong to no clause, it recognizes {pc(tc['none_acc'], 0)}")
     C("clause v2 validation", f"({pc(vv['tfidf']['acc41'])}, against {pc(vv['bert']['acc41'])} for DistilBERT and {pc(vv['average']['acc41'])} for the average)")
     C("clause v2 bert epochs", ", ".join(pc(h["eval_acc41"]) for h in bv["epochs_eval"][:-1]) + f" and {pc(bv['epochs_eval'][-1]['eval_acc41'])}")
     C("clause v2 bert minutes", f"three epochs, {bv['train_minutes']:.1f} minutes")

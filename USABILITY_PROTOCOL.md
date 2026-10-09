@@ -27,7 +27,7 @@ another department is ideal — the target user is a non-lawyer signing a contra
 3. Was there anything you didn't believe, or weren't sure about?
 4. Would you sign a contract on the strength of this? Why or why not?
 
-## What to report in the thesis (Section 7.6 and 8.2)
+## What to report in the thesis (Sections 5.6.1 and 6.4)
 Write **three to five sentences**, no more, and be explicit about the limits:
 
 > We ran an informal walkthrough with two non-lawyer participants (15 minutes each),
@@ -37,7 +37,9 @@ Write **three to five sentences**, no more, and be explicit about the limits:
 > and with n=2 no quantitative claim is possible.
 
 **The single most valuable thing to look for is over-trust** — a participant treating the
-quoted clause text as reliable, or reading the confidence bar as a probability. Chapter 6
-shows both are unwarranted (ECE 0.201; the quoted text matches the real clause in about
-one case in five overall). If a participant does that, it is a finding worth reporting,
-and it belongs in the ethics discussion as well.
+quoted clause text as certainly the clause, or a card's chance as a certainty. Chapter 5 shows
+the limits: the raw score was not a probability (ECE 0.206), so the app now shows a calibrated
+chance (ECE 0.016), and the quoted paragraph contains at least half of the clause for 71.7% of
+real clauses, not all of them. Also watch whether participants read **Possible — check** cards
+(under 50% chance) as findings. If a participant over-trusts the output, it is a finding worth
+reporting, and it belongs in the ethics discussion as well.

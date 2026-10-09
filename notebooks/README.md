@@ -104,6 +104,13 @@ The notebook is organized as a numbered sequence. Each cell prints **one focused
 
 ## Results — and what each number actually means
 
+> **First-setup history.** The numbers below are what this notebook itself produces: the first setup
+> of August 2026 (256-token presence model, no tuning, threshold 0.5). They are not the final results.
+> The final ones come from `retrain/`: presence ensemble micro-F1 **0.809**, a recall-first setting that
+> finds 90.3% of High-risk clauses (88.6% as the app reads long contracts), a retrained span model with
+> token-F1 **0.779** and **59.6%** of real clauses quoted correctly end to end, and a clause classifier at
+> **72.1%**. See the project README and the report's Table 5.23.
+
 | Stage | Model | Headline | Honest reading |
 |---|---|---|---|
 | **2A Presence** | TF-IDF + DistilBERT, AND-ensemble | **micro-F1 0.776, Accuracy 85.49%** | Transformer *alone* loses (0.694 < TF-IDF 0.775) — a real, significant gap. But the ensemble's 0.776 **ties** the 0.775 baseline (bootstrap 95% CI [−0.007, +0.009]); it earns its place through a balanced error profile, not a higher score. Confusion matrix: TP=1052, TN=2523, FP=311, FN=296. |

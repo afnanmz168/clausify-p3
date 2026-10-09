@@ -5,7 +5,7 @@ author:
   - "Group ID P25301051"
   - "Jerin Aktar \\quad Afnan Mazumder \\quad Shoyeb Hasan Sayem"
   - "Supervisor: Utsha Kumar Roy"
-  - "BRAC University, Department of Computer Science and Engineering"
+  - "Brac University, Department of Computer Science and Engineering"
 ---
 
 # How to use this document
@@ -19,7 +19,7 @@ Each long answer has two layers:
 * **If pushed**: the detail for when the examiner says "and why?" or "prove it".
 
 Every number here comes from the final report (October 2026) and its result files. The
-project's number checker, `retrain/verify_report.py`, compares 230 of them with those files.
+project's number checker, `retrain/verify_report.py`, compares 285 of them with those files.
 
 The project has **two stages of results**, and you must keep them apart:
 
@@ -42,17 +42,17 @@ We used CUAD, the Contract Understanding Atticus Dataset, built by The Atticus P
 published by Hendrycks and colleagues at the NeurIPS 2021 Datasets and Benchmarks track. We
 downloaded the official release from the Hugging Face hub, `theatticusproject/cuad`. It has 510
 commercial contracts from public US SEC filings, and experienced lawyers marked every clause that
-belongs to one of 41 categories. The labelling is reported to be worth about two million US
+belongs to one of 41 categories. The labeling is reported to be worth about two million US
 dollars of lawyers' time, which is why we could not build anything like it ourselves.
 
 **If pushed, the detail that shows you handled the data:**
 The default `load_dataset()` call gives only the 511 raw contract PDFs, which cannot be trained
-on. The labelled data is in two files:
+on. The labeled data is in two files:
 
 * `master_clauses.csv`: a wide table, 83 columns, one row per contract. Used for exploration and
   to double-check the labels.
 * `CUAD_v1.json`: the SQuAD-format file with full contract text and character offsets of every
-  answer. All modelling uses this file.
+  answer. All modeling uses this file.
 
 The wide CSV becomes 510 x 41 = 20,910 (contract, category) rows, 32.1 percent positive. Two
 decisions were not obvious. We paired each clause-text column with its answer column **by
@@ -62,7 +62,7 @@ list is non-empty, not from the Yes/No column, because eight categories (dates, 
 hold a value there instead of Yes or No.
 
 **Likely follow-up, "why not collect your own contracts?"**
-Labelling legal text needs lawyers, and lawyers are expensive; that is why the field was stuck
+Labeling legal text needs lawyers, and lawyers are expensive; that is why the field was stuck
 before CUAD. Three students with one laptop and one semester could not label even 20 contracts
 to this standard.
 
@@ -170,7 +170,7 @@ not fit in memory at all. It does at batch size 1; time is the real limit.
 step did not work as a summarizer (A6, Part G).
 
 **Why a lookup table for risk?** It can be checked line by line, every level has a written reason,
-and it cannot change silently between versions. We had no risk-labelled data to learn from. The
+and it cannot change silently between versions. We had no risk-labeled data to learn from. The
 cost: it cannot tell a $10,000 liability cap from a $10,000,000 one.
 
 \newpage
@@ -294,7 +294,7 @@ Newer legal datasets exist, but none replaces CUAD for this task: lawyer-marked 
 | **LEDGAR** (LREC 2020) | Hundreds of thousands of already-segmented provisions | Removes the hard part, finding the clause inside a 33,000-character contract |
 | **LexGLUE** (ACL 2022) | Seven legal understanding tasks | A benchmark suite, none of it span extraction over contracts |
 | **LegalBench** (2023) | Legal reasoning tasks for testing large language models | An evaluation suite, not a training corpus of the kind we needed |
-| **CLAUDETTE / Unfair-ToS** | Terms-of-service clauses labelled for possible unfairness | The closest public thing to a risk label, but consumer terms, not negotiated contracts |
+| **CLAUDETTE / Unfair-ToS** | Terms-of-service clauses labeled for possible unfairness | The closest public thing to a risk label, but consumer terms, not negotiated contracts |
 
 **The stronger point:** no public dataset labels **how serious** a clause is. CUAD says a non-compete
 is present, not how harsh it is. That is why we wrote the 41-level risk table ourselves.
@@ -306,11 +306,11 @@ instead of 24,000 changed micro-F1 by -0.0004. What helped was reading the whole
 
 # Part B, Dataset and preprocessing
 
-**B1. How many contracts, categories, labelled examples?** 510 contracts, 41 categories, 20,910
+**B1. How many contracts, categories, labeled examples?** 510 contracts, 41 categories, 20,910
 (contract, category) rows, 32.1 percent positive; 408 train, 102 test. In the re-run, 81 of the
 408 are held out for validation.
 
-**B2. Why 510 and not 511?** The repository has 511 PDFs; the labelled data covers 510 contracts.
+**B2. Why 510 and not 511?** The repository has 511 PDFs; the labeled data covers 510 contracts.
 
 **B3. How did you split, and why?** 80/20 by whole contract, seed 42, so no clause from a training
 contract appears in the test set. Splitting by row would let the model memorise a contract's
@@ -486,7 +486,7 @@ predicted about 77 and 65 percent.
 clause 17.4 percent of the time with the re-run model, against 30.9 percent before, so reading the
 whole window fixed most of this, and it is now about as large a loss as the span model's. Span model: with the right
 window the first span model found the clause only 28.0 percent of the time (39.6 percent with the
-first setup), because it was trained with the answer always near the start of a centred window. The
+first setup), because it was trained with the answer always near the start of a centered window. The
 data showed it: when the clause sat in the second half of the window it succeeded only 5.4 percent of
 the time (about 41 percent in the first half), and the first presence model rarely chose such windows
 because it never read that half.
@@ -505,7 +505,7 @@ of detected clauses (71.7 percent of all real clauses). The old method, the para
 model scored highest, reached 75.3 percent; we picked between them on validation.
 
 **E9. Why is exact match so much lower than token-F1?** Legal clause edges are debatable (should the
-section number be included?). For the first span model on centred windows, 82.8 percent of answers
+section number be included?). For the first span model on centered windows, 82.8 percent of answers
 overlap the real clause at F1 0.5 or more; that 0.764 / 82.8 percent was a best case, and on plain
 windows the same model reached only 0.366. The retrained model reaches 0.779 on plain windows.
 
@@ -571,7 +571,7 @@ matches it.
 70 percent of the time, another category's 30 percent.
 
 **G4. Why?** The training targets: 41 unique sentences across 11,156 pairs. The easiest way to lower
-the loss is to recognise the category and copy its sentence.
+the loss is to recognize the category and copy its sentence.
 
 **G5. Did fine-tuning help?** It hurt: the untrained FLAN-T5 scores 0.299 against the clause-specific
 references. It mostly echoes the source, which inflates word overlap, so it is not a good summarizer
@@ -599,7 +599,7 @@ missing-protection checklist, and PDF and CSV downloads.
 **H3. Which detection setting does it use, and why?** By default the re-run transformer alone with its
 recall-first thresholds: it misses the fewest High-risk clauses on the test set (9.7 percent). The
 recall-first ensemble and the balanced AND ensemble are settings. The default does not depend on the
-TF-IDF model, which learnt from long SEC filings and scores short contracts too low: on our 7,033-
+TF-IDF model, which learned from long SEC filings and scores short contracts too low: on our 7,033-
 character demo contract it scores the IP-assignment clause 0.08, so the ensemble misses it.
 
 **H4. How fast?** On the M4, CPU only: shortest test contract 2.0 s, median **74.7 s**, worst **116.2
@@ -648,7 +648,7 @@ tested on the other 100. The best scores ROUGE-L 0.331 against clause-specific r
 0.115), but only by copying: 68 percent of its outputs are near-verbatim excerpts of the clause, and
 some reverse an obligation ("IntriCon must make records available to Dynamic Hearing's auditor"
 became "IntriCon has the right to inspect"). Three worked examples in the prompt did not help (71
-percent near-verbatim). So we kept the template, labelled as such, and RQ3 stays no.
+percent near-verbatim). So we kept the template, labeled as such, and RQ3 stays no.
 
 **H9. Clause-by-clause mode?** One card per numbered clause; the clause heading decides the category
 when it names one, otherwise a clause classifier does. A contract with 18 numbered clauses gives
@@ -659,7 +659,7 @@ the presence model's yes/no scores. We trained a classifier for the task itself 
 "none", on the 327 fit contracts, chosen on validation): on the same 721 test clauses it is right
 **72.1 percent** of the time, the right type is in its top three 90.3 percent of the time, and the
 risk level is right 83.1 percent of the time. A word model (TF-IDF) beat DistilBERT here, 69.9 against
-59.3 percent on validation. Its weak point: it recognises only about half of paragraphs that are no
+59.3 percent on validation. Its weak point: it recognizes only about half of paragraphs that are no
 clause at all.
 
 **H10. Privacy?** Everything runs locally; nothing is saved or sent. On a shared server that would no
@@ -700,7 +700,7 @@ long contracts; one dataset.
 reference sentences from clause text alone, with no sight of model output.
 
 **I6. Reproducible?** Yes. The split, all models, the window scores and the thresholds are saved;
-scripts regenerate every table; `retrain/verify_report.py` checks 230 reported numbers.
+scripts regenerate every table; `retrain/verify_report.py` checks 285 reported numbers.
 
 \newpage
 
@@ -779,7 +779,7 @@ least half the clause: 77.2% of detected, 71.7% of all real clauses.
 **Calibration:** raw ECE 0.206, isotonic on validation 0.016, Platt ECE 0.084; Brier 0.195 to 0.091
 (isotonic) or 0.103 (Platt).
 
-**Span:** first model on centred windows token-F1 0.764 [0.743, 0.782], exact match 35.5%, overlap at
+**Span:** first model on centered windows token-F1 0.764 [0.743, 0.782], exact match 35.5%, overlap at
 F1 >= 0.5 82.8%; on plain windows 0.366. Retrained model on plain windows 0.779 (77.7% at F1 >= 0.5);
 46.2 min training, 11,967 chunks from 6,000 clauses; chosen on validation (63.4% vs 20.9%).
 

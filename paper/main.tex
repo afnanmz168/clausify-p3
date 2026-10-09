@@ -87,7 +87,7 @@ learning (MIL) rule~\cite{mil}. For generation, T5~\cite{t5} and its instruction
 variant~\cite{flan} express clause simplification naturally; Manor and Li~\cite{manor} assemble
 plain-English contract summaries and observe a tendency toward generic output. A substantial
 literature establishes that fluent abstractive output is frequently unfaithful~\cite{maynez,factcc}
-and that overlap metrics such as ROUGE~\cite{rouge} correlate poorly with faithfulness judgements;
+and that overlap metrics such as ROUGE~\cite{rouge} correlate poorly with faithfulness judgments;
 embedding metrics~\cite{bertscore} improve similarity estimation without testing factuality. The
 summarization result reported here is an extreme instance of the same phenomenon, and the
 calibration analysis follows~\cite{calibration}.
@@ -100,7 +100,7 @@ the middle used least~\cite{lostmiddle}. We did not run an LLM baseline; the sys
 user's own machine, which keeps confidential contracts local, and every number is reproducible from
 saved models.
 
-Two properties of CUAD dominate any modelling effort on it. The first is class imbalance:
+Two properties of CUAD dominate any modeling effort on it. The first is class imbalance:
 per-category positive rates span 100\% to 2.5\%. The second is length, which forces every system to
 commit to a length strategy before it commits to a model. That choice is usually asserted; here it
 is measured, both as a retrieval ceiling obtained before training and as a cost benchmark for
@@ -115,7 +115,7 @@ category; a risk layer attaches the detected category's level; and a text-genera
 a plain-English sentence. Each stage is trained independently and, in conventional practice, would
 be evaluated independently.
 
-\subsection{Stage 1: Presence Classification}
+\subsection{Presence Classification}
 A TF--IDF representation over the entire document feeds per-category logistic regression, giving a
 baseline with no length limit. In parallel, 2,000-character windows at a 1,500-character stride tile
 each contract and a DistilBERT~\cite{distilbert} scores (category question, window) pairs; the
@@ -131,16 +131,16 @@ baseline's recall of 0.81, so retrieval was rejected on a measurement rather tha
 The claim is narrow: it bounds \emph{lexical} retrieval only, and a dense retriever may well raise
 it.
 
-\subsection{Stage 2: Span Extraction}
+\subsection{Span Extraction}
 \label{sec:stage2}
 A DistilBertForQuestionAnswering head predicts start and end token positions. At training time each
-example is re-centred so the answer begins approximately 150 characters into a 1,200-character
+example is re-centered so the answer begins approximately 150 characters into a 1,200-character
 window, which guarantees the target survives tokenizer truncation. This uses a label to construct a
 training example and never to construct an inference input; Section~\ref{sec:e2e} shows it
 nevertheless has a cost. A second span model is therefore trained on the inputs it sees at run time:
 the presence model's 2,000-character window cut into 1,200-character chunks at offsets 0 and 800.
-A chunk that contains the start of a clause is labelled with its true position, wherever it falls;
-a chunk that does not is labelled ``no answer'' on [CLS], as in SQuAD~2.0~\cite{squad2}.
+A chunk that contains the start of a clause is labeled with its true position, wherever it falls;
+a chunk that does not is labeled ``no answer'' on [CLS], as in SQuAD~2.0~\cite{squad2}.
 
 \subsection{Risk Prioritization, Plain Language and Calibration}
 Each category carries a fixed High/Medium/Low level scored from the weaker party's perspective
@@ -485,7 +485,7 @@ is not calibrated.}
 
 \subsection{Span Extraction and Plain-Language Generation}
 \label{sec:summ}
-Given a window centred on the answer, the first span model reaches a token-F1 of 0.764 with a
+Given a window centered on the answer, the first span model reaches a token-F1 of 0.764 with a
 contract-clustered 95\% interval of $[0.743,0.782]$, and 82.8\% of predictions overlap the gold
 span at F1 $\geq 0.5$. The clustered
 interval is roughly twice the width obtained by resampling clauses independently
@@ -575,7 +575,7 @@ against 20.9\% for the first model. On the test set (Table~\ref{tab:spanv2}), gi
 it succeeds 76.4\% of the time, with no position effect (76.2\% in the first half, 76.8\% in the
 second), and end-to-end survival under the application setting rises from 22.1\% to 59.6\%. On a
 plain window that contains the clause the first model reaches a mean token-F1 of only 0.366, far
-below its centred-window 0.764, while the retrained model reaches 0.779. Survival now follows
+below its centered-window 0.764, while the retrained model reaches 0.779. Survival now follows
 $93.0\% \times 82.6\% \times 76.4\% = 58.7\%$, plus 12 clauses recovered from a wrong window. Of
 the 545 clauses still lost, 95 are never detected, 206 lie outside the selected window and 244 are
 missed inside it, so the two causes now cost about the same. No extra parameters were needed for

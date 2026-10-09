@@ -92,14 +92,14 @@ The analyses behind every Chapter 5 table (run from `retrain/analysis_oct2026/`,
 ```bash
 cd ../retrain/analysis_oct2026
 python3 make_probs.py                                           # once: reshape the presence scores for the scripts below
-python3 bootstrap_ci.py                                         # Table 5.14, cluster bootstrap (seconds)
+python3 bootstrap_ci.py                                         # Table 5.19, cluster bootstrap (seconds)
 python3 -u span_ci.py 2>&1 | tee span_ci.log                    # Table 5.5 intervals
 python3 -u summ_pilot.py 2>&1 | tee summ_pilot.log              # Tables 5.6-5.7 (~5 min)
 python3 -u e2e.py AND 2>&1 | tee e2e.log                        # Tables 5.8-5.9 (~40 min)
-python3 -u risk_threshold_calib.py 2>&1 | tee risk_threshold_calib.log   # Table 5.10, Figure 5.4
-python3 -u error_examples.py 2>&1 | tee error_examples.log      # Table 5.11
-python3 -u rare_tail.py 2>&1 | tee rare_tail.log                # Table 5.12
-caffeinate -i python3 -u pooling_ablation.py 2>&1 | tee pooling_ablation.log  # Table 5.13 (~55 min; keep the Mac awake)
+python3 -u risk_threshold_calib.py 2>&1 | tee risk_threshold_calib.log   # Table 5.11, Figure 5.4
+python3 -u error_examples.py 2>&1 | tee error_examples.log      # Table 5.13
+python3 -u rare_tail.py 2>&1 | tee rare_tail.log                # Table 5.14
+caffeinate -i python3 -u pooling_ablation.py 2>&1 | tee pooling_ablation.log  # Table 5.16 (~55 min; keep the Mac awake)
 python3 -u app_bench.py 2>&1 | tee app_bench.log                # Table 4.6, app speed with the current app (~3 min)
 ```
 
@@ -115,7 +115,7 @@ python3 retrain/verify_report.py        # expected last line: "... checks, 0 mis
 The original presence model reads only about half of each window (256 tokens; see
 `v2_fullwindow/measure_truncation.py`). `v2_fullwindow/` re-trains it at 512 tokens, holds out 81
 training contracts for validation, tunes both models there, and tests once. Commands and results are in
-`v2_fullwindow/README.md`; the report's Table 5.14 comes from `v2_fullwindow/runs/L512/results.json`,
+`v2_fullwindow/README.md`; the report's Table 5.17 comes from `v2_fullwindow/runs/L512/results.json`,
 and the app reads its thresholds from `decision.json` (copied to the app as `decision_v2.json`).
 
 ## 6. Stage 2B re-run: a span model trained on the chunks it reads (the final span results)
@@ -133,7 +133,7 @@ caffeinate -i python3 -u retrain/span_v2/span_chunks.py 2>&1 | tee retrain/span_
 python3 -u retrain/span_v2/evaluate_span.py 2>&1 | tee retrain/span_v2/evaluate.log              # ~20 min
 ```
 
-Results are in `span_v2/runs/chunks/evaluation.json` (the report's table "First and retrained span model"). The chosen model
+Results are in `span_v2/runs/chunks/evaluation.json` (the report's Table 5.10). The chosen model
 is saved to `notebooks/outputs/span_v2/final/`, and its settings are copied to the app as `span_v2.json`.
 
 ## Notes

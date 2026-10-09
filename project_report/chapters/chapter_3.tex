@@ -13,7 +13,7 @@
 \begin{itemize}[itemsep=2pt]
   \item Privacy: all models shall run on the user's own computer, and no contract text shall be sent to another service or saved to disk.
   \item Hardware: all models shall train and run on one ordinary laptop without a CUDA GPU.
-  \item Speed: analyzing a typical contract shall take no more than tens of seconds on a CPU (measured: median 74.7\,s, worst case 116.2\,s; Table~\ref{tab:appbench}). Reading whole windows doubled the time of the first setup, so long contracts now exceed this target.
+  \item Speed: analyzing a typical contract shall take about a minute on a CPU, and no contract shall take more than two minutes (measured: median 74.7\,s, worst case 116.2\,s; Table~\ref{tab:appbench}).
   \item Fair testing: every reported score shall come from contracts the models never saw during training (split by contract), and no setting shall be chosen by looking at the test set.
   \item Repeatability: the split, the baseline model and all trained models shall be saved, and a separate notebook shall recreate every reported number from them.
   \item Openness: the app shall say that it is not legal advice, and every risk level shall come with a written reason (Appendix~\ref{app:taxonomy}).
@@ -62,7 +62,7 @@ The project was designed to need little computing power. All models are small (D
 
 Including the extra test runs (the full-data presence run of 140.7 minutes, two extra seeds, the evaluation runs, the Longformer test, and the two re-runs of Section~\ref{sec:v2}, about ten hours together), the whole project used about twenty hours of laptop computing. If a laptop draws 20--30\,W under load (an estimate, not a measurement), that is well under one kilowatt-hour of electricity, very little compared with the many-GPU training often used for large legal language models.
 
-Two design choices also keep the running cost low. The models run locally, so no data centre is used for each contract, and the system avoids large text-generating models, which use far more energy per request. The price is accuracy. Section~\ref{sec:lfbench} shows that larger models were rejected partly because of cost, and Chapter~5 reports what the small models achieve.
+Two design choices also keep the running cost low. The models run locally, so no data center is used for each contract, and the system avoids large text-generating models, which use far more energy per request. The price is accuracy. Section~\ref{sec:lfbench} shows that larger models were rejected partly because of cost, and Chapter~5 reports what the small models achieve.
 
 \section{Ethical Issues}
 \label{sec:ethics}
@@ -70,9 +70,9 @@ The Ethics Statement at the front of this report explains how the data and model
 
 The system is a research prototype meant to help with contract review. It is not legal advice, and the app says so in a notice shown above every analysis. For a tool like this, the harder ethical questions concern what happens when someone relies on its output, and we list them here.
 
-False reassurance is the main danger. A clause the system does not find gives no warning, and no warning is easily read as ``there is nothing to worry about''. Our measurements show this reading would be wrong: even the app's recall-first setting misses 7.0\% of real clauses at the first step, only 59.6\% get through the whole system (Section~\ref{sec:spanv2}), and the first setup's best-scoring ensemble missed 36.9\% of the High-risk clauses (Section~\ref{sec:riskeval}). The recall-first setting the app now uses still misses 9.7\% (Section~\ref{sec:v2}). A user who checks a contract with this tool and sees three warnings cannot assume there are only three problems. Missed clauses are silent while false alarms are visible, so we think the share of High-risk clauses found is the measure that matters most ethically, even though the overall score does not reward it.
+False reassurance is the main danger. A clause the system does not find gives no warning, and no warning is easily read as ``there is nothing to worry about''. Our measurements show this reading would be wrong: even the app's recall-first setting misses 7.0\% of real clauses at the first step, only 59.6\% get through the whole system (Section~\ref{sec:spanv2}), and the first setup's best-scoring ensemble missed 36.9\% of the High-risk clauses (Section~\ref{sec:riskeval}). The recall-first setting the app now uses still misses 9.7\% when it reads whole contracts, and 11.4\% as the app reads long ones (Sections~\ref{sec:v2} and~\ref{sec:demolimits}). A user who checks a contract with this tool and sees three warnings cannot assume there are only three problems. Missed clauses are silent while false alarms are visible, so we think the share of High-risk clauses found is the measure that matters most ethically, even though the overall score does not reward it.
 
-Non-lawyers may trust the app too much. It is made for people without legal training, who are the least able to notice when it is wrong. Plain-English text shown with a confidence bar looks more certain than the model is, and Section~\ref{sec:threshold} shows the bar is not even a true probability: scores above 0.9 mean only about a 73\% chance that the clause is really there. The plain-English reason on each card is a fixed sentence for the whole category from the risk table, and it does not read the user's clause. The summarizer, which was meant to describe each clause, also turned out to output one fixed sentence per category (Section~\ref{sec:summ}). The app labels the summarizer's sentence clearly and warns when it belongs to a different category than the card. Without these warnings, the bar and the reason would invite more trust than the evidence supports.
+Non-lawyers may trust the app too much. It is made for people without legal training, who are the least able to notice when it is wrong. Plain-English text shown with a confidence bar looks more certain than the model is. Section~\ref{sec:threshold} shows that the raw score was not a probability (scores above 0.9 meant only about a 73\% chance that the clause was really there), so the app now shows a calibrated chance instead, with an Expected Calibration Error of 0.016 on the test contracts, and marks cards under 50\% as \emph{Possible --- check}. The plain-English reason on each card is a fixed sentence for the whole category from the risk table, and it does not read the user's clause. The summarizer, which was meant to describe each clause, also turned out to output one fixed sentence per category (Section~\ref{sec:summ}). The app labels the summarizer's sentence clearly and warns when it belongs to a different category than the card. Without these warnings, the bar and the reason would invite more trust than the evidence supports.
 
 Laws differ between countries. CUAD follows US business law, and risk levels that are right there may be wrong elsewhere. A non-compete that is binding in one country may be invalid in another, and then a High badge would mislead. The work was inspired by the situation in Bangladesh and we tested no Bangladeshi contract, so this limitation applies to the people the work was meant for.
 
@@ -96,7 +96,7 @@ Our rule for any future change follows from this. As soon as any part of the sys
 No formal engineering standard applies to a research prototype like this, but the project followed several common practices:
 \begin{itemize}[itemsep=2pt]
   \item Data format: CUAD uses the SQuAD question-answering format \cite{rajpurkar2016squad}, and our clause-text model uses the standard SQuAD start/end-token setup, so the data works with common question-answering tools.
-  \item Licences and credit: the dataset, the pre-trained models and all software are used under their open-source licences (CUAD under CC~BY~4.0; DistilBERT, FLAN-T5, \texttt{transformers} and Streamlit under Apache~2.0; PyTorch and scikit-learn under BSD licences), and they are credited in the references.
+  \item Licenses and credit: the dataset, the pre-trained models and all software are used under their open-source licenses (CUAD under CC~BY~4.0; DistilBERT, FLAN-T5, \texttt{transformers} and Streamlit under Apache~2.0; PyTorch and scikit-learn under BSD licenses), and they are credited in the references.
   \item Testing practice: we followed standard machine-learning practice, with a separate test set split by contract, no tuning on the test set, confidence intervals from a bootstrap over contracts \cite{efron1979bootstrap}, and standard scores (F1, exact match, ROUGE-L \cite{lin2004rouge}).
   \item Repeatability: Appendix~\ref{app:repro} gives a checklist covering the software versions, data, seeds, file checksums and commands, and all code and reports are kept in Git.
   \item Writing: references use the IEEE style, and this report follows the Brac University CSE400 report template.
@@ -134,10 +134,10 @@ October & Viva preparation; re-training and re-testing of each model; whole-wind
 \end{table}
 
 \subsection{Budget}
-The project cost no money. The dataset, the pre-trained models and all software are free, and all training and testing ran on a laptop the team already owned. No cloud computing, paid services or paid labelling were used.
+The project cost no money. The dataset, the pre-trained models and all software are free, and all training and testing ran on a laptop the team already owned. No cloud computing, paid services or paid labeling were used.
 
 \subsection{Resource management}
-The one shared laptop was the scarcest resource. Training runs were done one at a time, because the MPS backend does not free GPU memory between runs in the same program, and the summarizer was trained on the CPU for the same reason (Section~\ref{sec:engineering}). Everything needed for testing (the split, the baseline model and the three trained models) was saved to disk, so tests could be repeated without retraining. Code, notebooks and reports were kept in Git.
+The one shared laptop was the scarcest resource. Training runs were done one at a time, because the MPS backend does not free GPU memory between runs in the same program, and the summarizer was trained on the CPU for the same reason (Section~\ref{sec:engineering}). Everything needed for testing (the split and the five trained models: presence, TF--IDF, span, summarizer and clause classifier) was saved to disk, so tests could be repeated without retraining. Code, notebooks and reports were kept in Git.
 
 \section{Risk Management}
 Table~\ref{tab:projrisk} lists the main risks we found during the project and what we did about each one. Several of them actually happened, and the last column records the response.
@@ -181,7 +181,7 @@ Running it is also cheap. The models run on a CPU with about 2.1\,GB of memory, 
 
 The main benefit is quick sorting: the system points the reader to the parts of a long contract that most likely matter and explains them in plain language, at almost no cost. Expert time in this field is expensive (the CUAD labels alone are said to represent about two million US dollars of lawyers' time \cite{hendrycks2021cuad}), so even saving part of the time needed to find key clauses is worth something.
 
-The benefit is limited by how reliable the system is. Only 59.6\% of real clauses get through the whole system with the app's setting (Section~\ref{sec:spanv2}), and it still misses 9.7\% of High-risk clauses (Section~\ref{sec:v2}). The system is a free first look at a contract and cannot replace a lawyer.
+The benefit is limited by how reliable the system is. Only 59.6\% of real clauses get through the whole system with the app's setting (Section~\ref{sec:spanv2}), and it still misses 9.7\% of High-risk clauses on whole contracts and 11.4\% as the app reads long ones (Sections~\ref{sec:v2} and~\ref{sec:demolimits}). The system is a free first look at a contract and cannot replace a lawyer.
 
 \begin{table}[H]
 \centering
@@ -196,7 +196,7 @@ The benefit is limited by how reliable the system is. Only 59.6\% of real clause
 Marginal cost per contract & High (professional fees) & Per-request fee & Near zero\\
 Time per contract & Hours to days & Seconds & About a minute\\
 Privacy & Confidential & Contract leaves the user's machine & Contract stays on the machine\\
-Reliability & Expert judgement & Unmeasured on this task & Measured; misses many clauses\\
+Reliability & Expert judgment & Unmeasured on this task & Measured; misses many clauses\\
 Legal standing & Legal advice & None & None\\
 \bottomrule
 \end{tabular}

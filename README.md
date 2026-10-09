@@ -1,7 +1,7 @@
 # AI-Powered Legal Document Analysis System (CUAD)
 
 **Clause Detection, Category-Level Risk Prioritization and Plain-Language Explanation**
-B.Sc. Final Year Project (CSE400) · Department of Computer Science and Engineering · BRAC University
+B.Sc. Final Year Project (CSE400) · Department of Computer Science and Engineering · Brac University
 
 Jerin Aktar (22101279) · Afnan Mazumder (24141229) · Shoyeb Hasan Sayem (22101386)
 Supervisor: Utsha Kumar Roy
@@ -18,7 +18,7 @@ and **what it means and how risky it is** for the signer, and ships it as the **
 | Stage | Model | Job | Held-out result (102 test contracts) |
 |---|---|---|---|
 | **2A** | TF-IDF + DistilBERT (MIL) ensemble, tuned on a validation split | Which of the 41 categories are present? | micro-F1 **0.809**, accuracy **88.43%**; recall-first setting finds **90.3%** of High-risk clauses in whole contracts, **88.6%** as the app reads long ones |
-| **2B** | DistilBERT-QA | Locate the exact clause text | token-F1 **0.764** (given the window) |
+| **2B** | DistilBERT-QA, retrained on the chunks it reads | Locate the exact clause text | token-F1 **0.779** on a window holding the clause; **59.6%** of real clauses get a good quote end to end (first span model 22.1%) |
 | **1** | FLAN-T5-small | One plain-English sentence per clause | ROUGE-L **0.775** (41 templates) |
 
 All numbers come from a **contract-level 80/20 split** (408 training / 102 test contracts). The
@@ -35,7 +35,7 @@ in the report.
 
 | Folder / file | Contents |
 |---|---|
-| **`project_report/`** | **The full project report** (LaTeX, BRAC CSE400 template) — `main.pdf`, ~100 pages |
+| **`project_report/`** | **The full project report** (LaTeX, BRAC CSE400 template) — `main.pdf`, 114 pages |
 | `paper/`, `IEEE_Paper_Clausify.pdf` | Conference-style paper |
 | `notebooks/` | `train.ipynb`, `test.ipynb`, `build_artifacts.py`; `artifacts/` (split, TF-IDF baseline); `outputs/` (trained models) |
 | `retrain/` | Re-training and re-testing scripts with **exact terminal commands** (`retrain/README.md`), logs and results; `v2_fullwindow/` is the 512-token re-run with validation tuning (the final presence results and the app's thresholds); `analysis_oct2026/` re-runs every analysis on the October models; `smoke_test.py` checks every model; `verify_report.py` checks every reported number |

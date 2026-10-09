@@ -32,7 +32,7 @@ TN / TP & True Negative / True Positive\\
   \item[AND-ensemble] A rule that reports a clause category only when both the TF--IDF model and the DistilBERT model say it is present.
   \item[Bootstrap] A way to measure uncertainty: the test contracts are drawn again at random, with repeats, many times, and the score is recomputed each time.
   \item[Calibration] Whether a model's score can be read as a real chance. A well-calibrated score of 0.8 is right about 80\% of the time.
-  \item[Clause category] One of the 41 types of contract clause labelled in CUAD (for example \emph{Governing Law}, \emph{Non-Compete}, \emph{Cap on Liability}).
+  \item[Clause category] One of the 41 types of contract clause labeled in CUAD (for example \emph{Governing Law}, \emph{Non-Compete}, \emph{Cap on Liability}).
   \item[Contract-level split] A train/test split that puts each whole contract on one side, so no clause from a training contract can appear in the test set.
   \item[Max-pooling (over windows)] Scoring every window of a document and using the highest window score as the score for the whole document.
   \item[Micro-F1] One F1 score computed over all (contract, category) decisions together, so every decision counts the same.
