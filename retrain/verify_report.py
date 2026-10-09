@@ -257,6 +257,53 @@ if os.path.exists(os.path.join(V, "runs", "L512", "results.json")):
     C("span position share", f"only {pc(sp2['first_setup']['share_clause_in_second_half'])} of the time. With the re-run model it is {pc(sp2['app']['share_clause_in_second_half'])}")
     C("span position success", f"({pc(sp2['first_setup']['span_ok_first_half'])} and {pc(sp2['app']['span_ok_first_half'])}); in the second half it succeeds only {pc(sp2['first_setup']['span_ok_second_half'])} and {pc(sp2['app']['span_ok_second_half'])}")
 
+    if os.path.exists(os.path.join(V, "runs", "L512", "cards.json")):
+        cd = J(V, "runs", "L512", "cards.json"); b5, b2 = cd["below_50"], cd["below_20"]
+        C("cards total", f"the default setting shows {cd['n_cards']:,} cards. Of these, {b5['n']} ({pc(b5['share'])})")
+        C("cards below 20%", f"{b2['n']} ({pc(b2['share'])}) below 20")
+        C("cards real share", f"{pc(b5['real_share'])} of the {b5['n']} are real clauses, and they include {b5['high_real']} of the {cd['high_real_found']} High-risk")
+        C("cards recall without", f"from 90.3% to {pc(cd['high_recall_without_possible'])}")
+        C("cards >= 50%", f"Of the {cd['at_least_50']['n']:,} cards at 50% or more, {pc(cd['at_least_50']['real_share'])}")
+        C("cards non-compete", f"with a chance of about {100 * cd['lowest_non_compete_chance']:.0f}%")
+
+# ---- retrained span model (Section 5.2.1, retrain/span_v2) ----------------
+SV = os.path.join(HERE, "span_v2", "runs", "chunks")
+if os.path.exists(os.path.join(SV, "evaluation.json")):
+    ev = J(SV, "evaluation.json"); tv = J(SV, "train_info.json"); va = ev["validation"]
+    R1, R2 = ev["test"]["RECALL"]["first_model"], ev["test"]["RECALL"]["new_model"]
+    B1, B2 = ev["test"]["BALANCED"]["first_model"], ev["test"]["BALANCED"]["new_model"]
+    C("spanv2 e2e", f"{R1['n_ok']} {pc(R1['end_to_end'])} {R2['n_ok']} {pc(R2['end_to_end'])}", "tab:spanv2")
+    C("spanv2 e2e CI", f"{ci(*R1['end_to_end_ci'], pc)} {ci(*R2['end_to_end_ci'], pc)}", "tab:spanv2")
+    C("spanv2 right window", f"{pc(R1['ok_given_right_window'])} {pc(R2['ok_given_right_window'])}", "tab:spanv2")
+    C("spanv2 first half", f"{pc(R1['ok_first_half'])} {pc(R2['ok_first_half'])}", "tab:spanv2")
+    C("spanv2 second half", f"{pc(R1['ok_second_half'])} {pc(R2['ok_second_half'])}", "tab:spanv2")
+    C("spanv2 mean F1", f"{f3(ev['test']['RECALL']['mean_token_f1_first'])} {f3(ev['test']['RECALL']['mean_token_f1_new'])}", "tab:spanv2")
+    C("spanv2 balanced", f"{B1['n_ok']} {pc(B1['end_to_end'])} {B2['n_ok']} {pc(B2['end_to_end'])}", "tab:spanv2")
+    rw = ev["test"]["right_window"]
+    C("spanv2 plain window F1", f"{f3(rw['first_model_mean_f1'])} {f3(rw['new_model_mean_f1'])}", "tab:spanv2")
+    C("spanv2 plain window ok", f"{pc(rw['first_model_ok'])} {pc(rw['new_model_ok'])}", "tab:spanv2")
+    C("spanv2 validation", f"{pc(va['grid']['epoch2_minus_null_cap120'])} of the detected clauses at token-F1 >= 0.5, against {pc(va['old_model_ok'])}".replace(">=", "\\geq"))
+    C("spanv2 training data", f"{tv['answers']:,} clauses from the {tv['fit_contracts']} contracts")
+    C("spanv2 chunks", f"{tv['chunk_examples']:,} chunks ({pc(tv['positive_chunks'] / tv['chunk_examples'])} with an answer). Training took {tv['train_minutes']:.1f} minutes")
+    q = ev["test"]["app_quote"]; qp, qs = q["presence"], q["span"]
+    C("quote presence", f"{pc(qp['covers_half_of_clause']['share_of_detected'])} of the detected clauses are shown this way (median quote {qp['median_quote_chars']:.0f} characters)")
+    C("quote span", f"{pc(qs['covers_half_of_clause']['share_of_detected'])} are ({qs['median_quote_chars']:.0f} characters)")
+    C("quote validation", f"({pc(va['quote_cov_span_paragraph'])} against {pc(va['quote_cov_presence_paragraph'])})")
+    C("quote overall", f"Over all real clauses, {pc(qs['covers_half_of_clause']['end_to_end'])} get a card whose quote contains at least half of the clause (95% CI {ci(*qs['covers_half_of_clause']['end_to_end_ci'], pc)})")
+    C("quote strict", f"({pc(qs['token_f1_ok']['share_of_detected'])} and {pc(qp['token_f1_ok']['share_of_detected'])} of detected clauses)")
+    E2 = J(V, "runs", "L512", "downstream.json")["end_to_end"]["RECALL"]
+    prod = E2["presence_recall"] * E2["window_correct_rate"] * R2["ok_given_right_window"]
+    C("spanv2 product", f"which multiplies to {pc(prod)}; another {R2['n_ok'] - round(R2['ok_given_right_window'] * R2['right_window'])} clauses")
+    lost_window = E2["window_wrong"] - (R2["n_ok"] - round(R2["ok_given_right_window"] * R2["right_window"]))
+    lost_span = R2["right_window"] - round(R2["ok_given_right_window"] * R2["right_window"])
+    C("spanv2 losses", f"The {ev['n_gold_test'] - R2['n_ok']} clauses still lost split three ways: {ev['n_gold_test'] - R2['n_detected']} are never detected, {lost_window} are in a window the presence model did not choose, and {lost_span} are in the right window")
+    C("spanv2 future", f"{lost_window} clauses against the {lost_span} the span model misses")
+    C("spanv2 miss right window", f"still misses {pc(1 - R2['ok_given_right_window'])} of clauses in the right window")
+    C("quote rest", f"The other {pc(1 - qs['covers_half_of_clause']['end_to_end'])} are clauses")
+    import hashlib
+    h = hashlib.sha256(open(os.path.join(P, "notebooks", "outputs", "span_v2", "final", "model.safetensors"), "rb").read()).hexdigest()[:16]
+    C("span_v2 fingerprint", h)
+
 # ---- clause mode (app repository) -----------------------------------------
 CAL2 = os.path.join(os.path.dirname(P), "final project app p3", "clause_calibration_v2.json")
 if os.path.exists(CAL2):

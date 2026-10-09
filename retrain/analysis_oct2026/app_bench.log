@@ -1,0 +1,9 @@
+models available: True
+model load / warm-up: 0.5 s
+  shortest    1,283 chars    1 windows (capped to 1)     2.0 s  detected=4  peakRSS=1.16 GB
+  25th pct   18,104 chars   12 windows (capped to 12)    32.6 s  detected=20  peakRSS=1.73 GB
+  median     35,136 chars   24 windows (capped to 24)    64.4 s  detected=19  peakRSS=1.91 GB
+  75th pct   65,547 chars   30 windows (capped to 30)    81.8 s  detected=17  peakRSS=1.93 GB
+  longest   289,615 chars   30 windows (capped to 30)    87.1 s  detected=16  peakRSS=1.93 GB
+
+mean 53.6 s | median 64.4 s | max 87.1 s

@@ -118,6 +118,24 @@ training contracts for validation, tunes both models there, and tests once. Comm
 `v2_fullwindow/README.md`; the report's Table 5.14 comes from `v2_fullwindow/runs/L512/results.json`,
 and the app reads its thresholds from `decision.json` (copied to the app as `decision_v2.json`).
 
+## 6. Stage 2B re-run: a span model trained on the chunks it reads (the final span results)
+
+The first span model was trained with the answer about 150 characters into a centred 1,200-character
+window, but at run time it reads plain chunks of the presence window, where the clause can be anywhere
+or absent. `span_v2/span_chunks.py` trains a new one on exactly those chunks (answer anywhere, or a
+"no answer" label on chunks without one), on the 327 contracts the re-run presence model was trained
+on. `span_v2/evaluate_span.py` chooses the epoch and the decoding on the 81 validation contracts, scores
+the 102 test contracts once, and also measures the paragraph the app quotes. From the project folder:
+
+```bash
+cd ~/Desktop/"final project p3"
+caffeinate -i python3 -u retrain/span_v2/span_chunks.py 2>&1 | tee retrain/span_v2/train.log     # ~46 min
+python3 -u retrain/span_v2/evaluate_span.py 2>&1 | tee retrain/span_v2/evaluate.log              # ~20 min
+```
+
+Results are in `span_v2/runs/chunks/evaluation.json` (the report's table "First and retrained span model"). The chosen model
+is saved to `notebooks/outputs/span_v2/final/`, and its settings are copied to the app as `span_v2.json`.
+
 ## Notes
 
 - Run one script at a time. Two trainings at once share the GPU and memory and can stall.

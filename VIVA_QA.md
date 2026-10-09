@@ -224,12 +224,16 @@ Medium, Low.
 ## A6. Future work, in short
 
 **Say this:**
-The biggest loss in the system is now the span model, so that comes first, then users.
+What is left of the end-to-end loss is split about evenly between the window the presence model
+chooses (206 clauses) and the span model inside the right window (244), so both come first, then
+users.
 
-1. **Retrain the span model on the windows it really sees.** It was trained with the answer always
-   about 150 characters into the window. With the right window, it now finds the clause only
-   28.0 percent of the time. Training on varied positions, and on windows without the clause
-   (SQuAD v2 style, so it can say "not here"), targets that directly.
+1. **Train a model to choose the window.** We already retrained the span model on the chunks it
+   really reads (end-to-end 22.1 to 59.6 percent). What is left is mostly the window: the presence
+   model's best window misses the clause for 17.4 percent of detected categories. A locator trained
+   for that job, or the new span model scoring several candidate windows (it can now say "not
+   here"), targets it. The span model itself still misses 23.6 percent in the right window; it used
+   6,000 clauses and one seed, so more data and more seeds come next.
 2. **Watch people use Clausify.** Five to ten non-lawyers, with and without the app, measuring time,
    clauses found, and above all whether they trust the output too much. The protocol is written
    (`USABILITY_PROTOCOL.md`).
@@ -445,8 +449,9 @@ lengths; library changes in transformers 5.x.
 # Part E, Results and evaluation
 
 **E1. Headline numbers?** Presence, re-run: the tuned ensemble reaches micro-F1 **0.809** and accuracy
-**88.43 percent**; the app's recall-first setting finds **90.3 percent** of High-risk clauses. Span:
-token-F1 **0.764** when given the right window.
+**88.43 percent**; the app's recall-first setting finds **90.3 percent** of High-risk clauses. Span,
+retrained: token-F1 **0.779** on any window that holds the clause, and **59.6 percent** of real
+clauses get a good quote end to end (22.1 with the first span model).
 
 **E2. Which model won?** First setup: the TF-IDF baseline (0.775) beat the transformer (0.692), and the
 AND ensemble (0.779) tied the baseline. Re-run: the transformer ties the tuned baseline (0.797
@@ -471,21 +476,37 @@ conflict.
 **E6. Why not just switch to OR in the first setup?** Choosing it after seeing the test set would have
 been test-set tuning. The re-run did it properly, on a validation split.
 
-**E7. End-to-end performance?** With the app's setting, **22.1 percent** of the 1,348 real clauses get
-through all three steps (interval 19.7 to 24.6); with the first setup, 22.0 percent. The separate
-scores would predict about 77 and 65 percent.
+**E7. End-to-end performance?** With the app's setting and the retrained span model, **59.6 percent**
+of the 1,348 real clauses get through all three steps (interval 57.0 to 62.2). With the first span
+model it was 22.1 percent (19.7 to 24.6), and 22.0 with the first setup, when the separate scores
+predicted about 77 and 65 percent.
 
-**E8. Where does it fail?** Two causes. Window choice: the best-scoring window misses the clause 17.4
-percent of the time with the re-run model, against 30.9 percent before, so reading the whole window
-fixed most of this. Span model: with the right window it finds the clause only 28.0 percent of the
-time (39.6 percent before), because it was trained with the answer always near the start of a
-centred window. The data shows it: when the clause sits in the second half of the window the span
-model succeeds only 5.4 percent of the time (about 41 percent in the first half), and the first model
-rarely chose such windows because it never read that half. That is now the main loss, and both
-causes are fixable without a bigger model.
+**E8. Where does it fail?** There were two causes. Window choice: the best-scoring window misses the
+clause 17.4 percent of the time with the re-run model, against 30.9 percent before, so reading the
+whole window fixed most of this, and it is now about as large a loss as the span model's. Span model: with the right
+window the first span model found the clause only 28.0 percent of the time (39.6 percent with the
+first setup), because it was trained with the answer always near the start of a centred window. The
+data showed it: when the clause sat in the second half of the window it succeeded only 5.4 percent of
+the time (about 41 percent in the first half), and the first presence model rarely chose such windows
+because it never read that half.
+
+**If pushed, "so why didn't you fix it?"** We did. We retrained the span model on exactly the
+1,200-character chunks it reads in the app, with the answer wherever it falls and "no answer" chunks
+included (SQuAD 2.0 style), on the 327 fit contracts; epoch and decoding were chosen on the 81
+validation contracts. On the test set it finds the clause in the right window 76.4 percent of the
+time (28.0 before), 76.2 in the first half and 76.8 in the second, and end-to-end survival rises
+from 22.1 to 59.6 percent. Training took 46 minutes. Of the 545 clauses still lost, 95 are never
+detected, 206 are outside the chosen window and 244 are missed inside it.
+
+**If pushed, "is the quoted paragraph any good?"** Measured now: the app quotes the paragraph around
+the new model's answer, and on the test set it contains at least half of the clause for 77.2 percent
+of detected clauses (71.7 percent of all real clauses). The old method, the paragraph the presence
+model scored highest, reached 75.3 percent; we picked between them on validation.
 
 **E9. Why is exact match so much lower than token-F1?** Legal clause edges are debatable (should the
-section number be included?). 82.8 percent of answers overlap the real clause at F1 0.5 or more.
+section number be included?). For the first span model on centred windows, 82.8 percent of answers
+overlap the real clause at F1 0.5 or more; that 0.764 / 82.8 percent was a best case, and on plain
+windows the same model reached only 0.366. The retrained model reaches 0.779 on plain windows.
 
 **E10. Comparable with published CUAD results?** No: their models are about ten times larger, and they
 use a full-document ranked test; ours measures extraction inside windows that contain the answer.
@@ -579,8 +600,8 @@ recall-first ensemble and the balanced AND ensemble are settings. The default do
 TF-IDF model, which learnt from long SEC filings and scores short contracts too low: on our 7,033-
 character demo contract it scores the IP-assignment clause 0.08, so the ensemble misses it.
 
-**H4. How fast?** On the M4, CPU only: shortest test contract 3.1 s, median **58.7 s**, worst **102.8
-s**, peak memory 2.13 GB. Reading whole windows doubled the time of the first setup (median 30.1 s).
+**H4. How fast?** On the M4, CPU only: shortest test contract 2.0 s, median **64.4 s**, worst **87.1
+s**, peak memory 1.93 GB. Reading whole windows doubled the time of the first setup (median 30.1 s).
 
 **H5. Why do the two longest contracts take about the same time?** Both hit the **30-window cap**
 (about 45,500 characters). 38.4 percent of CUAD contracts are longer, and clauses after the cut cannot
@@ -589,8 +610,20 @@ be found. It is a limit of the app, not of the method.
 **H6. Can a user trust the bar?** Yes, more than before: it is the calibrated chance (ECE 0.016 on the
 test set), measured on CUAD contracts, so on very different contracts it is only a guide.
 
-**H7. Can a user trust the quoted text?** Less than the badge. About a fifth of real clauses get a good
-quote end to end, so a card means "look here", and the app says so.
+**If pushed, "why does a card say 9 percent and still report the clause?"** The recall-first
+thresholds are set per clause type, but the calibration map is shared, so some types are reported at
+a low chance. On the test contracts 728 of the 1,963 default cards (37.1 percent) are under 50
+percent, and 204 (10.4 percent) under 20. We keep them because they still hold 46 of the 159 High-risk
+clauses found; without them High-risk recall drops from 90.3 to 64.2 percent. The app now labels
+them **Possible — check** and lists them after the other cards of their risk level. Of the cards at
+50 percent or more, 83.9 percent are real clauses; of the "possible" ones, 29.8 percent.
+
+**H7. Can a user trust the quoted text?** Less than the badge, but much more than before. With the
+retrained span model, 59.6 percent of real clauses get a good extracted answer end to end (it was
+about a fifth), and the quoted paragraph contains at least half of the clause for 71.7 percent of
+real clauses. A card still means "look here", and the app says so. On the demo contract the
+Liquidated Damages card quotes the limitation-of-liability paragraph; the previous quoting method
+found Section 13 there, but it was slightly worse on the validation and test contracts overall.
 
 **H8. What does it find on your demo contract?** 27 clause types: 5 High, 13 Medium, 9 Low. The four
 High-risk types the section headings name (Exclusivity, IP Ownership Assignment, Non-Compete,
@@ -606,8 +639,10 @@ accuracy). A contract with 18 numbered clauses gives exactly 18 cards.
 **H10. Privacy?** Everything runs locally; nothing is saved or sent. On a shared server that would no
 longer hold.
 
-**H11. Is it tested?** 43 automatic end-to-end tests, including checks that the deployed thresholds are
-the tested ones and that the calibration map is valid.
+**H11. Is it tested?** 45 automatic end-to-end tests, including checks that the deployed thresholds are
+the tested ones, that the calibration map is valid, and that every card under 50 percent is marked
+"Possible — check". The output of the last run is saved in the app repository as
+`tests/test_output.log`.
 
 **H12. Has anyone outside your group used it?** Not in a study. The usability protocol is written; the
 claim that a risk-sorted report helps a non-lawyer is untested.
@@ -631,8 +666,9 @@ risk; token-F1 assumes clear clause edges. *External:* 510 US contracts from SEC
 only. *Statistical:* three seeds is a small sample; five categories have at most seven test examples;
 one split; the re-run's seed and split variation is unmeasured.
 
-**I4. Biggest limitations?** No user study; small models; the span model's training mismatch; the
-summarizer does not summarize; risk is per category; the 30-window cap; one dataset.
+**I4. Biggest limitations?** No user study; small models; the presence model's choice of window
+(17.4 percent wrong); the summarizer does not summarize; risk is per category; the 30-window cap;
+one dataset.
 
 **I5. AI tools?** One declared use affecting a number: an LLM assistant drafted the 150 clause-specific
 reference sentences from clause text alone, with no sight of model output.
@@ -657,9 +693,10 @@ app; and measured negative results about the summarizer and about how errors add
 ourselves, fixed it under a stricter protocol (validation split, test scored once), and ran a control
 that changes only the input length. Every choice was made on validation contracts.
 
-**J4. "22 percent end to end means it does not work."** As a clause-quoting system, correct. Presence
-works: 93.0 percent of real clauses are found with the app's setting, and the badge and category are
-reliable. The loss is in the span model and has a named fix.
+**J4. "22 percent end to end means it does not work."** It meant that for the first span model, and
+we fixed the cause: retrained on the chunks it really reads, 59.6 percent of real clauses get through
+end to end. Presence works: 93.0 percent of real clauses are found with the app's setting. What is
+left is split between the window the presence model chooses and the span model.
 
 **J5. "You thought Longformer would not fit in memory."** We measured it and corrected ourselves: it
 fits at batch size 1; time is the limit (136 days).
@@ -708,12 +745,16 @@ clause after the cut (4,875 of 21,028).
 **Risk levels (176 High-risk clauses):** first setup AND misses 36.9%, transformer 15.9%, OR 14.2%;
 re-run app setting misses 9.7% (17), balanced AND 46.0% (81).
 
-**End to end:** app 22.1% [19.7, 24.6] (first setup 22.0%); right window 82.6% (was 69.1%); span OK
-given the right window 28.0% (was 39.6%).
+**End to end:** app with retrained span model 59.6% [57.0, 62.2] (first span model 22.1% [19.7, 24.6];
+first setup 22.0%); right window 82.6% (was 69.1%); span OK given the right window 76.4% (first span
+model 28.0%; 76.2% / 76.8% in first / second half, was 40.7% / 5.4%). Quoted paragraph contains at
+least half the clause: 77.2% of detected, 71.7% of all real clauses.
 
 **Calibration:** raw ECE 0.206, isotonic on validation 0.016, Platt 0.084; Brier 0.195 to 0.091.
 
-**Span:** token-F1 0.764 [0.743, 0.782]; exact match 35.5%; overlap at F1 >= 0.5 82.8%.
+**Span:** first model on centred windows token-F1 0.764 [0.743, 0.782], exact match 35.5%, overlap at
+F1 >= 0.5 82.8%; on plain windows 0.366. Retrained model on plain windows 0.779 (77.7% at F1 >= 0.5);
+46.2 min training, 11,967 chunks from 6,000 clauses; chosen on validation (63.4% vs 20.9%).
 
 **Summarizer:** ROUGE-L 0.775 vs templates, 0.116 vs clause-specific, 0.115 template alone, 0.299
 untrained; 100% template copies, 70% right template.
@@ -727,5 +768,5 @@ scoring (512 tokens, epoch 2 of 3); span ~25 min; summarizer 8-13 min CPU.
 **Longformer (M4):** step 258 s / 14.71 GB at batch 1; ~136 days for our schedule; 454 s vs 10.6 s per
 median contract.
 
-**Clausify:** median 58.7 s, worst 102.8 s, 2.13 GB; 30-window cap (38.4% of CUAD longer); default
-recall-first transformer; 43 tests; demo contract 27 types (5 High, 13 Medium, 9 Low).
+**Clausify:** median 64.4 s, worst 87.1 s, 1.93 GB; 30-window cap (38.4% of CUAD longer); default
+recall-first transformer; 45 tests (log in `tests/test_output.log`); demo contract 27 types (5 High, 13 Medium, 9 Low).

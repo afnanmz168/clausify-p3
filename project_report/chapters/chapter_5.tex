@@ -299,6 +299,8 @@ This step needs the transformer, because a bag-of-words model cannot point to po
 
 The project uses two window sizes, and mixing them up makes the design look inconsistent. The 2{,}000-character window of Section~\ref{sec:mil} is a presence window. It covers the document in order, because at that point we do not know where anything is. The window used here is a focus window, 1{,}200 characters long and placed around the marked answer so that the answer starts about 150 characters in. Figure~\ref{fig:focus} draws the two at the same scale. The smaller, centred window has a simple technical purpose: it keeps the answer inside the model's 320-token limit. With a 2{,}000-character window an answer near the end could be cut off, and the model would be trained on an example with the answer missing. This step also has no length limit at all, since it only searches inside a window that the presence step has already marked as relevant.
 
+This is how the first span model was trained, and the end-to-end test showed what it cost: the model learnt to expect the answer near the start of its input (Section~\ref{sec:e2e}). We therefore trained a second span model on the chunks it really reads when the system runs, 1{,}200-character pieces of the presence window with the answer wherever it falls, or not there at all. Section~\ref{sec:spanv2} describes and tests it, and the app uses it.
+
 \begin{figure}[ht]
 \centering
 \begin{adjustbox}{max width=\textwidth}
@@ -384,7 +386,7 @@ The risk table is a simple lookup, which we chose on purpose. It can be checked 
 \label{sec:leakage}
 With such a small dataset, data leakage is the easiest way to fool ourselves, so we followed one rule throughout: \emph{the answers may be used to create training targets, but never to shape what a model reads or what is chosen when the app runs}. In practice the split is by contract, searches use only the category or its question, the marked answer positions label training windows but never build inputs or choose windows when the app runs, and the ensemble rules have no settings for the test set to tune.
 
-Figure~\ref{fig:focus} shows the one place where the rule seems to be broken. The focus window is placed using the marked answer position, which is part of the answer. In training this is normal supervised learning, because it decides which text becomes a training example. In the real system there is no marked answer, and the span step reads the window chosen by the presence step. The separate span test in Section~\ref{sec:span} is the exception. It builds each test example with the same centred focus window, so it measures extraction when the position of the answer is already known, and its score is a best case that the real system cannot reach. The realistic number comes from the start-to-finish test in Section~\ref{sec:e2e}, which never uses the marked answer position.
+Figure~\ref{fig:focus} shows the one place where the rule seems to be broken. The focus window is placed using the marked answer position, which is part of the answer. In training this is normal supervised learning, because it decides which text becomes a training example. In the real system there is no marked answer, and the span step reads the window chosen by the presence step. The separate span test in Section~\ref{sec:span} is the exception. It builds each test example with the same centred focus window, so it measures extraction when the position of the answer is already known, and its score is a best case that the real system cannot reach. The realistic number comes from the start-to-finish test in Section~\ref{sec:e2e}, which never uses the marked answer position. The retrained span model of Section~\ref{sec:spanv2} does not use centred windows at all: the answer position only labels its training chunks.
 
 \section{Data Collection}
 \label{sec:datasource}
@@ -423,7 +425,7 @@ We reduced the data only to keep training possible on a laptop and to balance th
 \begin{itemize}[itemsep=2pt]
   \item Vocabulary limit for the baseline: the TF--IDF vocabulary keeps only the 20{,}000 most common single words and word pairs that appear in at least two contracts.
   \item Fewer negative examples: for window-level training, every positive window is kept, but only two negative windows are taken for each (contract, category) pair, giving 53{,}662 window examples with 39.2\% positives.
-  \item Training on a sample: the presence model was trained on a balanced sample of 24{,}000 windows, the span model on 8{,}000 of 11{,}156 examples and the summarizer on 4{,}000 of 11{,}156 pairs. Section~\ref{sec:budget} tests whether training the presence model on a sample hurt it.
+  \item Training on a sample: the presence model was trained on a balanced sample of 24{,}000 windows, the span model on 8{,}000 of 11{,}156 examples (the retrained one on 6{,}000 clauses from the 327 fit contracts) and the summarizer on 4{,}000 of 11{,}156 pairs. Section~\ref{sec:budget} tests whether training the presence model on a sample hurt it.
 \end{itemize}
 
 \subsection{Summary of Preprocessed Data}
@@ -497,7 +499,7 @@ Wall-clock          & $\approx$50--52 min & $\approx$23--26 min & $\approx$8--13
 \end{tabular}
 \end{adjustbox}
 
-{\footnotesize\singlespacing \emph{Note.} The re-run of Section~\ref{sec:v2} changes three presence settings: 512 tokens, three epochs with the best one kept on validation, and training windows drawn from 327 of the 408 training contracts. Its training took 191 minutes.\par}
+{\footnotesize\singlespacing \emph{Note.} The re-run of Section~\ref{sec:v2} changes three presence settings: 512 tokens, three epochs with the best one kept on validation, and training windows drawn from 327 of the 408 training contracts. Its training took 191 minutes. The retrained span model of Section~\ref{sec:spanv2} uses 11{,}967 chunks of 1{,}200 characters (6{,}000 clauses), 384 tokens and two epochs, and took 46.2 minutes.\par}
 \end{table}
 \subsection{How We Validated, and Where the Settings Came From}
 \label{sec:valprotocol}
@@ -698,7 +700,7 @@ The final result of the project is \emph{Clausify}, a Streamlit web app that run
 \label{fig:apphome}
 \end{figure}
 
-Each clause card shows the category name with a coloured risk badge, the one-line reason why that category is risky (from the risk table in Appendix~\ref{app:taxonomy}), the summarizer's plain-English sentence with a warning when it belongs to another category, a bar showing the calibrated chance that the clause type is present, with the DistilBERT score and the threshold set for that clause type, and the clause quoted from the user's own contract with the span model's key phrase highlighted (Figure~\ref{fig:appcards}). Below the cards the app adds three more views:
+Each clause card shows the category name with a coloured risk badge, the one-line reason why that category is risky (from the risk table in Appendix~\ref{app:taxonomy}), the summarizer's plain-English sentence with a warning when it belongs to another category, a bar showing the calibrated chance that the clause type is present, with the DistilBERT score and the threshold set for that clause type, and the clause quoted from the user's own contract with the span model's answer highlighted (Figure~\ref{fig:appcards}). A card whose calibrated chance is below 50\% is labelled \emph{Possible --- check} and listed after the other cards of its risk level (Section~\ref{sec:demolimits}). Below the cards the app adds three more views:
 \begin{itemize}[itemsep=2pt]
   \item A highlighted contract: the full text, with every clause found marked in its risk colour and labelled with its category. Each card links to its place in the text.
   \item A missing-protection checklist: protective clauses the models did not find, namely a limit on liability, termination for convenience, governing law, an expiry date, a warranty period, insurance and, when the contract renews itself, a notice period to stop the renewal. Each comes with a sentence on why its absence matters, and the view notes that ``not detected'' can also mean the model missed it.
@@ -732,13 +734,13 @@ The app follows the same steps that were used in testing:
 \begin{enumerate}[itemsep=2pt]
   \item Windows. The contract is cut into 2{,}000-character windows that move forward 1{,}500 characters at a time, as in training. At most 30 windows are read, so very long documents stay fast.
   \item Model 1, presence. For each of the 41 categories, the exact CUAD question the model was trained on is paired with every window and scored by the re-run DistilBERT, which reads the whole window (512 tokens). The score for the whole contract is the highest window score. A category is reported as present when its score reaches the threshold chosen for it on the validation split, and the best window is remembered.
-  \item Finding the clause. Inside that best window, the presence model scores each paragraph against the category question, and the highest-scoring paragraph is quoted on the card. The DistilBERT question-answering model then highlights the key phrase inside it. An earlier version let the span model choose the text from the whole window, and on test inputs it returned the same sentence for almost every category, because the span model prefers text near the position where answers sat during training (Section~\ref{sec:e2e}). It is now used only inside the paragraph the presence model chose.
+  \item Finding the clause. Inside that best window, the retrained span model (Section~\ref{sec:spanv2}) reads the window in 1{,}200-character chunks, as in its training, and returns its answer. The card quotes the whole paragraph that contains the answer and highlights the answer inside it. Earlier versions of the app could not trust the first span model this far: on test inputs it returned the same sentence for almost every category, because it preferred text near the position where answers sat during its training (Section~\ref{sec:e2e}). They quoted the paragraph the presence model scored highest instead, which Section~\ref{sec:spanv2} compares with the new method on the test set.
   \item Optional ensembles. With these settings the re-run TF--IDF model also scores the whole contract. The recall-first ensemble reports a category when the average of the two scores reaches that category's threshold, and the balanced ensemble when both scores reach their own thresholds, exactly as tested in Section~\ref{sec:v2}. The thresholds are stored in \texttt{decision\_v2.json}, which the training code writes and the app reads, so the app cannot drift from the tested setup.
   \item Risk layer. The category found is looked up in the fixed risk table (8 High, 22 Medium, 11 Low) for its level and reason.
   \item Summarizer. FLAN-T5-small receives each quoted clause with the same prompt and settings as in testing and returns one plain-English sentence.
 \end{enumerate}
 
-All the models run on the CPU, so the app works on any computer, and a typical contract takes about a minute once the models are loaded (Table~\ref{tab:appbench}). The app loads the trained models saved by the training code (\texttt{presence\_mil}, \texttt{span}, \texttt{summarizer} and the TF--IDF \texttt{baseline.pkl}). When they are not on the computer, as on a cloud server, it downloads the same files once from a public Hugging Face model repository.
+All the models run on the CPU, so the app works on any computer, and a typical contract takes about a minute once the models are loaded (Table~\ref{tab:appbench}). The app loads the trained models saved by the training code (\texttt{presence\_v2}, \texttt{span\_v2}, \texttt{summarizer} and the re-run TF--IDF model, with the first setup's models as a fallback). When they are not on the computer, as on a cloud server, it downloads the same files once from a public Hugging Face model repository.
 \subsubsection{Implementation Notes}
 The app is a single-page Streamlit program (\texttt{app.py}) built on two small modules. \texttt{model\_utils.py} loads the models and handles windows, scoring, clause finding, the summarizer and the risk table, and \texttt{features.py} reads uploaded files, builds the highlighted view and creates the reports. Two test contracts come with the app: a real CUAD contract, and a made-up ``Master Software License and Distribution Agreement'' that we wrote to cover many of the 41 categories. On the made-up contract the app finds clauses at all three risk levels and puts the four High-risk clause types that the contract's section headings name (\emph{Exclusivity}, \emph{IP Ownership Assignment}, \emph{Non-Compete} and \emph{Liquidated Damages}) at the top of the report, which are the before-you-sign warnings the design aims for. It also reports one High-risk type the contract does not contain (Section~\ref{sec:v2}).
 \subsubsection{Clause-by-Clause Mode}
@@ -765,21 +767,21 @@ Chapter~2 explained that we chose a small model partly because the app must resp
 \cmidrule(lr){4-5}
 \textbf{Contract} & \textbf{Characters} & \textbf{Windows scored} & \textbf{First setup} & \textbf{Current app} & \textbf{Peak RSS}\\
 \midrule
-Shortest in test set & 1{,}283 & 1 & 2.7\,s & 3.1\,s & 1.25\,GB\\
-25th percentile & 18{,}104 & 12 & 15.0\,s & 30.4\,s & 1.72\,GB\\
-Median & 35{,}136 & 24 & 30.1\,s & 58.7\,s & 1.97\,GB\\
-75th percentile & 65{,}547 & 30 (capped) & 32.7\,s & 96.6\,s & 2.07\,GB\\
-Longest in test set & 289{,}615 & 30 (capped) & 34.8\,s & 102.8\,s & 2.13\,GB\\
+Shortest in test set & 1{,}283 & 1 & 2.7\,s & 2.0\,s & 1.16\,GB\\
+25th percentile & 18{,}104 & 12 & 15.0\,s & 32.6\,s & 1.73\,GB\\
+Median & 35{,}136 & 24 & 30.1\,s & 64.4\,s & 1.91\,GB\\
+75th percentile & 65{,}547 & 30 (capped) & 32.7\,s & 81.8\,s & 1.93\,GB\\
+Longest in test set & 289{,}615 & 30 (capped) & 34.8\,s & 87.1\,s & 1.93\,GB\\
 \midrule
-\multicolumn{6}{l}{\emph{Current app: median 58.7\,s \quad mean 58.3\,s \quad worst case 102.8\,s}}\\
+\multicolumn{6}{l}{\emph{Current app: median 64.4\,s \quad mean 53.6\,s \quad worst case 87.1\,s}}\\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
 
-{\footnotesize\singlespacing \emph{Note.} Measured in October 2026 through the application's own \texttt{analyze()} entry point with its default detection rule, on the same machine with nothing else running. First setup: the 256-token presence model. Current app: the re-run 512-token model of Section~\ref{sec:v2}. CPU only, Apple M4, models already loaded (loading adds 0.6\,s). Peak RSS is the memory of the whole Python process for the current app.\par}
+{\footnotesize\singlespacing \emph{Note.} Measured in October 2026 through the application's own \texttt{analyze()} entry point with its default detection rule, on the same machine with nothing else running. First setup: the 256-token presence model. Current app: the re-run 512-token presence model of Section~\ref{sec:v2} and the retrained span model of Section~\ref{sec:spanv2}. CPU only, Apple M4, models already loaded (loading adds 0.5\,s). Peak RSS is the memory of the whole Python process for the current app.\par}
 \end{table}
 
-A typical contract takes about a minute (58.7 seconds for the median test contract). That is about twice the first setup's 30.1 seconds, because the presence model now reads twice as much text in every window. It is the price of the accuracy gain in Section~\ref{sec:v2}. Our first guess of 5--15 seconds came from watching the demo on short inputs.
+A typical contract takes about a minute (64.4 seconds for the median test contract). That is about twice the first setup's 30.1 seconds, because the presence model now reads twice as much text in every window. It is the price of the accuracy gain in Section~\ref{sec:v2}. Our first guess of 5--15 seconds came from watching the demo on short inputs.
 
 Two design effects show in the numbers. Time grows in proportion to the number of windows, because most of the work is 41 categories $\times$ windows passes through DistilBERT, with each (category, window) pair scored once and nothing reused between categories. The 30-window limit keeps the worst case short. Without it the longest test contract would take more than ten minutes, but with it every contract longer than about 45{,}500 characters is cut at the same point. The limit buys speed with a hidden cost in recall: clauses after the cut cannot be found, and no Chapter~5 number shows this, because those tests read the full document. It is a limit of the app and not of the method, and Section~\ref{sec:demolimits} says so.
 

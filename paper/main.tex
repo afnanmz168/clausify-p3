@@ -24,7 +24,7 @@ Contract Understanding Atticus Dataset}
 \begin{abstract}
 Automated contract review is usually evaluated one component at a time. We report a three-stage
 pipeline on the Contract Understanding Atticus Dataset (CUAD; 510 contracts, 41 clause categories)
-under a contract-level 80/20 split, and three ways in which component scores misled us. First, a
+under a contract-level 80/20 split, and three ways component scores misled us. First, a
 sliding-window DistilBERT trained under multiple-instance learning lost to a full-document TF--IDF
 baseline at clause presence classification (micro-F1 0.692 against 0.775), and the gap survived
 controls for training data, random seed, aggregation rule and threshold. Every one of those runs
@@ -34,10 +34,10 @@ baseline (0.797 against 0.785) and their ensemble beats it (0.809; lead $+0.024$
 $[+0.011,+0.037]$); a length-only control shows the whole window adds $+0.036$ to the tuned transformer. Second, micro-F1 and the system's purpose diverge: in both setups the configuration ranked
 first on micro-F1 misses the most high-risk clauses, while a recall-first configuration chosen on
 validation finds 90.3\% of them. Third, stage-wise scores do not compose: only 22.1\% of gold
-clauses survive all stages, against roughly 77\% predicted. Reading the whole window cut
-wrong-window selections from 30.9\% to 17.4\%, leaving the span model as the main loss. We show that a 41-template reference set turns plain-language
+clauses first survived all stages, against about 77\% predicted. Reading the whole window and
+retraining the span model on the chunks it reads at run time raise this to 59.6\%. A 41-template reference set turns plain-language
 generation into classification (ROUGE-L 0.775 against the templates, 0.116 against clause-specific
-references), and that isotonic calibration lowers the presence score's expected calibration error
+references), and isotonic calibration lowers the presence score's expected calibration error
 from 0.206 to 0.016.
 \end{abstract}
 
@@ -67,8 +67,8 @@ and~\ref{sec:v2}).
 a risk-weighted evaluation, and resolved by fixing a recall-first objective before testing
 (Section~\ref{sec:risk}).
 \item A demonstration that stage-wise scores do not compose: 22.1\% end-to-end survival against
-about 77\% predicted, decomposed into two causes, one of which the full-window model largely removes
-(Section~\ref{sec:e2e}).
+about 77\% predicted, decomposed into two causes; the full-window presence model and a span model
+retrained on the chunks it actually reads raise survival to 59.6\% (Section~\ref{sec:e2e}).
 \item A demonstration that a small reference set converts a generation task into classification
 without the metric registering the change (Section~\ref{sec:summ}).
 \end{enumerate}
@@ -124,11 +124,15 @@ The claim is narrow: it bounds \emph{lexical} retrieval only, and a dense retrie
 it.
 
 \subsection{Stage 2: Span Extraction}
+\label{sec:stage2}
 A DistilBertForQuestionAnswering head predicts start and end token positions. At training time each
 example is re-centred so the answer begins approximately 150 characters into a 1,200-character
 window, which guarantees the target survives tokenizer truncation. This uses a label to construct a
 training example and never to construct an inference input; Section~\ref{sec:e2e} shows it
-nevertheless has a cost.
+nevertheless has a cost. A second span model is therefore trained on the inputs it sees at run time:
+the presence model's 2,000-character window cut into 1,200-character chunks at offsets 0 and 800.
+A chunk that contains the start of a clause is labelled with its true position, wherever it falls;
+a chunk that does not is labelled ``no answer'' on [CLS], as in SQuAD~2.0~\cite{squad2}.
 
 \subsection{Risk Prioritization, Plain Language and Calibration}
 Each category carries a fixed High/Medium/Low level scored from the weaker party's perspective
@@ -473,8 +477,9 @@ is not calibrated.}
 
 \subsection{Span Extraction and Plain-Language Generation}
 \label{sec:summ}
-Given an answer-bearing window, token-F1 is 0.764 with a contract-clustered 95\% interval of
-$[0.743,0.782]$, and 82.8\% of predictions overlap the gold span at F1 $\geq 0.5$. The clustered
+Given a window centred on the answer, the first span model reaches a token-F1 of 0.764 with a
+contract-clustered 95\% interval of $[0.743,0.782]$, and 82.8\% of predictions overlap the gold
+span at F1 $\geq 0.5$. The clustered
 interval is roughly twice the width obtained by resampling clauses independently
 ($[0.752,0.775]$), which is the practical cost of ignoring within-contract correlation.
 
@@ -548,14 +553,55 @@ first half of each window, its correct windows had the clause in the second half
 time, against 35.8\% for the full-window model. In the first half the span model succeeds about
 equally for both (41.7\% and 40.7\%); in the second half it succeeds 18.5\% and 5.4\% of the time.
 The whole drop from 39.6\% to 28.0\% therefore comes from clauses the first model could not see,
-and the span model's positional bias is now the main loss. Both causes are addressable without
-additional parameters.
+and with the window fixed, the span model's positional bias became the main loss.
+
+The retrained span model (Section~\ref{sec:stage2}) removes it. It uses the same backbone, learning
+rate and two epochs, 384 tokens, and 11,967 chunks from 6,000 clauses of the 327 fit contracts. The
+epoch and the decoding (each chunk's best answer scored against its ``no answer'' score, at most 120
+tokens) were chosen on the 81 validation contracts, where it extracts 63.4\% of detected clauses
+against 20.9\% for the first model. On the test set (Table~\ref{tab:spanv2}), given the right window
+it succeeds 76.4\% of the time, with no position effect (76.2\% in the first half, 76.8\% in the
+second), and end-to-end survival under the application setting rises from 22.1\% to 59.6\%. On a
+plain window that contains the clause the first model reaches a mean token-F1 of only 0.366, far
+below its centred-window 0.764, while the retrained model reaches 0.779. Survival now follows
+$93.0\% \times 82.6\% \times 76.4\% = 58.7\%$, plus 12 clauses recovered from a wrong window. Of
+the 545 clauses still lost, 95 are never detected, 206 lie outside the selected window and 244 are
+missed inside it, so the two causes now cost about the same. No extra parameters were needed for
+either fix.
+
+\begin{table}[!t]
+\caption{First and retrained span model, same detections and windows}
+\label{tab:spanv2}
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcc}
+\toprule
+ & \textbf{First} & \textbf{Retrained}\\
+\midrule
+Survive all stages (app setting) & 22.1\% & \textbf{59.6\%}\\
+\quad 95\% CI (contracts) & $[19.7, 24.6]$ & $[57.0, 62.2]$\\
+Span found, right window & 28.0\% & 76.4\%\\
+\quad clause in first half & 40.7\% & 76.2\%\\
+\quad clause in second half & 5.4\% & 76.8\%\\
+Survive all stages (balanced) & 19.7\% & 50.7\%\\
+Token-F1, plain right window & 0.366 & 0.779\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The application quotes the paragraph around the extracted answer and highlights the answer in it.
+Counting a quote as correct when it contains at least half of the clause's words, 77.2\% of
+detected clauses receive a correct quote, against 75.3\% when the paragraph is chosen by the presence
+model, the method the application used before (the choice was made on validation). Over all gold
+clauses that is 71.7\% ($[69.0, 74.5]$).
 
 \subsection{Limitations}
 \label{sec:limits}
 The re-run tuned up to 41 thresholds per model on 81 validation contracts, so some per-category
 thresholds fit noise; this inflates validation scores but not test scores. The seed, training-budget
-and split controls were run on the first setup and have not been repeated for the re-run model, and
+and split controls were run on the first setup and have not been repeated for the re-run model or
+the retrained span model, and
 the ensemble's own split variance is unmeasured. ROUGE-L measures its reference set rather than the
 task, as Section~\ref{sec:summ} demonstrates directly, and micro-F1 does not measure user harm, as
 Section~\ref{sec:risk} demonstrates. The risk levels are our own, and a different assignment would
@@ -567,7 +613,7 @@ statistics on the rare tail are not meaningful individually.
 \section{Engineering Considerations}
 Training the first-setup presence transformer took 49.8 minutes on the target laptop, the
 full-data control 140.7 minutes, and the re-run 191 minutes, with another 198 minutes to score every
-validation and test window; the summarizer trained on CPU in about 8 minutes. DeBERTa-v3 produced NaN
+validation and test window; the summarizer trained on CPU in about 8 minutes, and the retrained span model in 46.2 minutes. DeBERTa-v3 produced NaN
 gradients on the Metal backend and was replaced by DistilBERT. Gradient norms logged every 100 steps
 exceeded the clipping limit of 1.0 at every logged step of the October DistilBERT runs and at 98.4\%
 of logged points in the full-data run, so the nominal learning rate overstates the step size actually
@@ -582,7 +628,7 @@ inference side, scanning one median contract for all 41 categories takes 10.6\,s
 against 454\,s with Longformer.
 
 The deployed application runs all inference locally on CPU. With the full-window model, a
-median-length test contract takes 58.7\,s and the worst case 102.8\,s at a peak memory of 2.13\,GB,
+median-length test contract takes 64.4\,s and the worst case 87.1\,s at a peak memory of 1.93\,GB,
 about twice the first setup's 30.1\,s because each window now carries twice as much text. A
 30-window cap bounds latency but reads only the first 45,500 characters, and 38.4\% of CUAD
 contracts exceed that, so clauses beyond the cap cannot be detected, a limitation invisible in every
@@ -596,15 +642,14 @@ budget, random seed, aggregation rule and decision threshold. All of those contr
 the same validation split, the transformer ties the baseline and their ensemble beats it (0.809,
 lead $[+0.011,+0.037]$). In both setups the configuration that maximizes aggregate micro-F1 is the
 worst available choice for the clauses carrying the highest risk, and a recall-first objective
-fixed before testing finds 90.3\% of them. The assembled pipeline still retains only 22.1\% of gold
-clauses where its component scores predict about 77\%. We suggest that a comparison is fair only
+fixed before testing finds 90.3\% of them. The assembled pipeline first retained only 22.1\% of gold clauses where its component scores
+predicted about 77\%; both causes lay in our own setup, and fixing them raises survival to 59.6\%. We suggest that a comparison is fair only
 when both sides read the same evidence and are tuned the same way, that a margin should be compared
 against seed and split variance as well as a bootstrap interval, and that pipeline-level survival
 and a purpose-weighted metric belong alongside component scores in any system of this kind.
 
-Future work: training the span model on answers at varied positions and on unanswerable examples,
-which targets the main remaining loss; a locator trained for locating rather than a detector reused
-as one; a tuning objective that weights high-risk categories; repeating the seed and split controls
+Future work: a locator trained for locating rather than a detector reused as one, and further
+training of the span model, which target the two remaining losses; a tuning objective that weights high-risk categories; repeating the seed and split controls
 for the re-run model, with cross-validation; a clause-diverse generation target set; dense retrieval;
 a user study of the application; and evaluation on contracts drawn from outside CUAD.
 
@@ -615,6 +660,7 @@ how this work reports its results.
 \begin{thebibliography}{99}
 \bibitem{cuad} D. Hendrycks, C. Burns, A. Chen, and S. Ball, ``CUAD: An expert-annotated NLP dataset for legal contract review,'' in \emph{Proc. NeurIPS Datasets and Benchmarks}, 2021.
 \bibitem{squad} P. Rajpurkar, J. Zhang, K. Lopyrev, and P. Liang, ``SQuAD: 100,000+ questions for machine comprehension of text,'' in \emph{Proc. EMNLP}, 2016, pp. 2383--2392.
+\bibitem{squad2} P. Rajpurkar, R. Jia, and P. Liang, ``Know what you don't know: Unanswerable questions for SQuAD,'' in \emph{Proc. ACL}, 2018, pp. 784--789.
 \bibitem{legalbert} I. Chalkidis \emph{et al.}, ``LEGAL-BERT: The muppets straight out of law school,'' in \emph{Findings of EMNLP}, 2020, pp. 2898--2904.
 \bibitem{lexglue} I. Chalkidis \emph{et al.}, ``LexGLUE: A benchmark dataset for legal language understanding in English,'' in \emph{Proc. ACL}, 2022.
 \bibitem{longformer} I. Beltagy, M. E. Peters, and A. Cohan, ``Longformer: The long-document transformer,'' \emph{arXiv:2004.05150}, 2020.

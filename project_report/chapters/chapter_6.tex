@@ -147,7 +147,7 @@ Exact Match                   & 35.5\% & $[32.6\%,\ 38.6\%]$ & $[33.7\%,\ 37.3\%
 
 Resampling contracts gives a token-F1 interval of $[0.743, 0.782]$, roughly twice as wide as the $[0.752, 0.775]$ we would get by treating clauses as independent. The extra width is what it costs to ignore that clauses from one contract are linked, the same effect that made the contract-level bootstrap necessary in Section~\ref{sec:bootstrap}. It also tells us how precise the score is. On a test set this size, differences smaller than about two points of token-F1 cannot be measured, so 0.764 should be compared with published figures with that margin in mind.
 
-This test has a limit. It measures extraction when the window contains the answer. More exactly, each test window is the 1{,}200-character focus window placed around the real answer (Section~\ref{sec:leakage}), so the model is indirectly told where to look. The result is a best case, and the real system cannot reach it. The CUAD paper's full-document test (precision at 80\% recall over all windows, including those with no answer) needs a heavier ranking setup that we did not build, so we make no claim about that score. Section~\ref{sec:e2e} looks at the other side: how extraction does when the presence step chooses the window.
+This test has a limit. It measures extraction when the window contains the answer. More exactly, each test window is the 1{,}200-character focus window placed around the real answer (Section~\ref{sec:leakage}), so the model is indirectly told where to look. The result is a best case, and the real system cannot reach it: on plain windows that contain the clause the same model reaches a mean token-F1 of only 0.366 (Section~\ref{sec:spanv2}). The CUAD paper's full-document test (precision at 80\% recall over all windows, including those with no answer) needs a heavier ranking setup that we did not build, so we make no claim about that score. Section~\ref{sec:e2e} looks at the other side: how extraction does when the presence step chooses the window.
 \subsection{Summarization}
 \label{sec:summ}
 
@@ -258,7 +258,7 @@ Risk & correct risk level given & 296 & 22.0\% & 298 & 22.1\%\\
 {\footnotesize\singlespacing \emph{Note.} First setup: AND-ensemble at 0.5. App: the re-run transformer with its recall-first thresholds (Section~\ref{sec:v2}). Each share is of all real clauses still left after that step.\par}
 \end{table}
 
-Only 22.0\% of real clauses get through with the first setup, and 22.1\% with the app's setting. This is the number that describes what a user gets. It is far below what the separate scores suggest: 78.4\% presence recall times 82.8\% span overlap predicts about 65\% for the first setup, and 93.0\% times 82.8\% predicts about 77\% for the app. Both deliver less than a third of that. The rest of this section explains the gap.
+Only 22.0\% of real clauses get through with the first setup, and 22.1\% with the app's setting. This is the number that described what a user got, until we retrained the span model (Section~\ref{sec:spanv2}), which raises the app's figure to 59.6\%. It is far below what the separate scores suggest: 78.4\% presence recall times 82.8\% span overlap predicts about 65\% for the first setup, and 93.0\% times 82.8\% predicts about 77\% for the app. Both deliver less than a third of that. The rest of this section explains the gap.
 
 The risk step loses nothing. The level is a fixed lookup for each category, so it is right exactly when the category is right and adds no errors of its own. ``Correct'' here means ``matches our risk table''.
 
@@ -289,16 +289,60 @@ Chosen window does \emph{not} contain the real clause & 327 & 30.9\% & 218 & 17.
 
 The first cause is that the window with the highest score is often the wrong window. Reading the whole window helps here: the re-run model's best window misses the clause 17.4\% of the time, against 30.9\% for the first setup. We chose the maximum rule (Section~\ref{sec:mil}) because it removes the search limit: if any window fires, the category is reported. Section~\ref{sec:mil} already discussed what that costs in precision. We had not expected the second cost. The highest-scoring window is also used to locate the clause, and it is poor at that job, missing the clause entirely 30.9\% of the time. The model was never trained to locate clauses. It was trained to answer ``does this window contain a clause of this category?'', and a window that talks about liability in general can score higher than the one that sets the limit. For those 327 clauses (218 with the app's setting) the span step gets the wrong 2{,}000 characters, and no extraction model could recover them.
 
-The second cause is that the span model is much weaker on windows unlike the ones it was trained on. Even when the window does contain the clause, extraction succeeds only 39.6\% of the time with the first setup and 28.0\% with the app's setting, against 82.8\% in the separate test of Section~\ref{sec:span}. With the window choice improved, this is now the larger loss. Where the clause sits in the window explains the drop. The first model read only the first half of each window, so when its chosen window was right, the clause was in the second half only 8.9\% of the time. With the re-run model it is 35.8\%. In the first half the span model succeeds about equally often for both (41.7\% and 40.7\%); in the second half it succeeds only 18.5\% and 5.4\% of the time. All of the drop from 39.6\% to 28.0\% comes from clauses the first model could not even see. The focus windows explain this (Section~\ref{sec:spanmethod}). In training, every example was centred so that the answer started about 150 characters into a 1{,}200-character window. This is allowed, because the answer is used to build a training example and never as an input when the system runs (Section~\ref{sec:leakage}). It still had a cost. The model has only seen windows with the answer near the start, while the real system gives it plain 1{,}200-character chunks where the answer can be anywhere, and the average token-F1 falls from 0.764 to 0.383 (0.350 with the app's setting).
+The second cause is that the span model is much weaker on windows unlike the ones it was trained on. Even when the window does contain the clause, extraction succeeds only 39.6\% of the time with the first setup and 28.0\% with the app's setting, against 82.8\% in the separate test of Section~\ref{sec:span}. With the window choice improved, this became the larger loss. Where the clause sits in the window explains the drop. The first model read only the first half of each window, so when its chosen window was right, the clause was in the second half only 8.9\% of the time. With the re-run model it is 35.8\%. In the first half the span model succeeds about equally often for both (41.7\% and 40.7\%); in the second half it succeeds only 18.5\% and 5.4\% of the time. All of the drop from 39.6\% to 28.0\% comes from clauses the first model could not even see. The focus windows explain this (Section~\ref{sec:spanmethod}). In training, every example was centred so that the answer started about 150 characters into a 1{,}200-character window. This is allowed, because the answer is used to build a training example and never as an input when the system runs (Section~\ref{sec:leakage}). It still had a cost. The model has only seen windows with the answer near the start, while the real system gives it plain 1{,}200-character chunks where the answer can be anywhere, and the average token-F1 falls from 0.764 to 0.383 (0.350 with the app's setting).
 
 \subsubsection{What this changes}
 This changes how the earlier results should be read in three ways.
 
 The span scores in Section~\ref{sec:span} are an upper limit on real extraction quality. They answer ``how good is the extractor when given the right window?'', which is a fair question about the model and a misleading one about the system.
 
-A bigger model is also not the most useful next step. The second cause is a data problem with a cheap fix: train the span model on windows where the answer sits at different positions, or on the same plain chunks it sees in real use. The first cause needs a model trained to choose the extraction window, instead of reusing the presence score. Both fit within this project's computing budget, and neither needs more parameters.
+A bigger model is also not the most useful next step. The second cause is a data problem with a cheap fix: train the span model on the same plain chunks it sees in real use, with the answer wherever it falls. Section~\ref{sec:spanv2} applies that fix. The first cause needs a model trained to choose the extraction window, instead of reusing the presence score. Both fit within this project's computing budget, and neither needs more parameters.
 
-Clausify's output should be read as a shortlist. With the app's setting, the category is found for 93.0\% of the clauses that are really there, but in this test the span model's quoted text was a good copy of the real clause only about one time in five overall. The app has since changed how it picks the quote. It now quotes the whole paragraph that the presence model scores highest, which fixed the clear failures we saw in our own tests, but we have not measured this method on the test set. The app tells users that it is not legal advice and that the quoted text may not be the exact clause the badge refers to (Section~\ref{sec:demolimits}).
+\subsubsection{Fixing the second cause: a span model trained on the chunks it reads}
+\label{sec:spanv2}
+We trained a second span model in the same way as the first (DistilBERT, learning rate $3\times10^{-5}$, two epochs, seed 42) and changed only the training examples. Each example is now one of the 1{,}200-character chunks the system really reads. For every clause we took one of the 2{,}000-character windows that contain its start, chosen at random, and cut it into chunks at the same offsets as when the system runs (0 and 800 characters). A chunk that contains the start of the clause is labelled with its real position, wherever that is, and a clause that runs past the end of the chunk is cut there. A chunk that does not contain it is labelled ``no answer'', as in SQuAD~2.0 \cite{rajpurkar2018squad2}, so the model learns that a chunk can hold nothing. The input limit is 384 tokens, which covers the whole chunk. We used 6{,}000 clauses from the 327 contracts the re-run presence model was trained on, which gave 11{,}967 chunks (60.6\% with an answer). Training took 46.2 minutes.
+
+Two choices were made on the 81 validation contracts, before the test contracts were used: the epoch (first or second), and how answers are compared across the chunks of a window. The second epoch was best, comparing each chunk's best answer with that chunk's ``no answer'' score and allowing answers of up to 120 tokens. On validation it extracted 63.4\% of the detected clauses at token-F1 $\geq$ 0.5, against 20.9\% for the first span model. We then scored the test contracts once (Table~\ref{tab:spanv2}).
+
+\begin{table}[!htbp]
+\centering
+\caption{First and retrained span model}
+\label{tab:spanv2}
+\small
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lcc}
+\toprule
+ & \textbf{First span model} & \textbf{Retrained span model}\\
+\midrule
+\multicolumn{3}{l}{\emph{App setting (recall-first transformer), 1{,}348 real clauses}}\\
+Clauses that get through every step & 298 (22.1\%) & \textbf{803 (59.6\%)}\\
+\quad 95\% CI, bootstrap over contracts & $[19.7\%,\ 24.6\%]$ & $[57.0\%,\ 62.2\%]$\\
+Extraction succeeds, given the right window & 28.0\% & 76.4\%\\
+\quad clause in the first half of the window & 40.7\% & 76.2\%\\
+\quad clause in the second half of the window & 5.4\% & 76.8\%\\
+Mean token-F1 of the extracted text & 0.350 & 0.673\\
+\addlinespace
+\multicolumn{3}{l}{\emph{Balanced setting (AND, tuned for micro-F1)}}\\
+Clauses that get through every step & 266 (19.7\%) & 683 (50.7\%)\\
+\addlinespace
+\multicolumn{3}{l}{\emph{A window that contains the clause, wherever it sits (1{,}348 clauses)}}\\
+Mean token-F1 & 0.366 & 0.779\\
+Token-F1 $\geq$ 0.5 & 24.4\% & 77.7\%\\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+
+{\footnotesize\singlespacing \emph{Note.} Same 102 test contracts, same detections and same chosen windows as Table~\ref{tab:e2e}; only the span model changes. ``Extraction succeeds'' means token-F1 $\geq$ 0.5 with the real clause.\par}
+\end{table}
+
+The fix works. With the app's setting, 59.6\% of the real clauses now get through all three steps, against 22.1\% with the first span model, and when the chosen window contains the clause the new model extracts it 76.4\% of the time, against 28.0\%. The position effect has gone: the new model succeeds about as often when the clause is in the second half of the window (76.8\%) as in the first (76.2\%), where the first model fell from 40.7\% to 5.4\%. The last two rows show the same thing from the other side. Given a plain window that contains the clause, the first model reaches a mean token-F1 of only 0.366, far below the 0.764 it reaches on centred focus windows (Section~\ref{sec:span}), while the new model reaches 0.779. The 0.764 was a best case the first model never met in use, and the new model meets it in ordinary windows.
+
+The category is found for 93.0\% of the clauses, the chosen window contains 82.6\% of those, and the new model extracts 76.4\% of those, which multiplies to 58.7\%; another 12 clauses come through from a wrong window because the same wording appears elsewhere, giving the 59.6\%. The 545 clauses still lost split three ways: 95 are never detected, 206 are in a window the presence model did not choose, and 244 are in the right window but the span model misses them. The two causes of this section now cost about the same, so a model trained to choose the window and a better span model would each help. The new span model is the one the app uses.
+
+\subsubsection{The quote the app shows}
+Clausify does not show the extracted text alone. It quotes a whole paragraph and highlights the extracted text inside it, because a paragraph is easier to recognise in the contract. Until now the paragraph was the one the presence model scored highest, and this had not been measured on the test set. We measured it in the same test, counting a quote as showing the clause when it contains at least half of the clause's words. With the paragraph the presence model scores highest, 75.3\% of the detected clauses are shown this way (median quote 411 characters). With the paragraph that contains the new span model's answer, 77.2\% are (357 characters). We chose between the two on the validation contracts, where the second was slightly ahead (73.5\% against 72.7\%), and the app now uses it. Over all real clauses, 71.7\% get a card whose quote contains at least half of the clause (95\% CI $[69.0\%, 74.5\%]$). Under the stricter token-F1 $\geq$ 0.5 rule the paragraphs score lower (46.9\% and 44.9\% of detected clauses), because a paragraph is longer than the clause in it, which is why the app highlights the extracted text.
+
+The two ways of choosing the paragraph are close, and on the demonstration contract of Section~\ref{sec:clausify} they differ on 4 of the 27 cards. The new one quotes the agreement's title for \emph{Document Name}, where the old one quoted the license grant. On the \emph{Liquidated Damages} card, however, it quotes the limitation-of-liability paragraph, where the old one found Section~13, the liquidated-damages clause. Clausify's output should therefore still be read as a shortlist: the category is found for 93.0\% of the clauses that are really there, and the quote under it contains the clause most of the time, but not always. The app tells users that it is not legal advice and that the quoted text may not be the exact clause the badge refers to (Section~\ref{sec:demolimits}).
 \subsection{Risk-Weighted Evaluation: Does the Metric Match the Purpose?}
 \label{sec:riskeval}
 
@@ -437,7 +481,7 @@ Insurance & F1 0.20 & The real clause is the insurance duty; the model returns t
 
 Three patterns stand out. Many false positives match the words without the duty: a contract that mentions insurance costs does not require insurance, and a bag-of-words model reading the whole document cannot tell the two apart. Many misses are the reverse, the idea without the usual words. A \$5{,}000-per-month cancellation fee is liquidated damages, but a model that has seen only about fifty contracts with this category, most of them using the usual words, will not learn that. Disagreement with the labels is the third pattern and part of the rare-category problem. The \emph{Third Party Beneficiary} case above looks like a labelling mistake, so the 0.000 F1 scores in Section~\ref{sec:raretail} come partly from the model and partly from the labels. We did not try to measure the split between the two, because that would mean labelling the contracts again, and we are not qualified to do it.
 
-The span errors point to something easier to fix. The one-word answer ``\texttt{the}'' and the confident answer from a window that cannot contain the clause have the same cause: the extraction model has no way to say that nothing is there. Training with unanswerable examples, as in SQuAD~v2, would give it that option, and we list it as future work.
+The span errors point to something easier to fix. The one-word answer ``\texttt{the}'' and the confident answer from a window that cannot contain the clause have the same cause: the extraction model has no way to say that nothing is there. Training with unanswerable examples, as in SQuAD~2.0, gives it that option, and the retrained span model of Section~\ref{sec:spanv2} is trained that way.
 
 The app's recall-first setting makes a different mix of mistakes, because it was chosen to miss as little as possible. On the test set it reports 710 false positives and only 95 misses, against 309 and 291 for the first setup's ensemble. Its most confident false alarms are informational categories, \emph{Parties}, \emph{Agreement Date} and \emph{Effective Date}, reported with scores above 0.98 in exhibits and addenda where CUAD's annotators marked no such clause. These are cheap mistakes for a user, since the Low-risk cards sit at the bottom of the report. Its misses are mostly clauses written without the usual words: a renewal ``by amendment to this agreement'' (\emph{Renewal Term}), and a sponsor's promise about other sponsors read as \emph{Most Favored Nation}.
 \subsection{Does the AND Rule Hurt Rare Categories More Than Common Ones?}
@@ -834,13 +878,16 @@ Table~\ref{tab:scorecard} collects the test results of all three models. The sep
 2A Presence, re-run & Ensemble, recall-first (AVG) & micro-F1 / High-risk found & 0.783 / 86.9\%\\
 2A Presence, first setup & AND-ensemble (TF--IDF + DistilBERT) & micro-F1 / Accuracy & 0.779 / 85.65\%\\
 2A Presence, first setup & AND-ensemble & Precision / Recall     & 77.38\% / 78.41\%\\
-2B Span     & DistilBERT-QA & token-F1 (given the window) & 0.764\\
-2B Span     & DistilBERT-QA & token-F1 (window chosen by 2A, app setting) & 0.350\\
-2B Span     & DistilBERT-QA & Exact Match           & 35.5\%\\
+2B Span     & DistilBERT-QA, first model & token-F1 (centred window with the answer) & 0.764\\
+2B Span     & DistilBERT-QA, first model & token-F1 (window chosen by 2A, app setting) & 0.350\\
+2B Span     & DistilBERT-QA, retrained (app) & token-F1 (window chosen by 2A, app setting) & \textbf{0.673}\\
+2B Span     & DistilBERT-QA, first model & Exact Match (centred window)  & 35.5\%\\
+2B Span     & DistilBERT-QA, retrained (app) & token-F1 (plain window with the clause) & 0.779\\
 1 Summarizer & FLAN-T5-small & ROUGE-L (41 templates)  & 0.775\\
 1 Summarizer & FLAN-T5-small & ROUGE-L (clause-specific) & 0.116\\
 \midrule
-\textbf{Full pipeline} & \textbf{all three steps (app setting)} & \textbf{real clauses that get through} & \textbf{22.1\%}\\
+Full pipeline & all three steps, first span model & real clauses that get through & 22.1\%\\
+\textbf{Full pipeline} & \textbf{all three steps (app setting)} & \textbf{real clauses that get through} & \textbf{59.6\%}\\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
@@ -862,7 +909,7 @@ The main presence result changed during the project, and the change is itself a 
 
 Two further findings held throughout.
 \begin{enumerate}[itemsep=2pt]
-  \item For finding the clause text, a bag-of-words model is no help because it cannot point to positions in the text, so the transformer is needed here. The small model does well when given the right window: token-F1 0.764, 95\% CI $[0.743, 0.782]$.
+  \item For finding the clause text, a bag-of-words model is no help because it cannot point to positions in the text, so the transformer is needed here. The first span model did well only on windows centred on the answer (token-F1 0.764, 95\% CI $[0.743, 0.782]$) and reached 0.366 on plain windows. Trained on the chunks it really reads, the same small model reaches 0.779 on plain windows (Section~\ref{sec:spanv2}).
   \item For summaries, a set of 41 template sentences turns the task into classification. The fine-tuned model copies a template word for word for 100\% of test clauses, and against clause-specific references it scores no better than the template alone (Section~\ref{sec:summ}). A high automatic score should be checked by reading the outputs.
 \end{enumerate}
 
@@ -871,7 +918,7 @@ For the first setup we withdrew one claim. The AND-ensemble's first place in Tab
 Two costs only showed up once we looked for them, and neither is flattering.
 \begin{itemize}[itemsep=2pt]
   \item In the first setup, the AND rule does not help everywhere. On the ten rarest categories it gains nothing in F1 over the transformer alone (0.364 against 0.368): it buys 34.6 points of precision with 30.0 points of recall and cuts the clauses found from 39 of 70 to 18 of 70 (Section~\ref{sec:raretail}). All of its overall benefit comes from the common categories, and one of the categories it scores zero on is High-risk.
-  \item The separate scores do not multiply. Only 22.0\% of real clauses get through the whole system with the first setup and 22.1\% with the app's setting, against about 65\% and 77\% predicted by multiplying the separate scores (Section~\ref{sec:e2e}). Reading the whole window cut wrong-window choices from 30.9\% to 17.4\%, so the span model's training mismatch is now the main loss. The presence model's highest-scoring window is the wrong window 30.9\% of the time, and the span model was trained on centred windows it never sees in real use.
+  \item The separate scores do not multiply. Only 22.0\% of real clauses got through the whole system with the first setup and 22.1\% with the app's setting, against about 65\% and 77\% predicted by multiplying the separate scores (Section~\ref{sec:e2e}). There were two causes: the presence model's highest-scoring window was the wrong window 30.9\% of the time, and the span model was trained on centred windows it never sees in real use. Reading the whole window cut wrong-window choices to 17.4\%, and retraining the span model on the chunks it really reads raised the app's figure to 59.6\% (Section~\ref{sec:spanv2}). What is left is split about evenly between the two causes.
 \end{itemize}
 
 The numbers in this chapter that we first trusted least (the ensemble's rank, the summarizer's ROUGE, the span model's token-F1) each turned out to measure something narrower than it seemed. Each time, we found out by measuring the thing the score stood for: we resampled the contracts, changed the seed, changed the reference sentences, or ran the steps in a chain. None of these checks needed a bigger model or more data.
@@ -879,27 +926,13 @@ The numbers in this chapter that we first trusted least (the ensemble's rank, th
 \subsection{Usability}
 \label{sec:usability}
 We did not run a usability study. The app's main claim, that grouping clauses by risk helps a non-lawyer act on a contract, is therefore untested, and Section~\ref{sec:threats} lists it under construct validity.
-%% ==================================================================
-%% TODO IF THE INFORMAL WALKTHROUGH IS RUN (USABILITY_PROTOCOL.md)
-%% Replace the paragraph above with 3-5 sentences, e.g.:
-%%
-%% "We ran an informal walkthrough with two non-lawyer participants (15
-%%  minutes each). This is far too small to constitute a usability study and
-%%  is reported only to replace an absence of evidence with a little.
-%%  <What they did first.> <What they said in answer to the four questions.>
-%%  <Anything suggesting over-trust in the quoted clause text or the
-%%  confidence bar.> No task-completion or comprehension measurement was
-%%  attempted, and with two participants no quantitative claim is possible."
-%%
-%% If a participant treated the quoted clause text as authoritative, or read
-%% the confidence bar as a probability, say so -- Chapter~5 shows both are
-%% unwarranted, and an observed instance belongs in the ethics discussion too.
-%% ==================================================================
 \subsection{Honest Limitations of the Demo}
 \label{sec:demolimits}
 By default the app finds clauses with the re-run transformer alone, using the recall-first thresholds chosen on validation (Section~\ref{sec:v2}). The two re-run ensembles are offered as settings. The default finds the most High-risk clauses on the test set (90.3\%) at the cost of the lowest micro-F1 of the three (0.757), because a missed High-risk clause is the mistake this tool exists to prevent (Section~\ref{sec:ethics}). The ensembles also depend on the TF--IDF model, which scores short contracts too low (Section~\ref{sec:v2}).
 
 The model's raw score is not a probability. Section~\ref{sec:threshold} shows that the original transformer's score has an Expected Calibration Error of 0.205, and the re-run model's thresholds (0.88 shared, chosen on validation) show that its scores still bunch near 1. The app therefore shows a calibrated chance instead: the isotonic map of Section~\ref{sec:threshold}, fitted on the validation contracts, turns each score into the share of validation contracts with that score that really contained the clause, and on the test set it reaches an Expected Calibration Error of 0.016. It was measured on CUAD contracts, so on contracts unlike CUAD's it is only a guide, and the app says so.
 
-Long contracts are cut off. To keep the app fast, it scores at most 30 windows, so any contract longer than 45{,}500 characters is only partly read and clauses after that point cannot be found. The app says so in its notice, but none of the numbers in this chapter include the cut, because they score whole documents. It affects many contracts: 38.4\% of CUAD contracts (196 of 510) are longer than 45{,}500 characters, and the app reads only the first 16\% of the longest test contract (289{,}615 characters). Table~\ref{tab:appbench} shows the effect: the 75th-percentile contract and the longest contract take almost the same time (96.6 and 102.8 seconds) although one is four times longer, because both are cut to 30 windows. The quoted text is also less reliable than the label. Section~\ref{sec:e2e} shows that when the presence model chooses the window, the span model's answer overlaps the real clause in only about a fifth of cases overall. The app now quotes the whole paragraph that the presence model scores highest, which fixed the clear failures we saw in our own tests, though this has not been measured on the test set. For a user, the risk badge and the category name are much more reliable than the quoted text under them, and the app says this too. A card means ``this contract seems to contain a clause of this type; look here'' and should not be read as ``this is the clause''. The risk levels are also set per category. The risk table says a \emph{Cap on Liability} clause needs attention, but it does not check whether a particular cap is generous or harsh. The notice above every analysis states all of this. The demonstration does show that the models work on contracts they have never seen, and that the output can be presented in a form a non-lawyer can act on.
+The chance and the decision did not always agree. The recall-first thresholds are set for each clause type, but the calibration map is shared by all types, so a type with a low threshold can be reported at a chance well under 50\%. On the 102 test contracts the default setting shows 1{,}963 cards. Of these, 728 (37.1\%) give a chance below 50\% and 204 (10.4\%) below 20\%; a \emph{Non-Compete} card, for example, could appear as a found High-risk clause with a chance of about 8\%. The low-chance cards still matter: 29.8\% of the 728 are real clauses, and they include 46 of the 159 High-risk clauses the default setting finds, so dropping them would lower its High-risk recall from 90.3\% to 64.2\%. The app therefore keeps them but labels them \emph{Possible --- check} and lists them after the other cards of their risk level under their own heading. The risk summary at the top counts them, and the PDF and CSV reports mark them as well. Of the 1{,}235 cards at 50\% or more, 83.9\% are real clauses.
+
+Long contracts are cut off. To keep the app fast, it scores at most 30 windows, so any contract longer than 45{,}500 characters is only partly read and clauses after that point cannot be found. The app says so in its notice, but none of the numbers in this chapter include the cut, because they score whole documents. It affects many contracts: 38.4\% of CUAD contracts (196 of 510) are longer than 45{,}500 characters, and the app reads only the first 16\% of the longest test contract (289{,}615 characters). Table~\ref{tab:appbench} shows the effect: the 75th-percentile contract and the longest contract take almost the same time (81.8 and 87.1 seconds) although one is four times longer, because both are cut to 30 windows. The quoted text is also less reliable than the label. With the first span model, the extracted text overlapped the real clause in only about a fifth of cases overall (Section~\ref{sec:e2e}). The app now uses the retrained span model and quotes the paragraph around its answer, and on the test contracts 71.7\% of real clauses get a card whose quote contains at least half of the clause (Section~\ref{sec:spanv2}). The other 28.3\% are clauses whose category was missed, whose window was chosen wrongly, or whose quoted paragraph is the wrong one, so for a user the risk badge and the category name remain more reliable than the quoted text under them, and the app says this too. A card means ``this contract seems to contain a clause of this type; look here'' and should not be read as ``this is the clause''. The risk levels are also set per category. The risk table says a \emph{Cap on Liability} clause needs attention, but it does not check whether a particular cap is generous or harsh. The notice above every analysis states all of this. The demonstration does show that the models work on contracts they have never seen, and that the output can be presented in a form a non-lawyer can act on.
 

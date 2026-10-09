@@ -1,0 +1,26 @@
+{
+ "n_cards": 1963,
+ "n_real": 1253,
+ "high_real_found": 159,
+ "high_total": 176,
+ "below_50": {
+  "n": 728,
+  "share": 0.3708609271523179,
+  "real": 217,
+  "real_share": 0.2980769230769231,
+  "high_real": 46
+ },
+ "below_20": {
+  "n": 204,
+  "share": 0.10392256749872644,
+  "real": 42,
+  "real_share": 0.20588235294117646,
+  "high_real": 10
+ },
+ "at_least_50": {
+  "n": 1235,
+  "real_share": 0.8388663967611336
+ },
+ "high_recall_without_possible": 0.6420454545454546,
+ "lowest_non_compete_chance": 0.08450704225352113
+}

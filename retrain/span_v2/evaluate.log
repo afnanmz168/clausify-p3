@@ -1,0 +1,13 @@
+Loading weights:   0%|          | 0/102 [00:00<?, ?it/s]Loading weights: 100%|██████████| 102/102 [00:00<00:00, 9562.34it/s]
+Loading weights:   0%|          | 0/102 [00:00<?, ?it/s]Loading weights: 100%|██████████| 102/102 [00:00<00:00, 6436.47it/s]
+Loading weights:   0%|          | 0/102 [00:00<?, ?it/s]Loading weights: 100%|██████████| 102/102 [00:00<00:00, 7303.03it/s]
+validation grid: {'epoch1_raw_cap60': 0.4735, 'epoch1_raw_cap120': 0.5938, 'epoch1_minus_null_cap60': 0.4725, 'epoch1_minus_null_cap120': 0.5909, 'epoch2_raw_cap60': 0.4991, 'epoch2_raw_cap120': 0.6278, 'epoch2_minus_null_cap60': 0.5, 'epoch2_minus_null_cap120': 0.6345} -> chosen epoch2_minus_null_cap120
+Loading weights:   0%|          | 0/104 [00:00<?, ?it/s]Loading weights: 100%|██████████| 104/104 [00:00<00:00, 6415.38it/s]
+Loading weights:   0%|          | 0/102 [00:00<?, ?it/s]Loading weights: 100%|██████████| 102/102 [00:00<00:00, 22941.82it/s]
+validation: {'n_detected': 1056, 'old_model_ok': 0.20928030303030304, 'chosen': {'epoch': 2, 'rule': 'minus_null', 'max_answer_tokens': 120, 'checkpoint': 'checkpoint-1496'}, 'quote_cov_presence_paragraph': 0.7272727272727273, 'quote_cov_span_paragraph': 0.7348484848484849, 'quote_chosen': 'span_paragraph'}
+Loading weights:   0%|          | 0/102 [00:00<?, ?it/s]Loading weights: 100%|██████████| 102/102 [00:00<00:00, 6405.91it/s]
+RECALL {'first_model': {'n_ok': 298, 'end_to_end': 0.2211, 'ok_given_right_window': 0.2802, 'ok_first_half': 0.4066, 'ok_second_half': 0.0539}, 'new_model': {'n_ok': 803, 'end_to_end': 0.5957, 'ok_given_right_window': 0.7643, 'ok_first_half': 0.762, 'ok_second_half': 0.7682}}
+BALANCED {'first_model': {'n_ok': 266, 'end_to_end': 0.1973, 'ok_given_right_window': 0.2952, 'ok_first_half': 0.4206, 'ok_second_half': 0.0565}, 'new_model': {'n_ok': 683, 'end_to_end': 0.5067, 'ok_given_right_window': 0.77, 'ok_first_half': 0.7679, 'ok_second_half': 0.7741}}
+app quote: {'presence': (0.7534, 0.4493, 411.0), 'span': (0.7717, 0.4693, 357.0)}
+right window: {'n': 1348, 'first_model_mean_f1': 0.3660861426900067, 'first_model_ok': 0.24406528189910978, 'new_model_mean_f1': 0.7794426711340667, 'new_model_ok': 0.7774480712166172}
+wrote /Users/afnanmazumder/Desktop/final project p3/retrain/span_v2/runs/chunks/evaluation.json

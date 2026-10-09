@@ -49,9 +49,9 @@ The application lives in its own repository: **[clausify-p3-app](https://github.
 (Streamlit; all four models, PDF/Word upload, highlighted contract view, risk report download,
 missing-protection checklist). Trained weights: **[af123Af/clausify-models](https://huggingface.co/af123Af/clausify-models)**.
 The re-run presence model (`notebooks/outputs/presence_v2/`) and its TF-IDF model
-(`notebooks/artifacts/baseline_v2.pkl`) are local only until they are uploaded to that repository as
-`presence_v2/` and `baseline_v2/baseline.pkl`; without them the deployed app falls back to the first
-setup's models.
+(`notebooks/artifacts/baseline_v2.pkl`) are in that repository as `presence_v2/` and
+`baseline_v2/baseline.pkl` (uploaded 9 October 2026; same SHA-256 as the local files), so the app
+downloads the final models, with the calibrated chance, when it runs from GitHub.
 
 ---
 

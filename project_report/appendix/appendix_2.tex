@@ -46,7 +46,7 @@ Note & The default \texttt{load\_dataset()} option gives only the original PDFs,
 \end{itemize}
 
 \section*{Artifact fingerprints}
-The first 16 characters of the SHA-256 hash of each file (October 2026 models, and the re-run model and TF--IDF model the app uses), so a reader can check that they have the same files:
+The first 16 characters of the SHA-256 hash of each file (October 2026 models, and the re-run presence model, TF--IDF model and retrained span model the app uses), so a reader can check that they have the same files:
 
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{ll}
@@ -59,6 +59,7 @@ The first 16 characters of the SHA-256 hash of each file (October 2026 models, a
 \texttt{outputs/summarizer/final/model.safetensors} & \texttt{9fcb6bdf777d033c}\\
 \texttt{outputs/presence\_v2/final/model.safetensors} & \texttt{e5f84bd42eb8bf27}\\
 \texttt{artifacts/baseline\_v2.pkl} & \texttt{3fc0d273065d0a11}\\
+\texttt{outputs/span\_v2/final/model.safetensors} & \texttt{20ac289e746e84fb}\\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
@@ -96,6 +97,9 @@ The four \texttt{stage} scripts are run from the \texttt{notebooks/} folder, exa
 \texttt{python3 ../retrain/v2\_fullwindow/\allowbreak tune\_and\_test.py -{}-tag L512} (then \texttt{L256}) & Tables~\ref{tab:v2} and~\ref{tab:v2ctrl}; the app's thresholds (\texttt{decision.json}) and TF--IDF model\\
 \texttt{python3 retrain/v2\_fullwindow/\allowbreak compare\_window.py} & Paired 512 vs.\ 256 differences in Section~\ref{sec:v2}\\
 \texttt{python3 retrain/v2\_fullwindow/\allowbreak measure\_truncation.py} & How much of each window the 256-token model reads (Section~\ref{sec:v2})\\
+\texttt{caffeinate -i python3 -u retrain/span\_v2/\allowbreak span\_chunks.py} & Retrained span model of Section~\ref{sec:spanv2} ($\approx$46\,min)\\
+\texttt{python3 retrain/span\_v2/\allowbreak evaluate\_span.py} & Validation choices and Table~\ref{tab:spanv2}, including the app's quote; the settings in the app's \texttt{span\_v2.json} ($\approx$20\,min)\\
+\texttt{python3 retrain/v2\_fullwindow/\allowbreak card\_chance.py} & Cards under 50\% and 20\% chance (Section~\ref{sec:demolimits})\\
 \texttt{python3 retrain/analysis\_oct2026/\allowbreak app\_bench.py} & Table~\ref{tab:appbench}\\
 \texttt{python3 retrain/verify\_report.py} & Checks the reported numbers in this report against the result files; prints \texttt{0 mismatched} when they agree\\
 \texttt{tectonic project\_report/main.tex} & This report\\
@@ -129,13 +133,14 @@ clausify-p3/  (github.com/afnanmz168/clausify-p3)   -- research deliverable
 |  |- test.ipynb                      -- STANDALONE evaluation notebook
 |  |- build_artifacts.py              -- retrains & saves all artifacts
 |  |- artifacts/                      -- split.json, baseline.pkl, baseline_v2.pkl
-|  |- outputs/                        -- presence (and presence_v2), span, summarizer
+|  |- outputs/                        -- presence (and presence_v2), span (and span_v2), summarizer
 |- retrain/                           -- October 2026 re-training & re-testing
 |  |- README.md                       -- exact terminal commands
 |  |- stage2a_* stage2b_* stage1_*    -- train/test scripts, logs, results
 |  |- smoke_test.py, make_figures.py
 |  |- analysis_oct2026/               -- analyses re-run on the October models
 |  |- v2_fullwindow/                  -- 512-token re-run and 256-token control
+|  |- span_v2/                        -- span model retrained on the chunks it reads
 |  |- verify_report.py                -- checks report numbers against results
 |- analysis/
 |  |- bootstrap_ci.py                 -- cluster bootstrap, presence models
