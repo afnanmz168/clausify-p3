@@ -1,0 +1,739 @@
+{
+ "setups": [
+  "RECALL",
+  "RECALL_ENS",
+  "BALANCED",
+  "TFIDF"
+ ],
+ "n_test": 102,
+ "n_val": 81,
+ "overall": {
+  "RECALL": {
+   "tp": 1253,
+   "fp": 710,
+   "fn": 95,
+   "precision": 0.6383087111563933,
+   "recall": 0.9295252225519288,
+   "f1": 0.7568710359408035
+  },
+  "RECALL_ENS": {
+   "tp": 1243,
+   "fp": 583,
+   "fn": 105,
+   "precision": 0.6807228915662651,
+   "recall": 0.922106824925816,
+   "f1": 0.7832388153749211
+  },
+  "BALANCED": {
+   "tp": 1026,
+   "fp": 162,
+   "fn": 322,
+   "precision": 0.8636363636363636,
+   "recall": 0.7611275964391692,
+   "f1": 0.8091482649842272
+  },
+  "TFIDF": {
+   "tp": 1111,
+   "fp": 371,
+   "fn": 237,
+   "precision": 0.7496626180836707,
+   "recall": 0.8241839762611276,
+   "f1": 0.7851590106007068
+  }
+ },
+ "by_band": {
+  "High": {
+   "n_categories": 8,
+   "n_test_positives": 176,
+   "RECALL": {
+    "tp": 159,
+    "fp": 203,
+    "fn": 17,
+    "precision": 0.43922651933701656,
+    "recall": 0.9034090909090909,
+    "f1": 0.5910780669144982
+   },
+   "RECALL_ENS": {
+    "tp": 153,
+    "fp": 144,
+    "fn": 23,
+    "precision": 0.5151515151515151,
+    "recall": 0.8693181818181818,
+    "f1": 0.6469344608879493
+   },
+   "BALANCED": {
+    "tp": 95,
+    "fp": 34,
+    "fn": 81,
+    "precision": 0.7364341085271318,
+    "recall": 0.5397727272727273,
+    "f1": 0.6229508196721312
+   },
+   "TFIDF": {
+    "tp": 119,
+    "fp": 89,
+    "fn": 57,
+    "precision": 0.5721153846153846,
+    "recall": 0.6761363636363636,
+    "f1": 0.6197916666666666
+   }
+  },
+  "Medium": {
+   "n_categories": 22,
+   "n_test_positives": 498,
+   "RECALL": {
+    "tp": 443,
+    "fp": 386,
+    "fn": 55,
+    "precision": 0.53437876960193,
+    "recall": 0.8895582329317269,
+    "f1": 0.66767143933685
+   },
+   "RECALL_ENS": {
+    "tp": 443,
+    "fp": 341,
+    "fn": 55,
+    "precision": 0.5650510204081632,
+    "recall": 0.8895582329317269,
+    "f1": 0.6911076443057723
+   },
+   "BALANCED": {
+    "tp": 328,
+    "fp": 89,
+    "fn": 170,
+    "precision": 0.7865707434052758,
+    "recall": 0.6586345381526104,
+    "f1": 0.7169398907103824
+   },
+   "TFIDF": {
+    "tp": 372,
+    "fp": 228,
+    "fn": 126,
+    "precision": 0.62,
+    "recall": 0.7469879518072289,
+    "f1": 0.6775956284153004
+   }
+  },
+  "Low": {
+   "n_categories": 11,
+   "n_test_positives": 674,
+   "RECALL": {
+    "tp": 651,
+    "fp": 121,
+    "fn": 23,
+    "precision": 0.8432642487046632,
+    "recall": 0.9658753709198813,
+    "f1": 0.900414937759336
+   },
+   "RECALL_ENS": {
+    "tp": 647,
+    "fp": 98,
+    "fn": 27,
+    "precision": 0.8684563758389262,
+    "recall": 0.9599406528189911,
+    "f1": 0.911909795630726
+   },
+   "BALANCED": {
+    "tp": 603,
+    "fp": 39,
+    "fn": 71,
+    "precision": 0.9392523364485982,
+    "recall": 0.8946587537091988,
+    "f1": 0.9164133738601824
+   },
+   "TFIDF": {
+    "tp": 620,
+    "fp": 54,
+    "fn": 54,
+    "precision": 0.9198813056379822,
+    "recall": 0.9198813056379822,
+    "f1": 0.9198813056379823
+   }
+  }
+ },
+ "rare_tail": {
+  "rare_categories": [
+   "Price Restrictions",
+   "Source Code Escrow",
+   "Unlimited/All-You-Can-Eat-License",
+   "Affiliate License-Licensor",
+   "Most Favored Nation",
+   "Third Party Beneficiary",
+   "Non-Disparagement",
+   "No-Solicit Of Customers",
+   "Joint Ip Ownership",
+   "No-Solicit Of Employees"
+  ],
+  "rare10": {
+   "RECALL": {
+    "tp": 49,
+    "fp": 94,
+    "fn": 21,
+    "precision": 0.34265734265734266,
+    "recall": 0.7,
+    "f1": 0.460093896713615
+   },
+   "RECALL_ENS": {
+    "tp": 44,
+    "fp": 54,
+    "fn": 26,
+    "precision": 0.4489795918367347,
+    "recall": 0.6285714285714286,
+    "f1": 0.5238095238095237
+   },
+   "BALANCED": {
+    "tp": 18,
+    "fp": 8,
+    "fn": 52,
+    "precision": 0.6923076923076923,
+    "recall": 0.2571428571428571,
+    "f1": 0.37499999999999994
+   },
+   "TFIDF": {
+    "tp": 21,
+    "fp": 27,
+    "fn": 49,
+    "precision": 0.4375,
+    "recall": 0.3,
+    "f1": 0.3559322033898305
+   }
+  },
+  "common31": {
+   "RECALL": {
+    "tp": 1204,
+    "fp": 616,
+    "fn": 74,
+    "precision": 0.6615384615384615,
+    "recall": 0.9420970266040689,
+    "f1": 0.7772756617172369
+   },
+   "RECALL_ENS": {
+    "tp": 1199,
+    "fp": 529,
+    "fn": 79,
+    "precision": 0.6938657407407407,
+    "recall": 0.9381846635367762,
+    "f1": 0.7977378576180971
+   },
+   "BALANCED": {
+    "tp": 1008,
+    "fp": 154,
+    "fn": 270,
+    "precision": 0.8674698795180723,
+    "recall": 0.7887323943661971,
+    "f1": 0.8262295081967213
+   },
+   "TFIDF": {
+    "tp": 1090,
+    "fp": 344,
+    "fn": 188,
+    "precision": 0.7601115760111576,
+    "recall": 0.8528951486697965,
+    "f1": 0.803834808259587
+   }
+  },
+  "per_category_rare": [
+   {
+    "category": "Price Restrictions",
+    "test_pos": 4,
+    "RECALL_F1": 0.0,
+    "BALANCED_F1": 0.0,
+    "RECALL_tp": 0,
+    "BALANCED_tp": 0
+   },
+   {
+    "category": "Source Code Escrow",
+    "test_pos": 2,
+    "RECALL_F1": 0.333,
+    "BALANCED_F1": 0.0,
+    "RECALL_tp": 1,
+    "BALANCED_tp": 0
+   },
+   {
+    "category": "Unlimited/All-You-Can-Eat-License",
+    "test_pos": 2,
+    "RECALL_F1": 0.4,
+    "BALANCED_F1": 0.0,
+    "RECALL_tp": 1,
+    "BALANCED_tp": 0
+   },
+   {
+    "category": "Affiliate License-Licensor",
+    "test_pos": 3,
+    "RECALL_F1": 0.286,
+    "BALANCED_F1": 0.5,
+    "RECALL_tp": 3,
+    "BALANCED_tp": 1
+   },
+   {
+    "category": "Most Favored Nation",
+    "test_pos": 7,
+    "RECALL_F1": 0.25,
+    "BALANCED_F1": 0.0,
+    "RECALL_tp": 1,
+    "BALANCED_tp": 0
+   },
+   {
+    "category": "Third Party Beneficiary",
+    "test_pos": 10,
+    "RECALL_F1": 0.35,
+    "BALANCED_F1": 0.182,
+    "RECALL_tp": 7,
+    "BALANCED_tp": 1
+   },
+   {
+    "category": "Non-Disparagement",
+    "test_pos": 11,
+    "RECALL_F1": 0.5,
+    "BALANCED_F1": 0.167,
+    "RECALL_tp": 10,
+    "BALANCED_tp": 1
+   },
+   {
+    "category": "No-Solicit Of Customers",
+    "test_pos": 6,
+    "RECALL_F1": 0.364,
+    "BALANCED_F1": 0.0,
+    "RECALL_tp": 2,
+    "BALANCED_tp": 0
+   },
+   {
+    "category": "Joint Ip Ownership",
+    "test_pos": 8,
+    "RECALL_F1": 0.533,
+    "BALANCED_F1": 0.588,
+    "RECALL_tp": 8,
+    "BALANCED_tp": 5
+   },
+   {
+    "category": "No-Solicit Of Employees",
+    "test_pos": 17,
+    "RECALL_F1": 0.711,
+    "BALANCED_F1": 0.645,
+    "RECALL_tp": 16,
+    "BALANCED_tp": 10
+   }
+  ]
+ },
+ "calibration": {
+  "transformer_raw": {
+   "ece": 0.2061961658842018,
+   "brier": 0.1952470043133236,
+   "bins": [
+    {
+     "bin": [
+      0.0,
+      0.1
+     ],
+     "n": 1484,
+     "conf": 0.024903542401220127,
+     "acc": 0.020889487870619946
+    },
+    {
+     "bin": [
+      0.1,
+      0.2
+     ],
+     "n": 212,
+     "conf": 0.14220596189206502,
+     "acc": 0.05188679245283019
+    },
+    {
+     "bin": [
+      0.2,
+      0.30000000000000004
+     ],
+     "n": 123,
+     "conf": 0.24685407775204357,
+     "acc": 0.07317073170731707
+    },
+    {
+     "bin": [
+      0.30000000000000004,
+      0.4
+     ],
+     "n": 68,
+     "conf": 0.3413504042169627,
+     "acc": 0.16176470588235295
+    },
+    {
+     "bin": [
+      0.4,
+      0.5
+     ],
+     "n": 60,
+     "conf": 0.4540433531006177,
+     "acc": 0.016666666666666666
+    },
+    {
+     "bin": [
+      0.5,
+      0.6000000000000001
+     ],
+     "n": 60,
+     "conf": 0.5494413038094839,
+     "acc": 0.1
+    },
+    {
+     "bin": [
+      0.6000000000000001,
+      0.7000000000000001
+     ],
+     "n": 69,
+     "conf": 0.6512103063472803,
+     "acc": 0.13043478260869565
+    },
+    {
+     "bin": [
+      0.7000000000000001,
+      0.8
+     ],
+     "n": 115,
+     "conf": 0.7531790691873301,
+     "acc": 0.13043478260869565
+    },
+    {
+     "bin": [
+      0.8,
+      0.9
+     ],
+     "n": 212,
+     "conf": 0.8587763000209376,
+     "acc": 0.16981132075471697
+    },
+    {
+     "bin": [
+      0.9,
+      1.0
+     ],
+     "n": 1779,
+     "conf": 0.9644824096230458,
+     "acc": 0.6852164137155705
+    }
+   ]
+  },
+  "transformer_isotonic": {
+   "ece": 0.015584546832567063,
+   "brier": 0.09130733233728655,
+   "bins": [
+    {
+     "bin": [
+      0.0,
+      0.1
+     ],
+     "n": 2041,
+     "conf": 0.031995925968168366,
+     "acc": 0.036256736893679566
+    },
+    {
+     "bin": [
+      0.1,
+      0.2
+     ],
+     "n": 313,
+     "conf": 0.16154137194929605,
+     "acc": 0.1501597444089457
+    },
+    {
+     "bin": [
+      0.2,
+      0.30000000000000004
+     ],
+     "n": 433,
+     "conf": 0.2761860247229575,
+     "acc": 0.3002309468822171
+    },
+    {
+     "bin": [
+      0.30000000000000004,
+      0.4
+     ],
+     "n": 40,
+     "conf": 0.3725056244440956,
+     "acc": 0.375
+    },
+    {
+     "bin": [
+      0.4,
+      0.5
+     ],
+     "n": 119,
+     "conf": 0.45841371760525673,
+     "acc": 0.37815126050420167
+    },
+    {
+     "bin": [
+      0.5,
+      0.6000000000000001
+     ],
+     "n": 70,
+     "conf": 0.536750322719668,
+     "acc": 0.5428571428571428
+    },
+    {
+     "bin": [
+      0.6000000000000001,
+      0.7000000000000001
+     ],
+     "n": 233,
+     "conf": 0.6764361268694183,
+     "acc": 0.6266094420600858
+    },
+    {
+     "bin": [
+      0.7000000000000001,
+      0.8
+     ],
+     "n": 26,
+     "conf": 0.7639890166437588,
+     "acc": 0.6923076923076923
+    },
+    {
+     "bin": [
+      0.8,
+      0.9
+     ],
+     "n": 248,
+     "conf": 0.8286551779544322,
+     "acc": 0.8548387096774194
+    },
+    {
+     "bin": [
+      0.9,
+      1.0
+     ],
+     "n": 659,
+     "conf": 0.9642777334631867,
+     "acc": 0.9453717754172989
+    }
+   ]
+  },
+  "transformer_platt": {
+   "ece": 0.08417147232314523,
+   "brier": 0.1026113257682245,
+   "bins": [
+    {
+     "bin": [
+      0.0,
+      0.1
+     ],
+     "n": 1981,
+     "conf": 0.01121688199371533,
+     "acc": 0.03382130237253912
+    },
+    {
+     "bin": [
+      0.1,
+      0.2
+     ],
+     "n": 140,
+     "conf": 0.14975973930961023,
+     "acc": 0.12142857142857143
+    },
+    {
+     "bin": [
+      0.2,
+      0.30000000000000004
+     ],
+     "n": 125,
+     "conf": 0.24778993498414667,
+     "acc": 0.128
+    },
+    {
+     "bin": [
+      0.30000000000000004,
+      0.4
+     ],
+     "n": 126,
+     "conf": 0.35118502324067563,
+     "acc": 0.1746031746031746
+    },
+    {
+     "bin": [
+      0.4,
+      0.5
+     ],
+     "n": 181,
+     "conf": 0.4542092386620867,
+     "acc": 0.2983425414364641
+    },
+    {
+     "bin": [
+      0.5,
+      0.6000000000000001
+     ],
+     "n": 252,
+     "conf": 0.5530348638927104,
+     "acc": 0.3253968253968254
+    },
+    {
+     "bin": [
+      0.6000000000000001,
+      0.7000000000000001
+     ],
+     "n": 376,
+     "conf": 0.6542820082304214,
+     "acc": 0.4973404255319149
+    },
+    {
+     "bin": [
+      0.7000000000000001,
+      0.8
+     ],
+     "n": 763,
+     "conf": 0.7607546812076702,
+     "acc": 0.8807339449541285
+    },
+    {
+     "bin": [
+      0.8,
+      0.9
+     ],
+     "n": 235,
+     "conf": 0.8442192254656805,
+     "acc": 0.9702127659574468
+    },
+    {
+     "bin": [
+      0.9,
+      1.0
+     ],
+     "n": 3,
+     "conf": 0.9010103557657861,
+     "acc": 1.0
+    }
+   ]
+  },
+  "fitted_on": "81 validation contracts (3,321 decisions)"
+ },
+ "errors": {
+  "n_false_positives": 710,
+  "n_false_negatives": 95,
+  "false_positives": [
+   {
+    "contract": "SoupmanInc_20150814_8-K_EX-10.1_9230148_EX-10.1_Franchise Agreement3",
+    "category": "Parties",
+    "score": 0.9904963970184326,
+    "threshold": 0.88,
+    "window_text": "Attachment C to Master Franchise Agreement MULTI-STATE ADDENDUM CALIFORNIA APPENDIX 1. California Business and Professions Code Sections 20000 through 20043 provide rights to you concerning termination or non-renewal of a franchise. If the Master Franchise Agreement contains provisions that are inconsistent with the law, the law will control. 2. The Master Franchise Agreement provides for termination upon bankruptcy. This provision may not be enforceable under Federal Bankruptcy Law (11 U.S.C.A. Sec. 101 et seq. ). 3. The Master Franchise Agreement contains covenants not to compete which exten"
+   },
+   {
+    "contract": "WatchitMediaInc_20061201_8-K_EX-10.1_4148672_EX-10.1_Content License Agreement",
+    "category": "Agreement Date",
+    "score": 0.9835205674171448,
+    "threshold": 0.88,
+    "window_text": "Exhibit 10.1 Oceanic Time Warner Cable and Watchit Media Content and License Agreement Effective Dates: September 1, 2006, August 31, 2007 Watchit agrees to provide Oceanic Time Warner Cable the following content: - Watchit Gaming Guides - Lunchtime with Ira segments every week Watchit will provide the content on BetaSp format and reserves the right to modify the content to reflect sponsorship by an advertiser and advertisers. Oceanic Time Warner Cable agrees to not edit or modify the above content. Oceanic Time Warner Cable will use the content solely on channel 777, the Las Vegas channel. In"
+   },
+   {
+    "contract": "ONEMAINHOLDINGS,INC_02_20_2020-EX-99.D-JOINT FILING AGREEMENT",
+    "category": "Effective Date",
+    "score": 0.9831317663192749,
+    "threshold": 0.88,
+    "window_text": "Exhibit D JOINT FILING AGREEMENT OneMain Holdings, Inc. In accordance with Rule 13d-1(k) under the Securities Exchange Act of 1934, as amended, the undersigned hereby confirm the agreement by and among them to the joint filing on behalf of them of the Statement on Schedule 13D and any and all further amendments thereto, with respect to the securities of the above referenced issuer, and that this Agreement be included as an Exhibit to such filing. This Agreement may be executed in any number of counterparts each of which shall be deemed to be an original and all of which together shall be deeme"
+   },
+   {
+    "contract": "DRKOOPCOMINC_04_21_1999-EX-10.28-SPONSORSHIP AGREEMENT",
+    "category": "Effective Date",
+    "score": 0.9827260971069336,
+    "threshold": 0.88,
+    "window_text": "EXHIBIT 10.28 SPONSORSHIP AGREEMENT This Sponsorship Agreement (the \"Agreement\") is entered into as of the 11th day of March, 1999 by and between drkoop.com, inc., a Delaware corporation, located at 8920 Business Park Drive, Longhorn Suite, Austin, Texas 78759 (\"drkoop.com\"), and Vitamin Shoppe Industries, Inc., a New Jersey corporation, located at 4700 Westside Avenue, North Bergen, New Jersey 07047 (\"Sponsor\"). WHEREAS, drkoop.com develops, markets and maintains an integrated suite of Internet enabled, consumer oriented software applications and services, including but not limited to, drkoop"
+   },
+   {
+    "contract": "PaperexchangeComInc_20000322_S-1A_EX-10.4_5202103_EX-10.4_Co-Branding Agreement",
+    "category": "Agreement Date",
+    "score": 0.9824658632278442,
+    "threshold": 0.88,
+    "window_text": "Exhibit 10.4 CO-BRANDING AGREEMENT This Co-Branding Agreement (this \"Agreement\") dated September 30, 1999 (the \"Effective Date\") is entered into between VerticalNet, Inc., a Pennsylvania corporation having a principal place of business at 700 Dresher Road, Suite 100, Horsham, Pennsylvania, PA 19044 (\"VerticalNet\"), and PaperExchange.com, LLC, a Delaware limited liability company having a principal place of business at 545 Boylston Street, 8th Floor, Boston, MA 02116 (\"PaperExchange\"). In consideration of the mutual covenants herein, and intending to be legally bound hereby, the parties agree a"
+   },
+   {
+    "contract": "PACIFICSYSTEMSCONTROLTECHNOLOGYINC_08_24_2000-EX-10.53-SPONSORSHIP AGREEMENT",
+    "category": "Effective Date",
+    "score": 0.9822575449943542,
+    "threshold": 0.88,
+    "window_text": "EXHIBIT 10.53 SPONSORSHIP AGREEMENT for Boxing Event in China, on April 22, 2000 American Champion Media, Inc. (\"ACM\"), a Delaware company with headquarters at 1694 The Alameda, San Jose, CA 95126, U.S.A., is the host and producer of a boxing event to take place at the Tian He Stadium in Guangzhou, China (the \"Event\"). This Event is scheduled to take place on April 22, 2000, and this Sponsorship Agreement (the \"Agreement\") dated as of April 14, 2000 is made by and between Shun Li De Commerce & Trading Ltd (\"SLD\") a Beijing company, with headquarters at Xin Xing Dong Xiang, Bldg 1 Suite 1413, X"
+   }
+  ],
+  "false_negatives": [
+   {
+    "contract": "ORBSATCORP_08_17_2007-EX-7.3-STRATEGIC ALLIANCE AGREEMENT",
+    "category": "Third Party Beneficiary",
+    "score": 0.006301482208073139,
+    "threshold": 0.88,
+    "gold_clause": "Notwithstanding the foregoing, UTK may assign this Agreement or any portion of its Compensation as outlined herein to its subsidiaries in its sole discretion."
+   },
+   {
+    "contract": "BravatekSolutionsInc_20170418_8-K_EX-10.1_10205739_EX-10.1_Reseller Agreement",
+    "category": "Renewal Term",
+    "score": 0.007446878124028444,
+    "threshold": 0.94,
+    "gold_clause": "Contract is renewable for 1 year extension by amendment to this agreement."
+   },
+   {
+    "contract": "GAINSCOINC_01_21_2010-EX-10.41-SPONSORSHIP AGREEMENT",
+    "category": "Most Favored Nation",
+    "score": 0.008781698532402515,
+    "threshold": 0.88,
+    "gold_clause": "The Sponsor acknowledges that Racing has arranged and may arrange in the future for other sponsors for the Racing Team. Racing agrees that, during the term of this Agreement, (i) Sponsor shall have the right to approve or disapprove any additional sponsor identified by Racing, and (ii) unless another proposed sponsor has agreed to pay a sponsorship fee that exceeds the amount paid by Sponsor, no other sponsor shall receive any benefit of greater value (including either an equivalent or a more prominent use of another sponsor's name, logo or other identifying information) than the Benefits prov"
+   },
+   {
+    "contract": "WatchitMediaInc_20061201_8-K_EX-10.1_4148672_EX-10.1_Content License Agreement",
+    "category": "Liquidated Damages",
+    "score": 0.010044979862868786,
+    "threshold": 0.14,
+    "gold_clause": "In the event that Oceanic Time Warner Cable removes the above content and or terminates this agreement prior to December 31, 2006, Oceanic Time Warner Cable agrees to pay a cancellation fee of Five Thousand Dollars ($5,000) per month multiplied by the number of months remain on the agreement."
+   },
+   {
+    "contract": "ENERGYXXILTD_05_08_2015-EX-10.13-Transportation AGREEMENT",
+    "category": "Notice Period To Terminate Renewal",
+    "score": 0.010512185283005238,
+    "threshold": 0.04,
+    "gold_clause": "Subject to the other provisions of this Agreement, the term of this Agreement shall commence on the Effective Date and shall remain in effect until terminated by either Party upon thirty (30) days' prior written notice."
+   },
+   {
+    "contract": "Reinsurance Group of America, Incorporated - A_R REMARKETING  AGREEMENT",
+    "category": "Third Party Beneficiary",
+    "score": 0.011093326844274998,
+    "threshold": 0.88,
+    "gold_clause": "This Agreement and the terms and provisions hereof are for the sole benefit of only those persons, except that (A) the representations, warranties, indemnities and agreements of the Issuers contained in this Agreement shall also be deemed to be for the benefit of the officers, directors and employees of the Remarketing Agent and the person or persons, if any, who control the Remarketing Agent within the meaning of Section 15 of the Securities Act; and (B) any indemnity agreement of the Remarketing Agent contained in this Agreement shall be deemed to be for the benefit of directors, trustees, o"
+   }
+  ]
+ },
+ "end_to_end": {
+  "RECALL": {
+   "n_gold": 1348,
+   "n_presence": 1253,
+   "n_span_ok": 298,
+   "presence_recall": 0.9295252225519288,
+   "span_given_presence": 0.237829209896249,
+   "end_to_end": 0.22106824925816024,
+   "end_to_end_ci": [
+    0.19708015149216412,
+    0.24596632016885664
+   ],
+   "mean_token_f1_given_presence": 0.34981010832542025,
+   "window_correct": 1035,
+   "window_correct_rate": 0.8260175578611333,
+   "span_ok_given_window_correct": 0.28019323671497587,
+   "window_wrong": 218,
+   "span_ok_given_window_wrong": 8
+  },
+  "BALANCED": {
+   "n_gold": 1348,
+   "n_presence": 1026,
+   "n_span_ok": 266,
+   "presence_recall": 0.7611275964391692,
+   "span_given_presence": 0.25925925925925924,
+   "end_to_end": 0.19732937685459942,
+   "end_to_end_ci": [
+    0.17594486184993477,
+    0.2194384984142563
+   ],
+   "mean_token_f1_given_presence": 0.36570496377051503,
+   "window_correct": 874,
+   "window_correct_rate": 0.8518518518518519,
+   "span_ok_given_window_correct": 0.2951945080091533,
+   "window_wrong": 152,
+   "span_ok_given_window_wrong": 8
+  }
+ }
+}

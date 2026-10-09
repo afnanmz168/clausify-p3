@@ -104,7 +104,7 @@ C("e2e CI", ci(*e2e["end_to_end_ci"], pc), "tab:e2e")
 C("e2e mean token-F1", f3(e2e["mean_token_f1_given_presence"]))
 C("predicted survival", f"{round(100 * e2e['presence_recall'] * span['overlap_contract']['mean'])}%")
 C("window correct", f"{att['window_correct']} {pc(att['window_correct_rate'])}", "tab:e2eattr")
-C("both", f"{att['both']} {pc(att['span_ok_given_window_correct'])} of {att['window_correct']}", "tab:e2eattr")
+C("both", f"{att['both']} {pc(att['span_ok_given_window_correct'])}", "tab:e2eattr")
 C("window wrong", f"{att['window_wrong']} {pc(att['window_wrong'] / att['n'])}", "tab:e2eattr")
 
 # ---- risk bands -----------------------------------------------------------
@@ -209,6 +209,28 @@ if os.path.exists(os.path.join(V, "runs", "L512", "results.json")):
     C("v2 epoch losses", f"{ev[0]:.3f}, {ev[1]:.3f} and {ev[2]:.3f}")
     C("v2 train/score minutes", f"took {ti['train_minutes']:.0f} minutes, and scoring every window of the validation and test contracts another {ti['score_minutes']:.0f} minutes")
     C("v2 train minutes (hyper note)", f"Its training took {ti['train_minutes']:.0f} minutes", "tab:hyper")
+    ds = J(V, "runs", "L512", "downstream.json")
+    E2 = ds["end_to_end"]["RECALL"]
+    C("app e2e presence", f"{E2['n_presence']:,} {pc(E2['presence_recall'])}", "tab:e2e")
+    C("app e2e survive", f"{E2['n_span_ok']} {pc(E2['end_to_end'])}", "tab:e2e")
+    C("app e2e CI", ci(*E2["end_to_end_ci"], pc), "tab:e2e")
+    C("app window correct", f"{E2['window_correct']:,} {pc(E2['window_correct_rate'])}", "tab:e2eattr")
+    C("app span ok | right window", f"{round(E2['span_ok_given_window_correct'] * E2['window_correct'])} {pc(E2['span_ok_given_window_correct'])}", "tab:e2eattr")
+    C("app window wrong", f"{E2['window_wrong']} {pc(E2['window_wrong'] / E2['n_presence'])}", "tab:e2eattr")
+    C("app token-F1 in pipeline", f3(E2["mean_token_f1_given_presence"]), "tab:scorecard")
+    for band in ("High", "Medium", "Low"):
+        for name in ds["setups"]:
+            r = ds["by_band"][band][name]; npos = ds["by_band"][band]["n_test_positives"]
+            C(f"band {band} {name}", f"{f3(r['precision'])} {f3(r['recall'])} {f3(r['f1'])} {npos - r['fn']} {r['fn']}", "tab:riskeval2")
+    for grp in ("rare10", "common31"):
+        for name in ("RECALL", "RECALL_ENS", "BALANCED"):
+            r = ds["rare_tail"][grp][name]
+            C(f"rare {grp} {name}", f"{f3(r['precision'])} {f3(r['recall'])} {f3(r['f1'])} {r['tp']:,} {r['fn']}", "tab:raretail2")
+    cal = ds["calibration"]
+    C("calibration raw ECE", f"{cal['transformer_raw']['ece']:.3f}"); C("calibration iso ECE", f"{cal['transformer_isotonic']['ece']:.3f}")
+    C("calibration Brier", f"{cal['transformer_raw']['brier']:.3f} to {cal['transformer_isotonic']['brier']:.3f}")
+    C("calibration Platt", f"{cal['transformer_platt']['ece']:.3f}")
+    C("app errors", f"{ds['errors']['n_false_positives']} false positives and only {ds['errors']['n_false_negatives']} misses")
     if os.path.exists(os.path.join(V, "truncation_256.json")):
         tr = J(V, "truncation_256.json")
         C("truncation share read", f"{pc(tr['share_read_median'])} of each window (about {tr['chars_read_median']:,}")
@@ -230,6 +252,18 @@ if os.path.exists(os.path.join(V, "runs", "L512", "results.json")):
             C(f"window gain CI {k}", ci(*cw[k]["ci95"], d3))
         C("window gain high-risk", f"{100 * cw['f2']['high_recall_diff']:.1f} points ([{100 * cw['f2']['high_recall_ci95'][0]:+.1f}, "
                                    f"{100 * cw['f2']['high_recall_ci95'][1]:+.1f}])")
+
+    sp2 = J(V, "runs", "L512", "span_position.json")
+    C("span position share", f"only {pc(sp2['first_setup']['share_clause_in_second_half'])} of the time. With the re-run model it is {pc(sp2['app']['share_clause_in_second_half'])}")
+    C("span position success", f"({pc(sp2['first_setup']['span_ok_first_half'])} and {pc(sp2['app']['span_ok_first_half'])}); in the second half it succeeds only {pc(sp2['first_setup']['span_ok_second_half'])} and {pc(sp2['app']['span_ok_second_half'])}")
+
+# ---- clause mode (app repository) -----------------------------------------
+CAL2 = os.path.join(os.path.dirname(P), "final project app p3", "clause_calibration_v2.json")
+if os.path.exists(CAL2):
+    cv = J(CAL2)["eval"]; c1 = J(os.path.dirname(CAL2), "clause_calibration.json")["eval"]
+    C("clause mode re-run", f"from {pc(cv['raw_argmax_acc'])} (raw highest score) to {pc(cv['calibrated_acc'])}, against {pc(c1['calibrated_acc'])}")
+    C("clause mode top3/risk", f"{pc(cv['calibrated_top3'])} of the time, and the right risk level is given {pc(cv['risk_level_acc'])}")
+    C("clause mode unrecognized", f"{pc(cv['share_test_max_z_below_2'])} of clauses are left unrecognized")
 
 # ---- run ------------------------------------------------------------------
 def found(s, hay):
