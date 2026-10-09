@@ -3,7 +3,7 @@
 **Clause Detection, Category-Level Risk Prioritization and Plain-Language Explanation**
 B.Sc. Final Year Project (CSE400) · Department of Computer Science and Engineering · BRAC University
 
-Jerin Aktar (22101279) · Afnan Mazumdar (24141229) · Shoyeb Hasan Sayem (22101386)
+Jerin Aktar (22101279) · Afnan Mazumder (24141229) · Shoyeb Hasan Sayem (22101386)
 Supervisor: Utsha Kumar Roy
 
 ---

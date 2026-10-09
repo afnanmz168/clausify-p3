@@ -3,7 +3,7 @@ title: "Viva Question Bank, with Answers"
 subtitle: "AI-Powered Legal Document Analysis System: Clause Detection, Category-Level Risk Prioritization and Plain-Language Explanation on CUAD"
 author:
   - "Group ID P25301051"
-  - "Jerin Aktar \\quad Afnan Mazumdar \\quad Shoyeb Hasan Sayem"
+  - "Jerin Aktar \\quad Afnan Mazumder \\quad Shoyeb Hasan Sayem"
   - "Supervisor: Utsha Kumar Roy"
   - "BRAC University, Department of Computer Science and Engineering"
 ---
