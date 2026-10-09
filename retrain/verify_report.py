@@ -204,6 +204,11 @@ if os.path.exists(os.path.join(V, "runs", "L512", "results.json")):
     C("v2 scorecard P/R", f"{pc(e['p'], 2)} / {pc(e['r'], 2)}", "tab:scorecard")
     th = {k: vr["configs"][k]["chosen_on_validation"]["global_threshold"] for k in ("transformer_tuned_f1", "transformer_tuned_f2")}
     C("v2 shared thresholds", f"{th['transformer_tuned_f1']:.2f} (F1) and {th['transformer_tuned_f2']:.2f} (F2)", "tab:v2")
+    ti = J(V, "runs", "L512", "train_info.json")
+    ev = [h["eval_loss"] for h in ti["log_history"] if "eval_loss" in h]
+    C("v2 epoch losses", f"{ev[0]:.3f}, {ev[1]:.3f} and {ev[2]:.3f}")
+    C("v2 train/score minutes", f"took {ti['train_minutes']:.0f} minutes, and scoring every window of the validation and test contracts another {ti['score_minutes']:.0f} minutes")
+    C("v2 train minutes (hyper note)", f"Its training took {ti['train_minutes']:.0f} minutes", "tab:hyper")
     if os.path.exists(os.path.join(V, "truncation_256.json")):
         tr = J(V, "truncation_256.json")
         C("truncation share read", f"{pc(tr['share_read_median'])} of each window (about {tr['chars_read_median']:,}")

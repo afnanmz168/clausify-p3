@@ -58,9 +58,9 @@ The system is not legal advice, and it says so. Its biggest risk to society is f
 CUAD contains US business contracts written in English. Risk levels that make sense under US law may not apply in other countries, and contracts are written differently in different places. The work was inspired by the situation in Bangladesh, but we tested no Bangladeshi contract, so we cannot yet claim these benefits there.
 
 \section{Environmental Impact}
-The project was designed to need little computing power. All models are small (DistilBERT with 67M parameters and FLAN-T5-small). Training the three models used in the app took about 1.5 hours on a laptop, and the app runs on a CPU with at most about 2.1\,GB of memory (Table~\ref{tab:appbench}).
+The project was designed to need little computing power. All models are small (DistilBERT with 67M parameters and FLAN-T5-small). Training the first setup's three models took about 1.5 hours on a laptop, and the re-run presence model the app now uses took another 3.2 hours, and the app runs on a CPU with at most about 2.1\,GB of memory (Table~\ref{tab:appbench}).
 
-Including the extra test runs (the full-data presence run of 140.7 minutes, two extra seeds, the evaluation runs and the Longformer test), the whole project used about ten hours of laptop computing. If a laptop draws 20--30\,W under load (an estimate, not a measurement), that is well under one kilowatt-hour of electricity, very little compared with the many-GPU training often used for large legal language models.
+Including the extra test runs (the full-data presence run of 140.7 minutes, two extra seeds, the evaluation runs, the Longformer test, and the two re-runs of Section~\ref{sec:v2}, about ten hours together), the whole project used about twenty hours of laptop computing. If a laptop draws 20--30\,W under load (an estimate, not a measurement), that is well under one kilowatt-hour of electricity, very little compared with the many-GPU training often used for large legal language models.
 
 Two design choices also keep the running cost low. The models run locally, so no data centre is used for each contract, and the system avoids large text-generating models, which use far more energy per request. The price is accuracy. Section~\ref{sec:lfbench} shows that larger models were rejected partly because of cost, and Chapter~5 reports what the small models achieve.
 
@@ -70,7 +70,7 @@ The Ethics Statement at the front of this report explains how the data and model
 
 The system is a research prototype meant to help with contract review. It is not legal advice, and the app says so in a notice shown above every analysis. For a tool like this, the harder ethical questions concern what happens when someone relies on its output, and we list them here.
 
-False reassurance is the main danger. A clause the system does not find gives no warning, and no warning is easily read as ``there is nothing to worry about''. Our measurements show this reading would be wrong: 21.6\% of real clauses are missed at the first step, only 22.0\% get through the whole system (Section~\ref{sec:e2e}), and the setup we report as our main result misses 36.9\% of the High-risk clauses (Section~\ref{sec:riskeval}). A user who checks a contract with this tool and sees three warnings cannot assume there are only three problems. Missed clauses are silent while false alarms are visible, so we think the share of High-risk clauses found is the measure that matters most ethically, even though the overall score does not reward it.
+False reassurance is the main danger. A clause the system does not find gives no warning, and no warning is easily read as ``there is nothing to worry about''. Our measurements show this reading would be wrong: 21.6\% of real clauses are missed at the first step, only 22.0\% get through the whole system (Section~\ref{sec:e2e}), and the first setup's best-scoring ensemble missed 36.9\% of the High-risk clauses (Section~\ref{sec:riskeval}). The recall-first setting the app now uses still misses 9.7\% (Section~\ref{sec:v2}). A user who checks a contract with this tool and sees three warnings cannot assume there are only three problems. Missed clauses are silent while false alarms are visible, so we think the share of High-risk clauses found is the measure that matters most ethically, even though the overall score does not reward it.
 
 Non-lawyers may trust the app too much. It is made for people without legal training, who are the least able to notice when it is wrong. Plain-English text shown with a confidence bar looks more certain than the model is, and Section~\ref{sec:threshold} shows the bar is not even a true probability: scores above 0.9 mean only about a 73\% chance that the clause is really there. The plain-English reason on each card is a fixed sentence for the whole category from the risk table, and it does not read the user's clause. The summarizer, which was meant to describe each clause, also turned out to output one fixed sentence per category (Section~\ref{sec:summ}). The app labels the summarizer's sentence clearly and warns when it belongs to a different category than the card. Without these warnings, the bar and the reason would invite more trust than the evidence supports.
 
@@ -129,7 +129,7 @@ August & Supervisor review: training-budget and seed controls, cluster bootstrap
 \addlinespace
 September & Write-up of the full report and a conference-style paper; presentation & Report, paper, presentation slides\\
 \addlinespace
-October & Viva preparation; re-training and re-testing of each model; final report in the CSE400 template & Final project report\\
+October & Viva preparation; re-training and re-testing of each model; whole-window re-run with validation tuning and a control run; final report in the CSE400 template & Final project report, updated app\\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
@@ -166,7 +166,7 @@ Over-claiming small differences between models & Medium & Cluster-bootstrap conf
 \addlinespace
 An architecture that cannot reach the required recall & High & Retrieval ceiling measured before training (64\%), which ruled out the retrieval design at no training cost (Section~\ref{sec:ceiling}).\\
 \addlinespace
-Schedule overrun from long training runs & Medium & Distilled models (about 1.5 hours total training); subsampled training sets; saved artifacts so evaluation needs no retraining.\\
+Schedule overrun from long training runs & Medium & Distilled models (about 1.5 hours of training for the first setup); subsampled training sets; saved artifacts so evaluation needs no retraining.\\
 \addlinespace
 Loss of work or results & Medium & Version control on GitHub; trained weights backed up before any re-training.\\
 \addlinespace
@@ -177,13 +177,13 @@ Users over-trusting the application & High & Not-legal-advice notice; risk badge
 \end{table}
 
 \section{Economic Analysis}
-Developing the system cost no money: the data, models and software are free, and the laptop was already owned (Section~\ref{sec:pm}). The real cost was the team's time and about ten hours of laptop computing.
+Developing the system cost no money: the data, models and software are free, and the laptop was already owned (Section~\ref{sec:pm}). The real cost was the team's time and about twenty hours of laptop computing.
 
 Running it is also cheap. The models run on a CPU with about 2.1\,GB of memory, so the system can run on ordinary hardware with no cost per contract. Table~\ref{tab:econ} compares this with the two options a user has today.
 
 The main benefit is quick sorting: the system points the reader to the parts of a long contract that most likely matter and explains them in plain language, at almost no cost. Expert time in this field is expensive (the CUAD labels alone are said to represent about two million US dollars of lawyers' time \cite{hendrycks2021cuad}), so even saving part of the time needed to find key clauses is worth something.
 
-The benefit is limited by how reliable the system is. Only 22.0\% of real clauses get through the whole system, and the main setup misses 36.9\% of High-risk clauses (Section~\ref{sec:riskeval}). The system is a free first look at a contract and cannot replace a lawyer.
+The benefit is limited by how reliable the system is. With the first setup's presence model only 22.0\% of real clauses get through the whole system (Section~\ref{sec:e2e}), and the app's recall-first setting still misses 9.7\% of High-risk clauses (Section~\ref{sec:v2}). The system is a free first look at a contract and cannot replace a lawyer.
 
 \begin{table}[H]
 \centering

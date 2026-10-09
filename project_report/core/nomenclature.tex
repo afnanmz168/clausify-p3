@@ -36,9 +36,12 @@ TN / TP & True Negative / True Positive\\
   \item[Contract-level split] A train/test split that puts each whole contract on one side, so no clause from a training contract can appear in the test set.
   \item[Max-pooling (over windows)] Scoring every window of a document and using the highest window score as the score for the whole document.
   \item[Micro-F1] One F1 score computed over all (contract, category) decisions together, so every decision counts the same.
+  \item[Micro-F2] The same, but treating recall as twice as important as precision, so a missed clause costs more than a false alarm.
   \item[Presence classification] Deciding, for each clause category, whether a contract contains at least one clause of that category.
+  \item[Recall-first setting] A setup whose rule and thresholds were chosen on the validation split to maximize micro-F2; Clausify uses one by default.
   \item[Retrieval ceiling] The most a ``search first'' design can ever find: a clause in a window that the search never picks can never be found.
   \item[Span extraction] Finding the exact text of a clause inside the contract, treated as a question-answering task.
   \item[Token-F1] How much the extracted text overlaps the real clause, word by word (1.0 means a perfect match).
+  \item[Validation split] The 81 training contracts held out in the re-run to choose settings such as thresholds, so that the test contracts play no part in any choice.
   \item[Weaker party] The person or company signing the contract with less bargaining power; the risk table is written from their side.
 \end{description}

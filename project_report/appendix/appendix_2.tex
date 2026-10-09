@@ -42,10 +42,11 @@ Note & The default \texttt{load\_dataset()} option gives only the original PDFs,
   \item The split is \emph{made once} with \texttt{numpy.random.default\_rng(42).permutation}, saved to \texttt{artifacts/split.json}, and read from disk by every later script, so no script makes its own split.
   \item Extra presence-model seeds 43 and 44 (Section~\ref{sec:seeds}); split seeds 0--19 for Section~\ref{sec:splitvar}.
   \item Bootstrap: 10{,}000 resamples, \texttt{default\_rng(42)}, resampling whole contracts.
+  \item Re-run validation split (Section~\ref{sec:v2}): 81 of the 408 training contracts, drawn with \texttt{default\_rng(42).permutation} over the training titles and saved as \texttt{retrain/v2\_fullwindow/runs/<tag>/val\_split.json}.
 \end{itemize}
 
 \section*{Artifact fingerprints}
-The first 16 characters of the SHA-256 hash of each file (October 2026 models), so a reader can check that they have the same files:
+The first 16 characters of the SHA-256 hash of each file (October 2026 models, and the re-run model and TF--IDF model the app uses), so a reader can check that they have the same files:
 
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{ll}
@@ -56,6 +57,8 @@ The first 16 characters of the SHA-256 hash of each file (October 2026 models), 
 \texttt{outputs/presence\_mil/final/model.safetensors} & \texttt{a5482a0302ae2c7c}\\
 \texttt{outputs/span/final/model.safetensors} & \texttt{380a233a3c03e052}\\
 \texttt{outputs/summarizer/final/model.safetensors} & \texttt{9fcb6bdf777d033c}\\
+\texttt{outputs/presence\_v2/final/model.safetensors} & \texttt{e5f84bd42eb8bf27}\\
+\texttt{artifacts/baseline\_v2.pkl} & \texttt{3fc0d273065d0a11}\\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
@@ -88,6 +91,11 @@ The four \texttt{stage} scripts are run from the \texttt{notebooks/} folder, exa
 \texttt{python3 analysis/compare\_runs.py} & Differences in Table~\ref{tab:budget} (August)\\
 \texttt{python3 analysis/split\_variance.py} & Table~\ref{tab:splitvar}\\
 \texttt{python3 analysis/lf\_one.py longformer 4096 1 train} & Table~\ref{tab:lfbench} (one row per run)\\
+\texttt{caffeinate -i python3 -u ../retrain/v2\_fullwindow/\allowbreak presence\_v2.py -{}-max-len 512 -{}-tag L512} & Re-run presence model and its window scores for Section~\ref{sec:v2} ($\approx$6.5\,h)\\
+\texttt{caffeinate -i python3 -u ../retrain/v2\_fullwindow/\allowbreak presence\_v2.py -{}-max-len 256 -{}-tag L256} & 256-token control run ($\approx$3.2\,h)\\
+\texttt{python3 ../retrain/v2\_fullwindow/\allowbreak tune\_and\_test.py -{}-tag L512} (then \texttt{L256}) & Tables~\ref{tab:v2} and~\ref{tab:v2ctrl}; the app's thresholds (\texttt{decision.json}) and TF--IDF model\\
+\texttt{python3 retrain/v2\_fullwindow/\allowbreak compare\_window.py} & Paired 512 vs.\ 256 differences in Section~\ref{sec:v2}\\
+\texttt{python3 retrain/v2\_fullwindow/\allowbreak measure\_truncation.py} & How much of each window the 256-token model reads (Section~\ref{sec:v2})\\
 \texttt{python3 retrain/analysis\_oct2026/\allowbreak app\_bench.py} & Table~\ref{tab:appbench}\\
 \texttt{python3 retrain/verify\_report.py} & Checks the reported numbers in this report against the result files; prints \texttt{0 mismatched} when they agree\\
 \texttt{python3 review/agreement.py <sheets>} & Reviewer agreement and Cohen's/Fleiss' $\kappa$ once the risk-table review sheets are returned\\
@@ -121,13 +129,14 @@ clausify-p3/  (github.com/afnanmz168/clausify-p3)   -- research deliverable
 |  |- train.ipynb                     -- training notebook (EDA -> 3 models)
 |  |- test.ipynb                      -- STANDALONE evaluation notebook
 |  |- build_artifacts.py              -- retrains & saves all artifacts
-|  |- artifacts/                      -- split.json, baseline.pkl
-|  |- outputs/                        -- presence, span, summarizer checkpoints
+|  |- artifacts/                      -- split.json, baseline.pkl, baseline_v2.pkl
+|  |- outputs/                        -- presence (and presence_v2), span, summarizer
 |- retrain/                           -- October 2026 re-training & re-testing
 |  |- README.md                       -- exact terminal commands
 |  |- stage2a_* stage2b_* stage1_*    -- train/test scripts, logs, results
 |  |- smoke_test.py, make_figures.py
-|  |- analysis_oct2026/               -- analyses re-run on the new models
+|  |- analysis_oct2026/               -- analyses re-run on the October models
+|  |- v2_fullwindow/                  -- 512-token re-run and 256-token control
 |  |- verify_report.py                -- checks report numbers against results
 |- analysis/
 |  |- bootstrap_ci.py                 -- cluster bootstrap, presence models
@@ -150,6 +159,7 @@ clausify-p3-app/  (github.com/afnanmz168/clausify-p3-app)
 |- calibrate_clause_mode.py           -- clause-mode calibration (+ .json)
 |- cat_questions.json                 -- 41 category->question strings
 |- sample_contract.txt / test_contract.txt
-|- tests/test_app.py                  -- 38 end-to-end checks
+|- decision_v2.json                   -- tested rules and per-category thresholds
+|- tests/test_app.py                  -- 42 end-to-end checks
 \end{verbatim}
 }
