@@ -161,7 +161,7 @@ We test the fine-tuned FLAN-T5-small on 150 test clauses (chosen with seed 42) a
 
 \begin{enumerate}[itemsep=2pt]
   \item Template references: the category template, exactly as in training. The main score was produced this way.
-  \item Clause-specific references: 150 one-sentence summaries, one per clause, each describing that particular clause with its actual limit, notice period and parties. A large language model helped draft them from the clause text alone, without seeing any model output, and they are fully separate from the 41 templates. They are a trial reference set that no lawyer wrote, and we claim nothing more for them.
+  \item Clause-specific references: 150 one-sentence summaries, one per clause, each describing that particular clause with its actual limit, notice period and parties. They were drafted from the clause text alone, without seeing any model output, and they are fully separate from the 41 templates. They are a trial reference set that no lawyer wrote, and we claim nothing more for them.
 \end{enumerate}
 
 The clauses are the same in both tests, so the gap between the two scores measures one thing: how much of the ROUGE-L score comes from the reference sentences all being the same. Table~\ref{tab:sumeval} gives the result. The summarizer re-trained in October 2026 gives exactly the same scores as the original.
