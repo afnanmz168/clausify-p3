@@ -56,18 +56,28 @@ Our objectives lead to five research questions, which the rest of this report an
 
 \begin{description}[itemsep=4pt, leftmargin=1.6cm]
   \item[RQ1] \emph{Can a transformer that reads a contract in small windows beat a simple word-based model that reads the whole contract, at finding which clauses are present?}\\
-  \textbf{No.} The simple model wins by $+0.082$ micro-F1. The gap stays even when the transformer is trained on all its training data (Section~\ref{sec:budget}) and with three different random seeds (Section~\ref{sec:seeds}). Answered in Chapter~5.
+  \textbf{It ties, and together they win.} In our first setup the simple model won by $+0.082$ micro-F1, and the gap survived more training data (Section~\ref{sec:budget}) and three random seeds (Section~\ref{sec:seeds}). That setup let the transformer read only about half of each window. With the whole window read and both models tuned on the same validation split, the transformer ties the tuned simple model (0.797 against 0.785), and an ensemble of the two beats it (0.809, with an interval that excludes zero; Section~\ref{sec:v2}).
   \item[RQ2] \emph{How well can the system find the exact clause text in long contracts?}\\
   Token-F1 is 0.764 (95\% CI $[0.743, 0.782]$) \emph{when the model is given a window that contains the clause}, but only 0.383 when the window is chosen by the first model (Sections~\ref{sec:span} and~\ref{sec:e2e}).
   \item[RQ3] \emph{Does the summarizer really describe each specific clause in plain English?}\\
   \textbf{No.} For every input it copies one of 41 sentences we wrote in advance. Against clause-specific reference sentences, it scores no better than just printing that fixed sentence without any model (Section~\ref{sec:summ}).
   \item[RQ4] \emph{How do errors add up across the whole system?}\\
-  They multiply, and it is worse than the separate scores suggest: only 22.0\% of real clauses get through all three steps, compared with the $\approx$65\% that the separate scores would predict (Section~\ref{sec:e2e}).
+  They multiply, and it is worse than the separate scores suggest: with the first setup's presence model, only 22.0\% of real clauses get through all three steps, compared with the $\approx$65\% that the separate scores would predict (Section~\ref{sec:e2e}).
   \item[RQ5] \emph{Do the system's mistakes avoid the clauses that would hurt a signer most?}\\
-  \textbf{No, the opposite.} The setup we report as our main result misses 36.9\% of High-risk clauses, while the model we call weaker misses only 15.9\% (Section~\ref{sec:riskeval}). The overall score and the harm to the user point in different directions.
+  \textbf{Not when the setup is chosen by overall score.} In the first setup, the ensemble with the best micro-F1 misses 36.9\% of High-risk clauses, while the model we called weaker misses only 15.9\% (Section~\ref{sec:riskeval}). Choosing the setup on a validation split for recall instead, the transformer misses 9.7\% (Section~\ref{sec:v2}), and this is what the app uses.
 \end{description}
 
-Three of the five answers are negative, and we report them as results of the project. Each one is something a reader would have got wrong by looking only at the separate model scores.
+Two of the answers are negative (RQ3 and RQ4), and RQ1 and RQ5 changed once we found a flaw in our own setup. We report all of them as results of the project, because each is something a reader would have got wrong by looking only at the separate model scores.
+
+\subsection{Contributions}
+\label{sec:contrib1}
+\begin{enumerate}[itemsep=2pt]
+  \item A complete system that goes from a raw contract to a risk-sorted report: it finds which of the 41 clause types are present, quotes the clause, gives the type a risk level with a reason, and adds a plain-English line. CUAD work so far stops at finding the clause.
+  \item A controlled comparison of a whole-document word model and a window-based transformer for deciding which clauses a contract contains. It shows how a strong simple baseline can look unbeatable when the transformer reads only half of each window and is held to an untuned threshold, and that the two tie once both are tuned on the same validation split, with their ensemble ahead.
+  \item A risk table for the 41 CUAD categories, judged from the weaker party's side with written rules and a reason for each level, which no earlier CUAD work provides. It has not yet been reviewed by a lawyer (Section~\ref{sec:taxvalid}).
+  \item \emph{Clausify}, a working app that runs all the trained models on a user's own contract, with a recall-first setting chosen to miss as few High-risk clauses as possible.
+\end{enumerate}
+Section~\ref{sec:contributions} gives the full list, including the negative results.
 
 \section{Objective}
 \begin{itemize}[itemsep=2pt]
@@ -82,7 +92,7 @@ Three of the five answers are negative, and we report them as results of the pro
 \section{Methodology in Brief}
 We tested every design before building on it, using one fixed 80/20 split of CUAD by contract (408 training contracts and 102 test contracts). After exploring the data (Section~\ref{sec:eda}), we first built a simple word-based model (TF--IDF with logistic regression) that reads the whole contract, before training any transformer. We also measured the highest recall a ``search first'' design could ever reach (Section~\ref{sec:ceiling}). Based on that, we trained a DistilBERT model that scores the contract in small windows and takes the highest window score as the answer for the whole contract (multiple-instance learning), and we combined it with the simple model using an AND rule that reports a clause only when both models agree. A DistilBERT question-answering model finds the exact clause text, a fine-tuned FLAN-T5-small model writes a one-sentence plain-English explanation, and a hand-made table gives each of the 41 categories a High, Medium or Low risk level.
 
-Every model was tested once on the 102 test contracts. We report each score with confidence intervals from a bootstrap over contracts, and we checked how the results change with the amount of training data, the random seed, the way window scores are combined, the decision threshold and the train/test split. We also tested the full system from start to finish. Finally, we put the trained models into \emph{Clausify}, a Streamlit web app that gives a risk-sorted clause report for any contract. Chapter~4 describes the method in full.
+Every model was tested once on the 102 test contracts. We report each score with confidence intervals from a bootstrap over contracts, and we checked how the results change with the amount of training data, the random seed, the way window scores are combined, the decision threshold and the train/test split. We also tested the full system from start to finish. These checks led us to a flaw in the first setup, and we re-ran the presence comparison with the transformer reading whole windows and both models tuned on a validation split taken from the training contracts. Finally, we put the trained models into \emph{Clausify}, a Streamlit web app that gives a risk-sorted clause report for any contract. Chapter~4 describes the method in full.
 
 \section{Scopes and Challenges}
 The project covers English business contracts like those in CUAD: 510 contracts from US SEC filings, marked for 41 clause categories. Within that scope it handles four tasks (finding which clauses are present, finding their exact text, explaining them in plain language and showing their risk level) and delivers a working prototype app. Some things are left out on purpose: legal advice of any kind; contracts in other languages or countries (including Bangladeshi contracts, which inspired the work but were not tested); judging the risk of a clause's exact wording; finding conflicts between clauses; and a formal user study of the app. All models were sized so they can be trained and run on one ordinary laptop.

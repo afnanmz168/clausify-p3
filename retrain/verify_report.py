@@ -70,7 +70,7 @@ m = pres["metrics"]
 C("accuracy", pc(m["accuracy"], 2), "tab:metrics"); C("precision", pc(m["precision"], 2), "tab:metrics")
 C("recall", pc(m["recall"], 2), "tab:metrics"); C("specificity", pc(m["specificity"], 2), "tab:metrics")
 C("F1", f4(m["f1"]), "tab:metrics")
-for k in ("accuracy", "precision", "recall", "specificity"):
+for k in ("accuracy", "precision", "recall"):          # first-setup rows of the scorecard
     C(f"scorecard {k}", pc(m[k], 2), "tab:scorecard")
 
 # ---- bootstrap ------------------------------------------------------------
@@ -163,9 +163,9 @@ if pool:
     C("pooling best gain", f3(pool["max (thesis)"]["best_f1"] - pool["max (thesis)"]["f1_at_05"]))
 
 # ---- app latency (current app, October models) ---------------------------
-ab = J(A, "app_bench.json")
-for r in ab["rows"]:
-    C(f"latency {r['bucket']}", f"{r['chars']:,} {r['windows_after_cap']} {r['seconds']:.1f} {r['peak_rss_gb']:.2f}", "tab:appbench")
+ab = J(A, "app_bench.json"); ab1 = J(A, "app_bench_first_setup.json")   # current app; 256-token first setup
+for r, r1 in zip(ab["rows"], ab1["rows"]):
+    C(f"latency {r['bucket']}", f"{r['chars']:,} {r['windows_after_cap']} {r1['seconds']:.1f} {r['seconds']:.1f} {r['peak_rss_gb']:.2f}", "tab:appbench")
 C("latency summary", f"median {ab['median']:.1f} mean {ab['mean']:.1f} worst case {ab['max']:.1f}", "tab:appbench")
 
 # ---- gradient sizes logged during training --------------------------------
@@ -179,6 +179,52 @@ for nm in ("presence", "span", "summarizer"):
     C(f"grad {nm} median", f"median {_st.median(g):.2f}")
 g = _g(os.path.join(P, "analysis", "run_full53k_log_history.json"))
 C("grad full53k", f"{len(g)} logged points the gradient size ranges from {min(g):.2f} to {max(g):.2f} with a median of {_st.median(g):.2f}, and {100 * sum(x > 1 for x in g) / len(g):.1f}%")
+
+# ---- re-run: whole window, both models tuned on validation (Section 5.3.3) --
+V = os.path.join(HERE, "v2_fullwindow")
+if os.path.exists(os.path.join(V, "runs", "L512", "results.json")):
+    vr = J(V, "runs", "L512", "results.json")
+    def d3(x): return f"{x:+.3f}"
+    def stats(t):                       # recomputed from counts, so no rounding is applied twice
+        tp, fp, fn = t["tp"], t["fp"], t["fn"]; tn = 4182 - tp - fp - fn
+        return dict(f1=2*tp/(2*tp+fp+fn), p=tp/(tp+fp), r=tp/(tp+fn), f2=5*tp/(5*tp+4*fn+fp),
+                    acc=(tp+tn)/4182, spec=tn/(tn+fp))
+    rows = list(vr["reference_original"].items()) + [(k, v["test"]) for k, v in vr["configs"].items()]
+    for name, t in rows:
+        s = stats(t); cis = f" {ci(*t['micro_f1_ci95'], f3)}" if "micro_f1_ci95" in t else ""
+        C(f"v2 row {name}", f"{f3(s['f1'])}{cis} {f3(s['p'])} {f3(s['r'])} {f3(s['f2'])} "
+                            f"{pc(t['high_risk_recall'])} ({t['high_risk_missed']})", "tab:v2")
+    for name in ("transformer_tuned_f1", "ensemble_tuned_f1", "transformer_tuned_f2", "ensemble_tuned_f2"):
+        v = vr["configs"][name]["test"]["vs_tuned_tfidf"]
+        C(f"v2 lead {name}", f"{d3(v['diff'])} {ci(*v['ci95'], d3)}")
+    m = {k: vr["configs"][k]["test"]["macro_f1_ge10pos"] for k in ("transformer_tuned_f1", "tfidf_tuned_f1")}
+    C("v2 macro common", f"{f3(m['transformer_tuned_f1'])} against {f3(m['tfidf_tuned_f1'])}")
+    e = stats(vr["configs"]["ensemble_tuned_f1"]["test"])
+    C("v2 scorecard acc/spec", f"{pc(e['acc'], 2)} / {pc(e['spec'], 2)}", "tab:scorecard")
+    C("v2 scorecard P/R", f"{pc(e['p'], 2)} / {pc(e['r'], 2)}", "tab:scorecard")
+    th = {k: vr["configs"][k]["chosen_on_validation"]["global_threshold"] for k in ("transformer_tuned_f1", "transformer_tuned_f2")}
+    C("v2 shared thresholds", f"{th['transformer_tuned_f1']:.2f} (F1) and {th['transformer_tuned_f2']:.2f} (F2)", "tab:v2")
+    if os.path.exists(os.path.join(V, "truncation_256.json")):
+        tr = J(V, "truncation_256.json")
+        C("truncation share read", f"{pc(tr['share_read_median'])} of each window (about {tr['chars_read_median']:,}")
+        C("truncation middle 80%", f"{pc(tr['share_read_p10'], 0)} to {pc(tr['share_read_p90'], 0)}")
+        C("truncation label noise", f"{pc(tr['share_label_noise'])} of positive training windows "
+                                    f"({tr['positive_train_windows_clause_after_cut']:,} of {tr['positive_train_windows']:,})")
+    if os.path.exists(os.path.join(V, "runs", "L256", "results.json")):
+        cr2 = J(V, "runs", "L256", "results.json")["configs"]; c5 = vr["configs"]
+        for name in ("transformer_untuned", "transformer_tuned_f1", "ensemble_tuned_f1", "transformer_tuned_f2", "ensemble_tuned_f2"):
+            a, b = stats(cr2[name]["test"]), stats(c5[name]["test"])
+            C(f"control row {name}", f"{f3(a['f1'])} / {f3(a['f2'])} {pc(cr2[name]['test']['high_risk_recall'])} "
+                                     f"({cr2[name]['test']['high_risk_missed']}) {f3(b['f1'])} / {f3(b['f2'])} "
+                                     f"{pc(c5[name]['test']['high_risk_recall'])} ({c5[name]['test']['high_risk_missed']})", "tab:v2ctrl")
+        v = cr2["transformer_tuned_f1"]["test"]["vs_tuned_tfidf"]
+        C("control 256 tuned loses", f"by {abs(v['diff']):.3f} (interval {ci(*v['ci95'], d3)}")
+        cw = J(V, "compare_window.json")
+        for k in ("untuned", "f1", "f2"):
+            C(f"window gain {k}", f"{d3(cw[k]['diff'])}" + (" micro-F1" if k != "f2" else " micro-F2"))
+            C(f"window gain CI {k}", ci(*cw[k]["ci95"], d3))
+        C("window gain high-risk", f"{100 * cw['f2']['high_recall_diff']:.1f} points ([{100 * cw['f2']['high_recall_ci95'][0]:+.1f}, "
+                                   f"{100 * cw['f2']['high_recall_ci95'][1]:+.1f}])")
 
 # ---- run ------------------------------------------------------------------
 def found(s, hay):

@@ -13,7 +13,7 @@
 \begin{itemize}[itemsep=2pt]
   \item Privacy: all models shall run on the user's own computer, and no contract text shall be sent to another service or saved to disk.
   \item Hardware: all models shall train and run on one ordinary laptop without a CUDA GPU.
-  \item Speed: analyzing a typical contract shall take no more than tens of seconds on a CPU (measured: median 30.1\,s, worst case 34.8\,s; Table~\ref{tab:appbench}).
+  \item Speed: analyzing a typical contract shall take no more than tens of seconds on a CPU (measured: median 58.7\,s, worst case 102.8\,s; Table~\ref{tab:appbench}). Reading whole windows doubled the time of the first setup, so long contracts now exceed this target.
   \item Fair testing: every reported score shall come from contracts the models never saw during training (split by contract), and no setting shall be chosen by looking at the test set.
   \item Repeatability: the split, the baseline model and all trained models shall be saved, and a separate notebook shall recreate every reported number from them.
   \item Openness: the app shall say that it is not legal advice, and every risk level shall come with a written reason (Appendix~\ref{app:taxonomy}).
@@ -58,7 +58,7 @@ The system is not legal advice, and it says so. Its biggest risk to society is f
 CUAD contains US business contracts written in English. Risk levels that make sense under US law may not apply in other countries, and contracts are written differently in different places. The work was inspired by the situation in Bangladesh, but we tested no Bangladeshi contract, so we cannot yet claim these benefits there.
 
 \section{Environmental Impact}
-The project was designed to need little computing power. All models are small (DistilBERT with 67M parameters and FLAN-T5-small). Training the three models used in the app took about 1.5 hours on a laptop, and the app runs on a CPU with at most about 1.4\,GB of memory (Table~\ref{tab:appbench}).
+The project was designed to need little computing power. All models are small (DistilBERT with 67M parameters and FLAN-T5-small). Training the three models used in the app took about 1.5 hours on a laptop, and the app runs on a CPU with at most about 2.1\,GB of memory (Table~\ref{tab:appbench}).
 
 Including the extra test runs (the full-data presence run of 140.7 minutes, two extra seeds, the evaluation runs and the Longformer test), the whole project used about ten hours of laptop computing. If a laptop draws 20--30\,W under load (an estimate, not a measurement), that is well under one kilowatt-hour of electricity, very little compared with the many-GPU training often used for large legal language models.
 
@@ -84,7 +84,7 @@ Our experiments used only public contracts, so privacy did not arise during the 
 
 \subsection{Data Handling and Privacy}
 \label{sec:privacy}
-The app accepts contract text, and contracts are among the most sensitive documents a business has. Our experiments used only public CUAD contracts, so privacy did not arise during the research. The demo, however, invites users to paste their own contracts, so we state exactly what happens to them.
+The demo invites users to paste their own contracts, so we state exactly what happens to them.
 
 In the demo, all the models run locally. The DistilBERT models, the TF--IDF model and the FLAN-T5 summarizer are loaded from disk and run in the same program as the app, so no contract text leaves the computer the app runs on. An uploaded \texttt{.pdf}, \texttt{.docx} or \texttt{.txt} file is read into memory and turned into text on that computer. Nothing is saved to disk, no database or log keeps the text, and no usage data is collected. The text exists only in Streamlit's memory while the page is open and is gone when the browser session ends. The report the user can download is created on request and saved only where the user chooses.
 
@@ -160,7 +160,7 @@ GPU memory exhaustion during training & Medium & Occurred. One training run per 
 \addlinespace
 Data leakage between train and test & High & Contract-level split reused by all three models; retrieval and inference never use gold offsets; ensemble is parameter-free (Section~\ref{sec:leakage}).\\
 \addlinespace
-Optimistic results from test-set tuning & High & No hyperparameter was tuned; all settings are published defaults or fixed by arguments made before training (Section~\ref{sec:valprotocol}).\\
+Optimistic results from test-set tuning & High & First setup: no hyperparameter was tuned (Section~\ref{sec:valprotocol}). Re-run: every setting chosen on 81 validation contracts taken from the training split, and the test set scored once (Section~\ref{sec:v2}).\\
 \addlinespace
 Over-claiming small differences between models & Medium & Cluster-bootstrap confidence intervals, seed, budget and split controls (Section~\ref{sec:bootstrap} onwards).\\
 \addlinespace
@@ -179,7 +179,7 @@ Users over-trusting the application & High & Not-legal-advice notice; risk badge
 \section{Economic Analysis}
 Developing the system cost no money: the data, models and software are free, and the laptop was already owned (Section~\ref{sec:pm}). The real cost was the team's time and about ten hours of laptop computing.
 
-Running it is also cheap. The models run on a CPU with about 1.4\,GB of memory, so the system can run on ordinary hardware with no cost per contract. Table~\ref{tab:econ} compares this with the two options a user has today.
+Running it is also cheap. The models run on a CPU with about 2.1\,GB of memory, so the system can run on ordinary hardware with no cost per contract. Table~\ref{tab:econ} compares this with the two options a user has today.
 
 The main benefit is quick sorting: the system points the reader to the parts of a long contract that most likely matter and explains them in plain language, at almost no cost. Expert time in this field is expensive (the CUAD labels alone are said to represent about two million US dollars of lawyers' time \cite{hendrycks2021cuad}), so even saving part of the time needed to find key clauses is worth something.
 
@@ -196,7 +196,7 @@ The benefit is limited by how reliable the system is. Only 22.0\% of real clause
  & \textbf{Lawyer review} & \textbf{Hosted LLM service} & \textbf{This system (local)}\\
 \midrule
 Marginal cost per contract & High (professional fees) & Per-request fee & Near zero\\
-Time per contract & Hours to days & Seconds & About 30 seconds\\
+Time per contract & Hours to days & Seconds & About a minute\\
 Privacy & Confidential & Contract leaves the user's machine & Contract stays on the machine\\
 Reliability & Expert judgement & Unmeasured on this task & Measured; misses many clauses\\
 Legal standing & Legal advice & None & None\\
