@@ -1,0 +1,315 @@
+{
+ "dev_n": 50,
+ "test_n": 100,
+ "dev_idx": [
+  0,
+  2,
+  3,
+  4,
+  5,
+  12,
+  13,
+  20,
+  24,
+  25,
+  27,
+  28,
+  33,
+  37,
+  46,
+  52,
+  54,
+  56,
+  66,
+  68,
+  70,
+  78,
+  79,
+  81,
+  82,
+  85,
+  87,
+  89,
+  90,
+  91,
+  94,
+  96,
+  103,
+  105,
+  106,
+  111,
+  114,
+  116,
+  120,
+  122,
+  123,
+  124,
+  125,
+  126,
+  129,
+  130,
+  131,
+  134,
+  135,
+  143
+ ],
+ "candidates": {
+  "flan-t5-small|summarize": {
+   "dev": {
+    "rouge_l": 0.294224504181024,
+    "flesch": 16.216250974966467,
+    "flesch_clause": 1.7320686209356024,
+    "copy_share": 0.8590109783612587,
+    "invented_number": 0.0,
+    "mean_words": 31.46
+   },
+   "test": {
+    "rouge_l": 0.3207054726815129,
+    "flesch": 22.798386592938428,
+    "flesch_clause": 13.465133340875251,
+    "copy_share": 0.7874823511074102,
+    "invented_number": 0.0,
+    "mean_words": 27.78
+   },
+   "seconds_per_clause": 1.421
+  },
+  "flan-t5-small|explain": {
+   "dev": {
+    "rouge_l": 0.2826178920093368,
+    "flesch": 26.17465071389742,
+    "flesch_clause": 1.7320686209356024,
+    "copy_share": 0.8131782422591435,
+    "invented_number": 0.0,
+    "mean_words": 28.34
+   },
+   "test": {
+    "rouge_l": 0.3207174347641368,
+    "flesch": 32.36045730582468,
+    "flesch_clause": 13.465133340875251,
+    "copy_share": 0.769659753442521,
+    "invented_number": 0.0,
+    "mean_words": 28.24
+   },
+   "seconds_per_clause": 1.362
+  },
+  "flan-t5-small|rewrite": {
+   "dev": {
+    "rouge_l": 0.28632654866289625,
+    "flesch": 23.013417086677904,
+    "flesch_clause": 1.7320686209356024,
+    "copy_share": 0.8174490627729522,
+    "invented_number": 0.0,
+    "mean_words": 29.62
+   },
+   "test": {
+    "rouge_l": 0.33477257050688464,
+    "flesch": 30.736407708194303,
+    "flesch_clause": 13.465133340875251,
+    "copy_share": 0.7478343958334007,
+    "invented_number": 0.0,
+    "mean_words": 27.05
+   },
+   "seconds_per_clause": 1.328
+  },
+  "flan-t5-small|typed": {
+   "dev": {
+    "rouge_l": 0.263309155484639,
+    "flesch": 30.02626916146353,
+    "flesch_clause": 1.7320686209356024,
+    "copy_share": 0.7415156027278863,
+    "invented_number": 0.0,
+    "mean_words": 23.72
+   },
+   "test": {
+    "rouge_l": 0.31887935625077096,
+    "flesch": 27.5248091297373,
+    "flesch_clause": 13.465133340875251,
+    "copy_share": 0.7840351071800279,
+    "invented_number": 0.0,
+    "mean_words": 24.63
+   },
+   "seconds_per_clause": 1.159
+  },
+  "flan-t5-base|summarize": {
+   "dev": {
+    "rouge_l": 0.3000334673390753,
+    "flesch": 16.277178891766813,
+    "flesch_clause": 1.7320686209356024,
+    "copy_share": 0.8567188016528656,
+    "invented_number": 0.0,
+    "mean_words": 30.14
+   },
+   "test": {
+    "rouge_l": 0.3136581440019112,
+    "flesch": 22.24486963752242,
+    "flesch_clause": 13.465133340875251,
+    "copy_share": 0.7854700485198488,
+    "invented_number": 0.0,
+    "mean_words": 28.06
+   },
+   "seconds_per_clause": 1.725
+  },
+  "flan-t5-base|explain": {
+   "dev": {
+    "rouge_l": 0.28814644238684106,
+    "flesch": 26.440528650306714,
+    "flesch_clause": 1.7320686209356024,
+    "copy_share": 0.8457432041547562,
+    "invented_number": 0.0,
+    "mean_words": 27.78
+   },
+   "test": {
+    "rouge_l": 0.3064748027652779,
+    "flesch": 28.876396685711985,
+    "flesch_clause": 13.465133340875251,
+    "copy_share": 0.775605639888116,
+    "invented_number": 0.0,
+    "mean_words": 25.89
+   },
+   "seconds_per_clause": 1.652
+  },
+  "flan-t5-base|rewrite": {
+   "dev": {
+    "rouge_l": 0.294722489084674,
+    "flesch": 21.64442805283971,
+    "flesch_clause": 1.7320686209356024,
+    "copy_share": 0.7907638737616881,
+    "invented_number": 0.04,
+    "mean_words": 30.44
+   },
+   "test": {
+    "rouge_l": 0.3101016942533066,
+    "flesch": 26.702152092552048,
+    "flesch_clause": 13.465133340875251,
+    "copy_share": 0.7311703478547156,
+    "invented_number": 0.02,
+    "mean_words": 28.4
+   },
+   "seconds_per_clause": 1.723
+  },
+  "flan-t5-base|typed": {
+   "dev": {
+    "rouge_l": 0.289003974701913,
+    "flesch": 23.249440998634906,
+    "flesch_clause": 1.7320686209356024,
+    "copy_share": 0.8283899041730735,
+    "invented_number": 0.0,
+    "mean_words": 27.76
+   },
+   "test": {
+    "rouge_l": 0.31598218749261797,
+    "flesch": 26.356338489662317,
+    "flesch_clause": 13.465133340875251,
+    "copy_share": 0.7885072276790583,
+    "invented_number": 0.0,
+    "mean_words": 26.45
+   },
+   "seconds_per_clause": 1.599
+  },
+  "flan-t5-large|summarize": {
+   "dev": {
+    "rouge_l": 0.30629367496273086,
+    "flesch": 21.663653726486718,
+    "flesch_clause": 1.7320686209356024,
+    "copy_share": 0.79537704599894,
+    "invented_number": 0.02,
+    "mean_words": 26.98
+   },
+   "test": {
+    "rouge_l": 0.31717866954701723,
+    "flesch": 27.947100643655123,
+    "flesch_clause": 13.465133340875251,
+    "copy_share": 0.7760095077686,
+    "invented_number": 0.01,
+    "mean_words": 26.67
+   },
+   "seconds_per_clause": 2.981
+  },
+  "flan-t5-large|explain": {
+   "dev": {
+    "rouge_l": 0.31216488297727996,
+    "flesch": 20.857193579536144,
+    "flesch_clause": 1.7320686209356024,
+    "copy_share": 0.7987415792516933,
+    "invented_number": 0.0,
+    "mean_words": 28.48
+   },
+   "test": {
+    "rouge_l": 0.3305967414158473,
+    "flesch": 32.957016941188876,
+    "flesch_clause": 13.465133340875251,
+    "copy_share": 0.8044597196165104,
+    "invented_number": 0.02,
+    "mean_words": 27.55
+   },
+   "seconds_per_clause": 2.987
+  },
+  "flan-t5-large|rewrite": {
+   "dev": {
+    "rouge_l": 0.2959364620751999,
+    "flesch": 22.727184662139578,
+    "flesch_clause": 1.7320686209356024,
+    "copy_share": 0.8382677706557871,
+    "invented_number": 0.0,
+    "mean_words": 31.7
+   },
+   "test": {
+    "rouge_l": 0.3326215462818975,
+    "flesch": 30.450942320686252,
+    "flesch_clause": 13.465133340875251,
+    "copy_share": 0.7782246212756911,
+    "invented_number": 0.02,
+    "mean_words": 28.59
+   },
+   "seconds_per_clause": 3.21
+  },
+  "flan-t5-large|typed": {
+   "dev": {
+    "rouge_l": 0.30488023556583443,
+    "flesch": 21.10397867575737,
+    "flesch_clause": 1.7320686209356024,
+    "copy_share": 0.8659172503222969,
+    "invented_number": 0.0,
+    "mean_words": 29.4
+   },
+   "test": {
+    "rouge_l": 0.3325008378695019,
+    "flesch": 28.79097857076873,
+    "flesch_clause": 13.465133340875251,
+    "copy_share": 0.7826711807038427,
+    "invented_number": 0.0,
+    "mean_words": 27.56
+   },
+   "seconds_per_clause": 3.153
+  }
+ },
+ "eligible": [
+  "flan-t5-small|summarize",
+  "flan-t5-small|explain",
+  "flan-t5-small|rewrite",
+  "flan-t5-small|typed",
+  "flan-t5-base|summarize",
+  "flan-t5-base|explain",
+  "flan-t5-base|rewrite",
+  "flan-t5-base|typed",
+  "flan-t5-large|summarize",
+  "flan-t5-large|explain",
+  "flan-t5-large|rewrite",
+  "flan-t5-large|typed"
+ ],
+ "chosen": "flan-t5-large|explain",
+ "test_chosen": {
+  "rouge_l": 0.3305967414158473,
+  "flesch": 32.957016941188876,
+  "flesch_clause": 13.465133340875251,
+  "copy_share": 0.8044597196165104,
+  "invented_number": 0.02,
+  "mean_words": 27.55
+ },
+ "baselines_on_test_100": {
+  "template_vs_diverse": 0.11504644659042905,
+  "finetuned_vs_diverse": 0.113712269422
+ },
+ "device": "mps",
+ "rule": "among pairs easier to read than the clause and with an invented number in at most 5% of development outputs, the highest development ROUGE-L"
+}

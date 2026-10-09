@@ -1,0 +1,42 @@
+{
+ "val": {
+  "n_clauses": 698,
+  "acc41": 0.5931232091690545,
+  "top3": 0.8467048710601719,
+  "acc_any_label": 0.7421203438395415,
+  "clauses_called_none": 0.06017191977077364,
+  "n_none": 200,
+  "none_acc": 0.915
+ },
+ "train_minutes": 44.7,
+ "n_train": 9464,
+ "epochs_eval": [
+  {
+   "eval_loss": 1.681335210800171,
+   "eval_acc41": 0.46131805157593125,
+   "eval_runtime": 25.7605,
+   "eval_samples_per_second": 34.86,
+   "eval_steps_per_second": 1.126,
+   "epoch": 1.0,
+   "step": 592
+  },
+  {
+   "eval_loss": 1.298361897468567,
+   "eval_acc41": 0.5472779369627507,
+   "eval_runtime": 26.1358,
+   "eval_samples_per_second": 34.359,
+   "eval_steps_per_second": 1.11,
+   "epoch": 2.0,
+   "step": 1184
+  },
+  {
+   "eval_loss": 1.1951498985290527,
+   "eval_acc41": 0.5931232091690545,
+   "eval_runtime": 24.5544,
+   "eval_samples_per_second": 36.572,
+   "eval_steps_per_second": 1.181,
+   "epoch": 3.0,
+   "step": 1776
+  }
+ ]
+}

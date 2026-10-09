@@ -1,0 +1,50 @@
+[
+ {
+  "rep": 0,
+  "extra": 0,
+  "contract": "75th",
+  "seconds": 86.25586271286011
+ },
+ {
+  "rep": 0,
+  "extra": 0,
+  "contract": "longest",
+  "seconds": 104.12138390541077
+ },
+ {
+  "rep": 0,
+  "extra": 5,
+  "contract": "75th",
+  "seconds": 118.6196539402008
+ },
+ {
+  "rep": 0,
+  "extra": 5,
+  "contract": "longest",
+  "seconds": 128.4212818145752
+ },
+ {
+  "rep": 1,
+  "extra": 0,
+  "contract": "75th",
+  "seconds": 104.68652415275574
+ },
+ {
+  "rep": 1,
+  "extra": 0,
+  "contract": "longest",
+  "seconds": 104.14366483688354
+ },
+ {
+  "rep": 1,
+  "extra": 5,
+  "contract": "75th",
+  "seconds": 105.00577306747437
+ },
+ {
+  "rep": 1,
+  "extra": 5,
+  "contract": "longest",
+  "seconds": 109.67130613327026
+ }
+]

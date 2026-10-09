@@ -13,7 +13,7 @@
 \begin{itemize}[itemsep=2pt]
   \item Privacy: all models shall run on the user's own computer, and no contract text shall be sent to another service or saved to disk.
   \item Hardware: all models shall train and run on one ordinary laptop without a CUDA GPU.
-  \item Speed: analyzing a typical contract shall take no more than tens of seconds on a CPU (measured: median 64.4\,s, worst case 87.1\,s; Table~\ref{tab:appbench}). Reading whole windows doubled the time of the first setup, so long contracts now exceed this target.
+  \item Speed: analyzing a typical contract shall take no more than tens of seconds on a CPU (measured: median 74.7\,s, worst case 116.2\,s; Table~\ref{tab:appbench}). Reading whole windows doubled the time of the first setup, so long contracts now exceed this target.
   \item Fair testing: every reported score shall come from contracts the models never saw during training (split by contract), and no setting shall be chosen by looking at the test set.
   \item Repeatability: the split, the baseline model and all trained models shall be saved, and a separate notebook shall recreate every reported number from them.
   \item Openness: the app shall say that it is not legal advice, and every risk level shall come with a written reason (Appendix~\ref{app:taxonomy}).
@@ -46,7 +46,7 @@ Development tools & Jupyter notebooks, Git and GitHub, \LaTeX\\
 \end{table}
 
 \subsection{Design constraints}
-Four limits shaped the final design. One laptop cannot train very large models such as the DeBERTa-xlarge model used in the original CUAD work, so we chose smaller (distilled) models. The 510 contracts cannot be extended, so we started from pre-trained models and split the data by contract. The app must score every window of a contract for all 41 categories quickly, which is why it reads at most 30 windows. And the models must run locally for privacy, so online language-model services were ruled out.
+Four limits shaped the final design. One laptop cannot train very large models such as the DeBERTa-xlarge model used in the original CUAD work, so we chose smaller (distilled) models. The 510 contracts cannot be extended, so we started from pre-trained models and split the data by contract. The app must score every window of a contract for all 41 categories quickly, which is why it checks every clause type in the first 30 windows of a contract and in only 5 more windows after that, picked by the TF--IDF model. And the models must run locally for privacy, so online language-model services were ruled out.
 
 \section{Societal Impact}
 Having a lawyer review a contract takes hours and costs money that many people and small businesses cannot afford, so many people sign contracts they do not fully understand. A tool that points a non-lawyer to the clauses most likely to hurt them (unlimited liability, IP assignment, non-competes, automatic renewal) can make this easier and help people ask the right questions before signing. The users we have in mind are freelancers, start-ups and small businesses, the groups least able to pay for professional review.

@@ -10,6 +10,12 @@ data/CUADv1.json
 
 # Trainer checkpoints / backups / caches
 notebooks/outputs/*/ckpt/
+retrain/span_v2/runs/*/ckpt/
+retrain/clause_v2/runs/bert_ckpt/
+retrain/clause_v2/runs/bert_best/
+# clause-mode classifier (16 MB), published on Hugging Face as clause_v2/tfidf.pkl
+notebooks/outputs/clause_v2/tfidf.pkl
+retrain/clause_v2/runs/tfidf.pkl
 _prev_run_*/
 retrain/analysis_oct2026/window_scores.npz
 .ipynb_checkpoints/

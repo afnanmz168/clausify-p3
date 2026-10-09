@@ -1,0 +1,19 @@
+Loading weights:   0%|          | 0/190 [00:00<?, ?it/s]Loading weights: 100%|██████████| 190/190 [00:00<00:00, 9177.80it/s]
+[transformers] The tied weights mapping and config for this model specifies to tie shared.weight to lm_head.weight, but both are present in the checkpoints with different values, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning.
+flan-t5-small|summarize {'rouge_l': 0.294, 'flesch': 16.216, 'flesch_clause': 1.732, 'copy_share': 0.859, 'invented_number': 0.0, 'mean_words': 31.46} 1.42s/clause (mps)
+flan-t5-small|explain {'rouge_l': 0.283, 'flesch': 26.175, 'flesch_clause': 1.732, 'copy_share': 0.813, 'invented_number': 0.0, 'mean_words': 28.34} 1.36s/clause (mps)
+flan-t5-small|rewrite {'rouge_l': 0.286, 'flesch': 23.013, 'flesch_clause': 1.732, 'copy_share': 0.817, 'invented_number': 0.0, 'mean_words': 29.62} 1.33s/clause (mps)
+flan-t5-small|typed {'rouge_l': 0.263, 'flesch': 30.026, 'flesch_clause': 1.732, 'copy_share': 0.742, 'invented_number': 0.0, 'mean_words': 23.72} 1.16s/clause (mps)
+Loading weights:   0%|          | 0/282 [00:00<?, ?it/s]Loading weights: 100%|██████████| 282/282 [00:00<00:00, 3016.95it/s]
+[transformers] The tied weights mapping and config for this model specifies to tie shared.weight to lm_head.weight, but both are present in the checkpoints with different values, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning.
+flan-t5-base|summarize {'rouge_l': 0.3, 'flesch': 16.277, 'flesch_clause': 1.732, 'copy_share': 0.857, 'invented_number': 0.0, 'mean_words': 30.14} 1.73s/clause (mps)
+flan-t5-base|explain {'rouge_l': 0.288, 'flesch': 26.441, 'flesch_clause': 1.732, 'copy_share': 0.846, 'invented_number': 0.0, 'mean_words': 27.78} 1.65s/clause (mps)
+flan-t5-base|rewrite {'rouge_l': 0.295, 'flesch': 21.644, 'flesch_clause': 1.732, 'copy_share': 0.791, 'invented_number': 0.04, 'mean_words': 30.44} 1.72s/clause (mps)
+flan-t5-base|typed {'rouge_l': 0.289, 'flesch': 23.249, 'flesch_clause': 1.732, 'copy_share': 0.828, 'invented_number': 0.0, 'mean_words': 27.76} 1.60s/clause (mps)
+Loading weights:   0%|          | 0/558 [00:00<?, ?it/s]Loading weights: 100%|██████████| 558/558 [00:00<00:00, 5635.63it/s]
+[transformers] The tied weights mapping and config for this model specifies to tie shared.weight to lm_head.weight, but both are present in the checkpoints with different values, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning.
+flan-t5-large|summarize {'rouge_l': 0.306, 'flesch': 21.664, 'flesch_clause': 1.732, 'copy_share': 0.795, 'invented_number': 0.02, 'mean_words': 26.98} 2.98s/clause (mps)
+flan-t5-large|explain {'rouge_l': 0.312, 'flesch': 20.857, 'flesch_clause': 1.732, 'copy_share': 0.799, 'invented_number': 0.0, 'mean_words': 28.48} 2.99s/clause (mps)
+flan-t5-large|rewrite {'rouge_l': 0.296, 'flesch': 22.727, 'flesch_clause': 1.732, 'copy_share': 0.838, 'invented_number': 0.0, 'mean_words': 31.7} 3.21s/clause (mps)
+flan-t5-large|typed {'rouge_l': 0.305, 'flesch': 21.104, 'flesch_clause': 1.732, 'copy_share': 0.866, 'invented_number': 0.0, 'mean_words': 29.4} 3.15s/clause (mps)
+chosen: flan-t5-large|explain {'rouge_l': 0.3305967414158473, 'flesch': 32.957016941188876, 'flesch_clause': 13.465133340875251, 'copy_share': 0.8044597196165104, 'invented_number': 0.02, 'mean_words': 27.55} | baselines on the 100: {'template_vs_diverse': 0.11504644659042905, 'finetuned_vs_diverse': 0.113712269422}

@@ -17,7 +17,7 @@ and **what it means and how risky it is** for the signer, and ships it as the **
 
 | Stage | Model | Job | Held-out result (102 test contracts) |
 |---|---|---|---|
-| **2A** | TF-IDF + DistilBERT (MIL) ensemble, tuned on a validation split | Which of the 41 categories are present? | micro-F1 **0.809**, accuracy **88.43%**; recall-first setting finds **90.3%** of High-risk clauses |
+| **2A** | TF-IDF + DistilBERT (MIL) ensemble, tuned on a validation split | Which of the 41 categories are present? | micro-F1 **0.809**, accuracy **88.43%**; recall-first setting finds **90.3%** of High-risk clauses in whole contracts, **88.6%** as the app reads long ones |
 | **2B** | DistilBERT-QA | Locate the exact clause text | token-F1 **0.764** (given the window) |
 | **1** | FLAN-T5-small | One plain-English sentence per clause | ROUGE-L **0.775** (41 templates) |
 
@@ -50,8 +50,8 @@ The application lives in its own repository: **[clausify-p3-app](https://github.
 missing-protection checklist). Trained weights: **[af123Af/clausify-models](https://huggingface.co/af123Af/clausify-models)**.
 The re-run presence model (`notebooks/outputs/presence_v2/`) and its TF-IDF model
 (`notebooks/artifacts/baseline_v2.pkl`) are in that repository as `presence_v2/` and
-`baseline_v2/baseline.pkl`, and the retrained span model (`notebooks/outputs/span_v2/`) is there as
-`span_v2/` (all uploaded 9 October 2026; same SHA-256 as the local files), so the app downloads the
+`baseline_v2/baseline.pkl`, the retrained span model (`notebooks/outputs/span_v2/`) is there as `span_v2/`, and
+the clause-mode classifier (`notebooks/outputs/clause_v2/tfidf.pkl`) as `clause_v2/` (all uploaded 9 October 2026; same SHA-256 as the local files), so the app downloads the
 final models, with the calibrated chance and the new quoting, when it runs from GitHub.
 
 ---

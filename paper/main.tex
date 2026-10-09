@@ -92,6 +92,14 @@ embedding metrics~\cite{bertscore} improve similarity estimation without testing
 summarization result reported here is an extreme instance of the same phenomenon, and the
 calibration analysis follows~\cite{calibration}.
 
+General-purpose large language models are the obvious alternative to a pipeline of small trained
+models. GPT-4 passes the bar examination~\cite{gpt4bar}, but prompted ChatGPT scores below 50\%
+average micro-F1 on LexGLUE~\cite{chatgptlexglue}, public models hallucinate on at least 58\% of
+verifiable legal questions~\cite{fictions}, and long contexts are used unevenly, with information in
+the middle used least~\cite{lostmiddle}. We did not run an LLM baseline; the system here runs on the
+user's own machine, which keeps confidential contracts local, and every number is reproducible from
+saved models.
+
 Two properties of CUAD dominate any modelling effort on it. The first is class imbalance:
 per-category positive rates span 100\% to 2.5\%. The second is length, which forces every system to
 commit to a length strategy before it commits to a model. That choice is usually asserted; here it
@@ -462,7 +470,7 @@ probability-preserving operation, and nothing in training asked it to be. The re
 score is no better (test ECE 0.206), and its validation-chosen thresholds of 0.96 (F1) and 0.88
 (F2) show that its scores still bunch near 1. An isotonic map fitted on the 81 validation contracts
 and applied unchanged to the test set lowers ECE to 0.016 and the Brier score to 0.091; Platt
-scaling reaches 0.084. Because the map is monotone it changes no detection. On the test set,
+scaling reaches an ECE of 0.084 and a Brier score of 0.103, so isotonic regression is better on both. Because the map is monotone it changes no detection. On the test set,
 contracts with a raw score of at least 0.99 contained the clause 99.0\% of the time, and those
 between 0.90 and 0.95 only 32.3\% of the time, a distinction the raw score hides.
 
@@ -500,6 +508,7 @@ drafted independently of the model (Table~\ref{tab:summ}).
 Fine-tuned FLAN-T5 & 41 templates    & 0.775\\
 Fine-tuned FLAN-T5 & clause-specific & 0.116\\
 Zero-shot FLAN-T5  & clause-specific & 0.299\\
+Zero-shot FLAN-T5-large$^\dagger$ & clause-specific & 0.331\\
 \emph{Template alone, no model} & clause-specific & 0.115\\
 \bottomrule
 \end{tabular}
@@ -509,7 +518,10 @@ The fine-tuned model emits one of the 41 templates verbatim on 100\% of inputs, 
 of the time, and a constant lookup table matches its score. The task became 41-way classification and
 the metric did not register the change. A template-emitting model cannot hallucinate in the usual
 sense; it fails instead by producing fluent, confident text about a different provision, which is
-undetectable from the output alone.
+undetectable from the output alone. A larger model does not fix this: FLAN-T5-large, chosen with
+its prompt on 50 of the clauses and tested on the other 100 ($^\dagger$), scores higher only by
+copying the clause, with 68\% of its outputs near-verbatim excerpts and some that reverse an
+obligation.
 
 \subsection{End-to-End Evaluation}
 \label{sec:e2e}
@@ -628,11 +640,12 @@ inference side, scanning one median contract for all 41 categories takes 10.6\,s
 against 454\,s with Longformer.
 
 The deployed application runs all inference locally on CPU. With the full-window model, a
-median-length test contract takes 64.4\,s and the worst case 87.1\,s at a peak memory of 1.93\,GB,
-about twice the first setup's 30.1\,s because each window now carries twice as much text. A
-30-window cap bounds latency but reads only the first 45,500 characters, and 38.4\% of CUAD
-contracts exceed that, so clauses beyond the cap cannot be detected, a limitation invisible in every
-offline metric reported above.
+median-length test contract takes 74.7\,s and the worst case 116.2\,s at a peak memory of 2.07\,GB,
+about twice the first setup's 30.1\,s because each window now carries twice as much text. Every clause type is checked in the first 30 windows (45,500 characters), and 38.4\% of CUAD
+contracts are longer. This limitation is invisible in every offline metric above: replaying the saved
+window scores with it, the recall-first setting finds 77.3\% of high-risk test clauses instead of
+90.3\%. Letting the TF--IDF model pick the 5 later windows most likely to hold each clause type (5
+chosen on validation) restores it to 88.6\%, measured through the application's own code.
 
 \section{Conclusion and Future Work}
 On a strict held-out protocol, a full-document lexical baseline first appeared to beat a windowed
@@ -673,6 +686,10 @@ how this work reports its results.
 \bibitem{rouge} C.-Y. Lin, ``ROUGE: A package for automatic evaluation of summaries,'' in \emph{Text Summarization Branches Out}, 2004, pp. 74--81.
 \bibitem{bertscore} T. Zhang, V. Kishore, F. Wu, K. Q. Weinberger, and Y. Artzi, ``BERTScore: Evaluating text generation with BERT,'' in \emph{Proc. ICLR}, 2020.
 \bibitem{calibration} C. Guo, G. Pleiss, Y. Sun, and K. Q. Weinberger, ``On calibration of modern neural networks,'' in \emph{Proc. ICML}, 2017, pp. 1321--1330.
+\bibitem{gpt4bar} D. M. Katz, M. J. Bommarito, S. Gao, and P. Arredondo, ``GPT-4 passes the bar exam,'' \emph{Phil. Trans. R. Soc. A}, vol. 382, no. 2270, p. 20230254, 2024.
+\bibitem{chatgptlexglue} I. Chalkidis, ``ChatGPT may pass the bar exam soon, but has a long way to go for the LexGLUE benchmark,'' \emph{arXiv:2304.12202}, 2023.
+\bibitem{fictions} M. Dahl, V. Magesh, M. Suzgun, and D. E. Ho, ``Large legal fictions: Profiling legal hallucinations in large language models,'' \emph{J. Legal Analysis}, vol. 16, no. 1, pp. 64--93, 2024.
+\bibitem{lostmiddle} N. F. Liu \emph{et al.}, ``Lost in the middle: How language models use long contexts,'' \emph{Trans. ACL}, vol. 12, pp. 157--173, 2024.
 \bibitem{distilbert} V. Sanh, L. Debut, J. Chaumond, and T. Wolf, ``DistilBERT, a distilled version of BERT,'' in \emph{Proc. EMC$^2$ Workshop, NeurIPS}, 2019.
 \end{thebibliography}
 

@@ -1,0 +1,1352 @@
+[
+ {
+  "i": 0,
+  "category": "Parties",
+  "out": "A person with legal training can understand life technologies.",
+  "rouge_l": 0.10526315789473685,
+  "flesch": 37.900000000000034,
+  "copy": 0.0,
+  "invented": 0
+ },
+ {
+  "i": 1,
+  "category": "Anti-Assignment",
+  "out": "Neither party to this Agreement shall assign, subcontract, or otherwise delegate its rights or duties hereunder to any third party without the prior written consent of the other party hereto, such consent not to be unreasonably withheld.",
+  "rouge_l": 0.4406779661016949,
+  "flesch": 18.37189189189192,
+  "copy": 0.9428571428571428,
+  "invented": 0
+ },
+ {
+  "i": 2,
+  "category": "Insurance",
+  "out": "Each party will provide such evidence of the effectiveness of such insurance to the other party as may be reasonably requested.",
+  "rouge_l": 0.16326530612244897,
+  "flesch": 32.43428571428575,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 3,
+  "category": "Post-Termination Services",
+  "out": "The Parties agree that during the pendency of the winding up, the JVC will be allowed to use the Technical Know How to the extent the same is necessary for the purpose of implementing any orders pending in favour of its customers.",
+  "rouge_l": 0.1846153846153846,
+  "flesch": 33.276428571428596,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 4,
+  "category": "Affiliate License-Licensee",
+  "out": "Licensee may sublicense its rights under Section 1.1 solely to a wholly owned subsidiary of Licensee, and then only with the prior written consent of Licensor (which shall not be unreasonably withheld), provided that any such sublicense shall terminate automatically, with no need for written notice to",
+  "rouge_l": 0.3146067415730337,
+  "flesch": 7.497173913043497,
+  "copy": 0.9777777777777777,
+  "invented": 0
+ },
+ {
+  "i": 5,
+  "category": "License Grant",
+  "out": "In the event of a Supply Failure, Miltenyi shall grant Bellicum's Second-Source Supplier a limited, non-exclusive, nontransferable, one-site production license, without the right to sublicense.",
+  "rouge_l": 0.19607843137254902,
+  "flesch": 25.703448275862087,
+  "copy": 0.8260869565217391,
+  "invented": 0
+ },
+ {
+  "i": 6,
+  "category": "Covenant Not To Sue",
+  "out": "Allied shall not at any time do, or cause to be done, directly or indirectly any act that may impair or tarnish any part of Newegg's goodwill and reputation.",
+  "rouge_l": 0.22727272727272724,
+  "flesch": 46.66500000000002,
+  "copy": 0.9629629629629629,
+  "invented": 0
+ },
+ {
+  "i": 7,
+  "category": "Minimum Commitment",
+  "out": "Bellicum shall have [...***...] days to tender a firm Purchase Order for the purchase of such shortfall to satisfy the Minimum Purchase requirements set forth above.",
+  "rouge_l": 0.28571428571428575,
+  "flesch": 59.632666666666665,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 8,
+  "category": "Warranty Duration",
+  "out": "NeuroBo may perform a quality control test in accordance with the methods of the test on such Licensed Products and/or their matching placebo for acceptance (the \"Product Test Methods\"), which shall be separately agreed in writing by and between Dong-A and neuroBo and attached hereto",
+  "rouge_l": 0.18181818181818182,
+  "flesch": 16.930000000000007,
+  "copy": 0.9069767441860465,
+  "invented": 0
+ },
+ {
+  "i": 9,
+  "category": "License Grant",
+  "out": "ExxonMobil Background Patents for Generation 1 Technology in any applications outside of Carbon Capture Applications includes the right to use, reproduce, and create derivative works of exxonmobil background information under applicable copyrights and the right of making, use, import, and sell or offer to sell",
+  "rouge_l": 0.2058823529411765,
+  "flesch": -7.024999999999977,
+  "copy": 0.9069767441860465,
+  "invented": 0
+ },
+ {
+  "i": 10,
+  "category": "Expiration Date",
+  "out": "The initial term of this Agreement shall commence on the Effective Date and shall continue until the fifth (5t h) anniversary of the effective date (the \"Term\"), unless the Agreement is sooner terminated in accordance with the terms of the Agreement.",
+  "rouge_l": 0.19999999999999998,
+  "flesch": 26.971219512195148,
+  "copy": 0.9487179487179487,
+  "invented": 0
+ },
+ {
+  "i": 11,
+  "category": "Exclusivity",
+  "out": "MD Anderson also grants Adaptimmune Limited an exclusive option to negotiate an agreement.",
+  "rouge_l": 0.6363636363636364,
+  "flesch": 11.424615384615407,
+  "copy": 0.6363636363636364,
+  "invented": 0
+ },
+ {
+  "i": 12,
+  "category": "Third Party Beneficiary",
+  "out": "Lessor and Lessee expressly agree that Franchisor is a third party beneficiary of this Addendum.",
+  "rouge_l": 0.06666666666666667,
+  "flesch": 39.33000000000001,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 13,
+  "category": "Post-Termination Services",
+  "out": "All reasonable fees associated with the wind-down activities and final monitoring visit shall be paid by Adaptimmune, to the extent not covered by Alliance Funding.",
+  "rouge_l": 0.3181818181818182,
+  "flesch": 24.260384615384652,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 14,
+  "category": "Audit Rights",
+  "out": "Each Party to this Agreement shall have the right to inspect from time to time the operation and maintenance of any portion of the APCN 2 and to obtain copies of the maintenance records.",
+  "rouge_l": 0.5573770491803278,
+  "flesch": 47.72181818181819,
+  "copy": 0.90625,
+  "invented": 0
+ },
+ {
+  "i": 15,
+  "category": "Parties",
+  "out": "SutroVax, Inc.",
+  "rouge_l": 0.33333333333333337,
+  "flesch": 35.60500000000002,
+  "copy": 0.0,
+  "invented": 0
+ },
+ {
+  "i": 16,
+  "category": "Ip Ownership Assignment",
+  "out": "Vendor assigns all right, title and interest in AT&T Data.",
+  "rouge_l": 0.4000000000000001,
+  "flesch": 64.9245454545455,
+  "copy": 0.75,
+  "invented": 0
+ },
+ {
+  "i": 17,
+  "category": "Audit Rights",
+  "out": "Adaptimmune may monitor the conduct of a Clinical Study in accordance with Good Clinical Practice requirements of FDA Regulations, and may visit MD Anderson for the purpose of such monitoring.",
+  "rouge_l": 0.5,
+  "flesch": 15.645000000000039,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 18,
+  "category": "Parties",
+  "out": "Owners of a property are liable for the loss of their property.",
+  "rouge_l": 0.1,
+  "flesch": 67.75500000000001,
+  "copy": 0.0,
+  "invented": 0
+ },
+ {
+  "i": 19,
+  "category": "Agreement Date",
+  "out": "1 st day of May 2006.",
+  "rouge_l": 0.4615384615384615,
+  "flesch": 118.17500000000001,
+  "copy": 0.75,
+  "invented": 0
+ },
+ {
+  "i": 20,
+  "category": "License Grant",
+  "out": "Each Party shall own rights to any Internet domain names incorporating the Product Trademark(s) owned by such Party under Section 12.1 or any variation or part of such Product TradeMark(s), as its URL address or any part thereof, and agrees to grant, and hereby grants to the other Party",
+  "rouge_l": 0.21176470588235297,
+  "flesch": 19.033000000000015,
+  "copy": 0.8723404255319149,
+  "invented": 0
+ },
+ {
+  "i": 21,
+  "category": "Document Name",
+  "out": "Addendum to lease Agreement",
+  "rouge_l": 0.46153846153846156,
+  "flesch": 33.57500000000002,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 22,
+  "category": "Insurance",
+  "out": "By requiring insurance, the Sponsor does not represent that coverage limits will necessarily be adequate to protect Racing.",
+  "rouge_l": 0.3225806451612903,
+  "flesch": 19.36500000000001,
+  "copy": 0.8125,
+  "invented": 0
+ },
+ {
+  "i": 23,
+  "category": "Termination For Convenience",
+  "out": "Without limitation of its rights under this ARTICLE 13, Xencor may also terminate this Agreement in its entirety as applicable, pursuant to the provisions of Section 9.7.",
+  "rouge_l": 0.3636363636363636,
+  "flesch": 31.71550000000002,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 24,
+  "category": "Anti-Assignment",
+  "out": "Each Party may assign its rights under the Agreement, but any assignment of rights will be void to the extent that (i) the assignment purports to impose upon the non-assigning Party additional costs or obligations or requires AT&T to make payments to any Person other than Vendor,",
+  "rouge_l": 0.24390243902439024,
+  "flesch": 20.7040816326531,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 25,
+  "category": "Anti-Assignment",
+  "out": "Any assignment, delegation or transfer for which consent is required hereby and which is made without such consent given in writing will be void.",
+  "rouge_l": 0.3333333333333333,
+  "flesch": 41.47500000000002,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 26,
+  "category": "Non-Transferable License",
+  "out": "To the extent not already granted pursuant to the License Agreement, FCE grants ExxonMobil and its Affiliates a worldwide, non-exclusive, royalty-free, irrevocable, perpetual, sub-licensable, nontransferable right and license to practice FCE Background Information",
+  "rouge_l": 0.34375,
+  "flesch": -1.254999999999967,
+  "copy": 0.9032258064516129,
+  "invented": 0
+ },
+ {
+  "i": 27,
+  "category": "Parties",
+  "out": "A person without legal training can understand IAC.",
+  "rouge_l": 0.0,
+  "flesch": 50.66500000000002,
+  "copy": 0.0,
+  "invented": 0
+ },
+ {
+  "i": 28,
+  "category": "Anti-Assignment",
+  "out": "If you have transferred your Interests in violation of this Agreement, you shall be considered in breach of this agreement.",
+  "rouge_l": 0.5142857142857143,
+  "flesch": 46.94500000000005,
+  "copy": 0.8333333333333334,
+  "invented": 0
+ },
+ {
+  "i": 29,
+  "category": "Expiration Date",
+  "out": "This agreement is for a term of ten (10) years.",
+  "rouge_l": 0.4,
+  "flesch": 94.30000000000003,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 30,
+  "category": "License Grant",
+  "out": "Subject to the terms of this Agreement, Company grants Reseller the right to use and display the Company trademarks, tradenames and other designations of source, and proprietary notices, slogans, designs and distinct advertising as may appear on any documentation or other material with respect to Product (\"Marks\") with prior",
+  "rouge_l": 0.273972602739726,
+  "flesch": 1.7122448979592377,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 31,
+  "category": "Agreement Date",
+  "out": "A person without legal training can understand a contract clause on 31 October 2019.",
+  "rouge_l": 0.2857142857142857,
+  "flesch": 46.60500000000002,
+  "copy": 0.0,
+  "invented": 0
+ },
+ {
+  "i": 32,
+  "category": "License Grant",
+  "out": "You agree to use the Marks as the sole trade identification of the Franchise, except that you will display at the Franchise location a notice, in the form we prescribe, stating that you are the independent owner of the franchise pursuant to a Franchise Agreement with us.",
+  "rouge_l": 0.2857142857142857,
+  "flesch": 31.330000000000013,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 33,
+  "category": "Post-Termination Services",
+  "out": "Upon the expiration or termination of this Agreement, pursuant to Section 4.1 or 4.2 hereof, the Company may, at its option to be exercised within 30 days of the date of the termination of the Agreement, and in its sole discretion, repurchase any Products in the possession of the Distribu",
+  "rouge_l": 0.20253164556962025,
+  "flesch": 35.38250000000002,
+  "copy": 0.9166666666666666,
+  "invented": 0
+ },
+ {
+  "i": 34,
+  "category": "Cap On Liability",
+  "out": "EVEN IF THE PARTY HAS BEEN ADVISED, KNOWS OR SHOULD KNOW, OR IS AWARE OF THE POSSIBILITY OF such DAMAGES.",
+  "rouge_l": 0.11320754716981132,
+  "flesch": 55.40500000000003,
+  "copy": 0.8888888888888888,
+  "invented": 0
+ },
+ {
+  "i": 35,
+  "category": "Rofr/Rofo/Rofn",
+  "out": "If any of the Transferees intend to purchase all or any portion of the said shares so offered, such Party shall dispatch a written notice of acceptance to the transferor describing the number of the shares it intends to purchase within three (3) weeks after the date of receipt of the offer. The sale price",
+  "rouge_l": 0.2891566265060241,
+  "flesch": 21.991666666666674,
+  "copy": 0.9433962264150944,
+  "invented": 0
+ },
+ {
+  "i": 36,
+  "category": "Non-Compete",
+  "out": "The Manufacturer agrees that the Customer has the right under this agreement to consider, source, promote, market and sell other product outside of the products listed in Schedule A.",
+  "rouge_l": 0.48148148148148145,
+  "flesch": 31.537931034482767,
+  "copy": 0.9629629629629629,
+  "invented": 0
+ },
+ {
+  "i": 37,
+  "category": "Ip Ownership Assignment",
+  "out": "All inventions, ideas, creations, discoveries, computer programs, works of authorship, data, developments, technology, designs, innovations and improvements (whether or not patentable and whether or not copyrightable) which are made, conceived, reduced to practice, created, written, designed or developed by the",
+  "rouge_l": 0.18666666666666665,
+  "flesch": -17.769999999999982,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 38,
+  "category": "Expiration Date",
+  "out": "This agreement will be in effect until the end of 2006 and will be evaluated at that time.",
+  "rouge_l": 0.5806451612903226,
+  "flesch": 70.14470588235297,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 39,
+  "category": "Agreement Date",
+  "out": "May 25, 2016 is the 25th of May.",
+  "rouge_l": 0.13333333333333333,
+  "flesch": 116.14500000000001,
+  "copy": 0.16666666666666666,
+  "invented": 0
+ },
+ {
+  "i": 40,
+  "category": "Uncapped Liability",
+  "out": "NOTWITHSTANDING THE FOREGOING, NOTHING IN THIS SECTION 11.4 IS INTENDED TO OR SHALL LIMIT OR RESTRICT THE INDEMNIFICATION RIGHTS OR OBLIGATIONS OF ANY PARTY UNDER SEC",
+  "rouge_l": 0.17391304347826086,
+  "flesch": 22.412000000000006,
+  "copy": 0.9583333333333334,
+  "invented": 0
+ },
+ {
+  "i": 41,
+  "category": "Parties",
+  "out": "FMM is a type of contract.",
+  "rouge_l": 0.4,
+  "flesch": 102.04500000000002,
+  "copy": 0.0,
+  "invented": 0
+ },
+ {
+  "i": 42,
+  "category": "Post-Termination Services",
+  "out": "IntriCon must make all such records available for inspection, copying and audit by an independent auditor appointed by Dynamic Hearing.",
+  "rouge_l": 0.2857142857142857,
+  "flesch": 17.335000000000036,
+  "copy": 0.9444444444444444,
+  "invented": 0
+ },
+ {
+  "i": 43,
+  "category": "Warranty Duration",
+  "out": "Todos warrants that for a period of one (1) year from the date of delivery of each Product to the Reseller, the Product, except for those components that have a shorter expiration date as set forth on Exhibit A, shall perform substantially in accordance with the Product's documentation",
+  "rouge_l": 0.3076923076923077,
+  "flesch": 20.640000000000015,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 44,
+  "category": "License Grant",
+  "out": "Dynamic Hearing grants to IntriCon in accordance with this Agreement, for the Term, a license, to Use Dynamic hearing's Technology, Software and Documentation developed as of the Commencement Date to manufacture, import, sell and offer for sale throughout the Territory, Products containing Dynamic",
+  "rouge_l": 0.42424242424242425,
+  "flesch": -3.1795454545454334,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 45,
+  "category": "Effective Date",
+  "out": "June 13, 2012 was the last month of the month.",
+  "rouge_l": 0.11764705882352941,
+  "flesch": 114.11500000000001,
+  "copy": 0.125,
+  "invented": 0
+ },
+ {
+  "i": 46,
+  "category": "Parties",
+  "out": "Cisco Systems, Inc. or its subsidiary licensing the Software instead of Cisco Systems (Cisco).",
+  "rouge_l": 0.4137931034482759,
+  "flesch": 42.61571428571432,
+  "copy": 0.8333333333333334,
+  "invented": 0
+ },
+ {
+  "i": 47,
+  "category": "Cap On Liability",
+  "out": "SUTRO'S LIABILITY TO SURTROVAX FOR THIRD PARTY PENALTIES, COSTS AND EXPENSES UNDER SECTION 2.9 SHALL NOT EXCEED [***]",
+  "rouge_l": 0.5945945945945946,
+  "flesch": 35.309411764705914,
+  "copy": 0.6875,
+  "invented": 0
+ },
+ {
+  "i": 48,
+  "category": "Uncapped Liability",
+  "out": "Losses any claim, demand, lawsuit, loss, liability, damage, obligation, payment, cost or expense (including the cost and expense of any action, suit, proceeding, assessment, judgment, settlement or compromise relating thereto)",
+  "rouge_l": 0.09523809523809525,
+  "flesch": 4.3650000000000375,
+  "copy": 0.8571428571428571,
+  "invented": 0
+ },
+ {
+  "i": 49,
+  "category": "Expiration Date",
+  "out": "This Agreement shall be effective as of the date hereof and shall remain in full force and effect for the period (the \"Covered Period\") commencing on and ending on the date that is the earliest of: (i) the Company's failure to appoint the ValueAct Designee",
+  "rouge_l": 0.21428571428571427,
+  "flesch": 36.923260869565226,
+  "copy": 0.8604651162790697,
+  "invented": 0
+ },
+ {
+  "i": 50,
+  "category": "Revenue/Profit Sharing",
+  "out": "Licensee shall pay to Licensor for maintenance and support and upgrade services provided under the applicable Sublicense or other written maintenance agreement with or approved by Licensee for each of the Licensed Products a fee equal to 50% of all revenues received (without deduction for value added tax, if any).",
+  "rouge_l": 0.3116883116883117,
+  "flesch": 5.16530612244901,
+  "copy": 0.9375,
+  "invented": 0
+ },
+ {
+  "i": 51,
+  "category": "Minimum Commitment",
+  "out": "In the event the Company is unable to sell a minimum of 1,875,000 Shares on or before June 30, 2007, this Agreement shall terminate and the Company shall cause the Escrow Agent (as defined below) to refund to any persons who have subscribed for any of the Shares the full amount it",
+  "rouge_l": 0.25974025974025977,
+  "flesch": 24.157142857142873,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 52,
+  "category": "License Grant",
+  "out": "To the extent any Development owned by Life Technologies relates directly to the practice of, or constitutes an improvement to, the Assay, Life Technologies grants to Biocept, during the Term of this Agreement, and, except in the case of termination of this agreement, a non-exclusive, worldwide, royalty",
+  "rouge_l": 0.23809523809523814,
+  "flesch": 6.5400000000000205,
+  "copy": 0.9333333333333333,
+  "invented": 0
+ },
+ {
+  "i": 53,
+  "category": "Document Name",
+  "out": "COLLABORATION AGREEMENT",
+  "rouge_l": 0.25,
+  "flesch": -133.59499999999997,
+  "copy": 0.0,
+  "invented": 0
+ },
+ {
+  "i": 54,
+  "category": "Change Of Control",
+  "out": "Within fifteen (15) Business Days after the merger, consolidation, succession or assignment, such Person will execute an agreement to assume the Servicesr's obligations under this Agreement and each Transaction Document to which the Servicer is a party (unless the assumption happens by operation of Law), (ii) deliver to the Issue",
+  "rouge_l": 0.21951219512195122,
+  "flesch": -2.962999999999994,
+  "copy": 0.875,
+  "invented": 0
+ },
+ {
+  "i": 55,
+  "category": "License Grant",
+  "out": "Aimmune covenants that it will not research or develop (including Develop) the Antibody itself, including not developing any modification, variant, fragment, progeny or derivatives of such Antibody, in each case, in a way that would produce a molecule that is neither the Antik\u00f6rper",
+  "rouge_l": 0.4705882352941177,
+  "flesch": -1.2568181818181472,
+  "copy": 0.975609756097561,
+  "invented": 0
+ },
+ {
+  "i": 56,
+  "category": "Exclusivity",
+  "out": "The Company and the Trust (together, the \"Issuers\") hereby appoint Barclays as Remarketing Agent, for the purpose of (i) remarketing the Remarketing Securities on behalf of the holders thereof and (ii) performing such other duties as are assigned to the",
+  "rouge_l": 0.2950819672131147,
+  "flesch": 13.955000000000013,
+  "copy": 0.9736842105263158,
+  "invented": 0
+ },
+ {
+  "i": 57,
+  "category": "Parties",
+  "out": "ESSI is a legal entity.",
+  "rouge_l": 0.2857142857142857,
+  "flesch": 49.48000000000002,
+  "copy": 0.0,
+  "invented": 0
+ },
+ {
+  "i": 58,
+  "category": "Expiration Date",
+  "out": "This Agreement will terminate on the earlier to occur of (a) the date upon which the last remaining Receivable is paid in full, settled, sold or written off and any amounts received are applied and (b) the Issuer is terminated under Section 8.1 of the Trust Agreement.",
+  "rouge_l": 0.4166666666666667,
+  "flesch": 49.23347826086959,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 59,
+  "category": "Uncapped Liability",
+  "out": "9.1.1 The Liability Cap will not apply to any (1) material confidentiality breach under Section 5, and/or (2) indemnification obligations under Section 7.1.",
+  "rouge_l": 0.40816326530612246,
+  "flesch": 10.550592105263178,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 60,
+  "category": "Governing Law",
+  "out": "This Agreement shall be governed by and construed in accordance with the internal laws of the State of New York applicable to agreements made and to be performed entirely within such State, without regard to the conflicts of law principles of such State.",
+  "rouge_l": 0.11111111111111109,
+  "flesch": 29.40395348837211,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 61,
+  "category": "Minimum Commitment",
+  "out": "If the Company fails to achieve the Minimum Number of Details Requirement, the Minimum Reach Requrement or, if applicable, the minimum PDE RequREMENT or the Minimum Top Target Requirenment, as applicable, then Janssen shall have the right to terminate this Agreement by giving thirty",
+  "rouge_l": 0.22222222222222227,
+  "flesch": 2.5886363636363967,
+  "copy": 0.6666666666666666,
+  "invented": 0
+ },
+ {
+  "i": 62,
+  "category": "Non-Disparagement",
+  "out": "CONSULTANT acknowledges that any disparaging comments by him against the Company are likely to substantially depreciate the business reputation of the Company.",
+  "rouge_l": 0.27027027027027023,
+  "flesch": -3.9222727272727127,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 63,
+  "category": "Insurance",
+  "out": "Aimmune shall procure and maintain insurance, including clinical trials insurance and product liability insurance, adequate to cover its obligations hereunder and which is consistent with normal business practices of prudent companies similarly situated at all times during which the Product is being clinically tested in human subjects or commercially distributed or sold by Ai",
+  "rouge_l": 0.26666666666666666,
+  "flesch": -18.741666666666646,
+  "copy": 0.9807692307692307,
+  "invented": 0
+ },
+ {
+  "i": 64,
+  "category": "Parties",
+  "out": "MG Capital Management Ltd.",
+  "rouge_l": 0.5,
+  "flesch": 12.425000000000011,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 65,
+  "category": "Cap On Liability",
+  "out": "EACH PARTY'S MAXIMUM LIABILITY FOR ANY DAMAGES FOR BREACH OF THIS AGREEMENT SHALL BE LIMITED TO DIRECT AND ACTUAL DAMAGES.",
+  "rouge_l": 0.21428571428571427,
+  "flesch": 32.43428571428575,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 66,
+  "category": "Insurance",
+  "out": "Company will carry a reasonable amount of product liability insurance through a reasonably acceptable products liability insurance company and will name the Distributor as an additional insured under that policy. Company will make reasonable efforts to procure a policy, which is non-cancelable, except upon thirty (30) days, advance notice",
+  "rouge_l": 0.2784810126582279,
+  "flesch": -22.45918367346937,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 67,
+  "category": "Exclusivity",
+  "out": "IntriCon will not license any Dynamic Hearing Technology for Hearing Aids, subject to Clause 3.5.",
+  "rouge_l": 0.3,
+  "flesch": 42.61571428571432,
+  "copy": 0.9230769230769231,
+  "invented": 0
+ },
+ {
+  "i": 68,
+  "category": "Irrevocable Or Perpetual License",
+  "out": "Aimmune hereby grants Xencor a non-exclusive license under and with respect to Patents.",
+  "rouge_l": 0.29629629629629634,
+  "flesch": 47.59642857142859,
+  "copy": 0.6363636363636364,
+  "invented": 0
+ },
+ {
+  "i": 69,
+  "category": "Parties",
+  "out": "CAPSUGEL is an acronym for a company.",
+  "rouge_l": 0.25,
+  "flesch": 42.61571428571432,
+  "copy": 0.0,
+  "invented": 0
+ },
+ {
+  "i": 70,
+  "category": "Insurance",
+  "out": "Workers' Compensation Coverage covers both bodily injury and property damage liability. 7.5.2 Umbrella/Excess Liability with limits of not less than [***] for each occurrence. 7.5.3 Auto Liability $1,000,000 combined single limit.",
+  "rouge_l": 0.25806451612903225,
+  "flesch": 15.446428571428584,
+  "copy": 0.7586206896551724,
+  "invented": 0
+ },
+ {
+  "i": 71,
+  "category": "Cap On Liability",
+  "out": "Neither party shall be liable to the other pursuant to this Agreement for any amounts representing loss of profit, loss of business or indirect, consequential, exemplary, or punitive damages of the other party.",
+  "rouge_l": 0.34615384615384615,
+  "flesch": 14.394545454545465,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 72,
+  "category": "Parties",
+  "out": "Berkshire is a county in England.",
+  "rouge_l": 0.26666666666666666,
+  "flesch": 73.84500000000001,
+  "copy": 0.0,
+  "invented": 0
+ },
+ {
+  "i": 73,
+  "category": "Anti-Assignment",
+  "out": "Neither Party may assign or transfer this Agreement or any rights or obligations hereunder without the prior written consent of the other Party, except that a Party may make such an assignment or transfer without the third Party's written consent to (a) any of its Affiliates, in whole or in part, or (",
+  "rouge_l": 0.2891566265060241,
+  "flesch": 18.956981132075498,
+  "copy": 0.9215686274509803,
+  "invented": 0
+ },
+ {
+  "i": 74,
+  "category": "Change Of Control",
+  "out": "Notwithstanding the foregoing, a Party may transfer or assign its rights under this IP Agreement in connection with a merger, acquisition or sale of all or substantially all of its assets.",
+  "rouge_l": 0.5901639344262295,
+  "flesch": 30.731290322580662,
+  "copy": 0.9655172413793104,
+  "invented": 0
+ },
+ {
+  "i": 75,
+  "category": "Governing Law",
+  "out": "This Agreement shall be governed by and construed under the laws of the Commonwealth of Virginia without regard to the conflicts of law provisions thereof.",
+  "rouge_l": 0.11764705882352941,
+  "flesch": 42.71600000000001,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 76,
+  "category": "Non-Transferable License",
+  "out": "ExxonMobil grants FCE a worldwide non-exclusive, royalty-free, non-sub-licensable (except as stated in Paragraphs 12.03 (Failure to Perform), 12.04 (Other Termination), and 12.05 (Bankruptcy)",
+  "rouge_l": 0.19047619047619047,
+  "flesch": 36.565,
+  "copy": 0.8095238095238095,
+  "invented": 0
+ },
+ {
+  "i": 77,
+  "category": "Agreement Date",
+  "out": "March 18, 2003 was the last day of the month of March.",
+  "rouge_l": 0.10526315789473685,
+  "flesch": 112.08500000000001,
+  "copy": 0.1,
+  "invented": 0
+ },
+ {
+  "i": 78,
+  "category": "Non-Disparagement",
+  "out": "The Company may terminate the Executive's employment under this Agreement with immediate effect without notice and with no liability to make any further payment to the Executive (other than in respect of amounts accrued at the Termination Date) if in the reasonable opinion of the Company the Executive:",
+  "rouge_l": 0.2777777777777778,
+  "flesch": -1.7408163265305916,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 79,
+  "category": "Agreement Date",
+  "out": "November 25, 2019 is the 25th of November.",
+  "rouge_l": 0.13333333333333333,
+  "flesch": 59.745000000000005,
+  "copy": 0.16666666666666666,
+  "invented": 0
+ },
+ {
+  "i": 80,
+  "category": "License Grant",
+  "out": "Licensor hereby grants to Licensee a non-exclusive, non-transferable, and (subject to Section 1.2 hereof) non-sublicensable license for the use of the Brand solely for the Permitted Activity.",
+  "rouge_l": 0.375,
+  "flesch": 34.58646551724141,
+  "copy": 0.88,
+  "invented": 0
+ },
+ {
+  "i": 81,
+  "category": "Non-Disparagement",
+  "out": "The Company agrees that, from the date of this Agreement until the earliest of (i) the date that is thirty (30) calendar days prior to any applicable deadline by which a shareholder must give notice to the Company of its intention to nominate a director for election at or bring other business before the 2015",
+  "rouge_l": 0.23404255319148937,
+  "flesch": 15.764528301886827,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 82,
+  "category": "Audit Rights",
+  "out": "In no event shall Owner's audits interfere with Operator's operations.",
+  "rouge_l": 0.16666666666666669,
+  "flesch": 32.504999999999995,
+  "copy": 0.75,
+  "invented": 0
+ },
+ {
+  "i": 83,
+  "category": "Audit Rights",
+  "out": "D2 may audit such records by engaging an independent public audit firm, approved in advance by Licensee, upon thirty days written notice, provided that (i) no more than one such audit may be made in any twelve month period, and (iii) D2 shall be responsible for ensuring that the auditor",
+  "rouge_l": 0.2727272727272727,
+  "flesch": 22.417,
+  "copy": 0.9583333333333334,
+  "invented": 0
+ },
+ {
+  "i": 84,
+  "category": "Renewal Term",
+  "out": "If you choose to renew the Franchise, you must provide us with written notice of that intent no earlier than two (2) years and no later than one (1) year before the expiration of the Initial Term.",
+  "rouge_l": 0.6774193548387097,
+  "flesch": 52.87000000000002,
+  "copy": 0.9714285714285714,
+  "invented": 0
+ },
+ {
+  "i": 85,
+  "category": "Parties",
+  "out": "Freedom Mortgage Corporation is a mortgage company.",
+  "rouge_l": 0.4444444444444444,
+  "flesch": 18.44428571428574,
+  "copy": 0.2,
+  "invented": 0
+ },
+ {
+  "i": 86,
+  "category": "Post-Termination Services",
+  "out": "In the event of the early termination of this Agreement pursuant to Article 4 hereof, BE and Operator agree to use commercially reasonable efforts to cooperate with Owner to facilitate Owner.",
+  "rouge_l": 0.3636363636363636,
+  "flesch": 12.825000000000045,
+  "copy": 0.9655172413793104,
+  "invented": 0
+ },
+ {
+  "i": 87,
+  "category": "Parties",
+  "out": "UNIFORM INVESTCO GP LLC is a company that is regulated by the U.S. Securities and Exchange Commission.",
+  "rouge_l": 0.41379310344827586,
+  "flesch": 45.64500000000001,
+  "copy": 0.13333333333333333,
+  "invented": 0
+ },
+ {
+  "i": 88,
+  "category": "Parties",
+  "out": "Photronics DNP Photomask Corporation is a company in the United States.",
+  "rouge_l": 0.5217391304347826,
+  "flesch": 18.77909090909094,
+  "copy": 0.2222222222222222,
+  "invented": 0
+ },
+ {
+  "i": 89,
+  "category": "Rofr/Rofo/Rofn",
+  "out": "If by the expiration of the ROFR Transfer Period, the Farids Group has not completed the Transfer of the RoFR Shares, in order to transfer such ROFR shares (or any other Shares) it shall be necessary for a new ROFO Sale Notice or ROFR Sale Notice to be delivered",
+  "rouge_l": 0.3658536585365854,
+  "flesch": 25.883673469387787,
+  "copy": 0.9361702127659575,
+  "invented": 0
+ },
+ {
+  "i": 90,
+  "category": "Parties",
+  "out": "Company is a company.",
+  "rouge_l": 0.3333333333333333,
+  "flesch": 33.57500000000002,
+  "copy": 0.0,
+  "invented": 0
+ },
+ {
+  "i": 91,
+  "category": "Expiration Date",
+  "out": "The Appointment may be terminated by either party giving the other at least 12 months' notice in writing.",
+  "rouge_l": 0.5294117647058824,
+  "flesch": 50.2388235294118,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 92,
+  "category": "Rofr/Rofo/Rofn",
+  "out": "Xencor shall have the right, but not the obligation, to assume responsibility for the preparation, filing, prosecution or maintenance thereof.",
+  "rouge_l": 0.13114754098360656,
+  "flesch": 17.335000000000036,
+  "copy": 0.8333333333333334,
+  "invented": 0
+ },
+ {
+  "i": 93,
+  "category": "Document Name",
+  "out": "The Online Hosting Agreement is a contract between a company and an online hosting company.",
+  "rouge_l": 0.4545454545454545,
+  "flesch": 39.33000000000001,
+  "copy": 0.07692307692307693,
+  "invented": 0
+ },
+ {
+  "i": 94,
+  "category": "License Grant",
+  "out": "To the extent not already granted pursuant to the License Agreement, FCE grants ExxonMobil and its Affiliates a worldwide, non-exclusive, royalty-free, irrevocable, perpetual, sub-licensable, nontransferable right and license to practice FCE Background Information",
+  "rouge_l": 0.3125,
+  "flesch": -1.254999999999967,
+  "copy": 0.9032258064516129,
+  "invented": 0
+ },
+ {
+  "i": 95,
+  "category": "Non-Compete",
+  "out": "During the Term, VerticalNet will not, directly or indirectly, design, host, operate, maintain or otherwise participate in a co-branded career center or a Co-branded equipment listing Site with a PaperExchange Competitor or license a VerticalNet Link for use or display on any",
+  "rouge_l": 0.4594594594594595,
+  "flesch": 6.434090909090941,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 96,
+  "category": "Termination For Convenience",
+  "out": "Each Party may terminate the Agreement for convenience after Contract Year 2.",
+  "rouge_l": 0.30769230769230765,
+  "flesch": 41.8518181818182,
+  "copy": 0.7,
+  "invented": 0
+ },
+ {
+  "i": 97,
+  "category": "Rofr/Rofo/Rofn",
+  "out": "If the Company does not timely deliver a ROFR Purchase Notice it shall be deemed to have waived all of its rights with respect to the offer contained in the ROFR Sale Notice.",
+  "rouge_l": 0.4230769230769231,
+  "flesch": 47.72181818181819,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 98,
+  "category": "Parties",
+  "out": "NeuroBo Pharmaceuticals, Inc.",
+  "rouge_l": 0.42857142857142855,
+  "flesch": -50.00999999999996,
+  "copy": 0.0,
+  "invented": 0
+ },
+ {
+  "i": 99,
+  "category": "Post-Termination Services",
+  "out": "The Parties shall reasonably cooperate in good faith to effect the transition to Janssen of all product promotional activities to minimize disruptions to customers and patients.",
+  "rouge_l": 0.4,
+  "flesch": 17.752692307692342,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 100,
+  "category": "Parties",
+  "out": "Owners of a property are liable for the loss of their property.",
+  "rouge_l": 0.1,
+  "flesch": 67.75500000000001,
+  "copy": 0.0,
+  "invented": 0
+ },
+ {
+  "i": 101,
+  "category": "Competitive Restriction Exception",
+  "out": "For the avoidance of doubt, the parties acknowledge that the foregoing restriction applies only to persistent sponsorship placement as judged by Sponsor at its discretion, and not to run-of-site banner advertisements or other rotating promotional placements.",
+  "rouge_l": 0.4000000000000001,
+  "flesch": 7.970263157894749,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 102,
+  "category": "Parties",
+  "out": "SONY is a person with legal training.",
+  "rouge_l": 0.25,
+  "flesch": 66.7871428571429,
+  "copy": 0.0,
+  "invented": 0
+ },
+ {
+  "i": 103,
+  "category": "Affiliate License-Licensee",
+  "out": "Sonos hereby grants to IAC and its Affiliates a non-exclusive, worldwide, nontransferable, royalty free right and license under Sonos' Intellectual Property Rights, to manufacture the Products solely for Sonos.",
+  "rouge_l": 0.42105263157894735,
+  "flesch": 10.005000000000024,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 104,
+  "category": "Joint Ip Ownership",
+  "out": "Except to the extent any jointly owned inventions or intellectual property are included in subject matter licensed by one Party to the other Party under this Agreement, each Party may only practice any such jointly-owned inventions and intellectual property for its own internal purposes, and neither Party shall have the right to enforce, license, or assign",
+  "rouge_l": 0.2553191489361702,
+  "flesch": -3.8936842105262883,
+  "copy": 0.8888888888888888,
+  "invented": 0
+ },
+ {
+  "i": 105,
+  "category": "Document Name",
+  "out": "ODM SUPPLY AGREEMENT",
+  "rouge_l": 0.4,
+  "flesch": 34.59000000000003,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 106,
+  "category": "Cap On Liability",
+  "out": "IN NO EVENT SHALL COMPANY'S AGGREGATE LIABILITY ARISING OUT OF OR IN CONNECTION WITH THIS AGREEMENT EXCEED THE AMOUNTS PAID BY COMPaNY TO CONSULTANT UNDER this AGREement FOR THE SERVICES",
+  "rouge_l": 0.22641509433962265,
+  "flesch": 22.544193548387113,
+  "copy": 0.9642857142857143,
+  "invented": 0
+ },
+ {
+  "i": 107,
+  "category": "Warranty Duration",
+  "out": "IAC hereby represents and warrants that for a period of [*] after the Manufacturing Date (the \"Warranty Period\"), a Product Unit will be free from defects in manufacturing process and defects in workmanship, will conform to general expectations of performance of wireless audio products and will conform with the Statement",
+  "rouge_l": 0.4827586206896552,
+  "flesch": 3.438775510204124,
+  "copy": 0.9375,
+  "invented": 0
+ },
+ {
+  "i": 108,
+  "category": "Third Party Beneficiary",
+  "out": "The owner trust and the Indenture Trustee, for the benefit of the Secured Parties, will be third-party beneficiaries of this Agreement and may enforce this Agreement against the Depositor and the Servicer.",
+  "rouge_l": 0.5762711864406779,
+  "flesch": 27.212727272727278,
+  "copy": 0.9,
+  "invented": 0
+ },
+ {
+  "i": 109,
+  "category": "Parties",
+  "out": "Forty Niners SC Stadium Company LLC is a company that operates the stadium.",
+  "rouge_l": 0.5925925925925927,
+  "flesch": 37.455384615384645,
+  "copy": 0.36363636363636365,
+  "invented": 0
+ },
+ {
+  "i": 110,
+  "category": "License Grant",
+  "out": "ExxonMobil Background Patents will include the right to use, reproduce, and create derivative works of the information under applicable copyrights and the right of making, use, import, and sell or offer to sell under the claims of exxonmobil background patents.",
+  "rouge_l": 0.28125000000000006,
+  "flesch": 20.30000000000001,
+  "copy": 0.7631578947368421,
+  "invented": 0
+ },
+ {
+  "i": 111,
+  "category": "License Grant",
+  "out": "Array grants to Ono a worldwide non-exclusive license under the Array Patents, Array Know-How and Array's interests in the Joint Patents and Joint Know-how to (i) Manufacture and have Manufactored Binimetinib and En",
+  "rouge_l": 0.3939393939393939,
+  "flesch": 27.517837837837845,
+  "copy": 0.8387096774193549,
+  "invented": 0
+ },
+ {
+  "i": 112,
+  "category": "Anti-Assignment",
+  "out": "This Agreement and/or any Study Order may not be assigned by either Party except as agreed upon in writing by the other Party.",
+  "rouge_l": 0.358974358974359,
+  "flesch": 45.00000000000003,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 113,
+  "category": "Ip Ownership Assignment",
+  "out": "Upon the request of the Company and at the Company's expense, the Consultant shall execute such further assignments, documents and other instruments as may be necessary or desirable to fully and completely assign all Inventions to the Company, and to assist the Company in applying for, obtaining and enforcing patent",
+  "rouge_l": 0.3294117647058824,
+  "flesch": -0.8594117647058397,
+  "copy": 0.9166666666666666,
+  "invented": 0
+ },
+ {
+  "i": 114,
+  "category": "Parties",
+  "out": "Eastern Telecommunications Philippines, Inc.",
+  "rouge_l": 0.375,
+  "flesch": -93.32499999999996,
+  "copy": 0.5,
+  "invented": 0
+ },
+ {
+  "i": 115,
+  "category": "Minimum Commitment",
+  "out": "There shall be fewer than 1 talkoff in 5 hours of voice when the detector is programmed with the recommended parameters (minimum tone duration 400 ms).",
+  "rouge_l": 0.2222222222222222,
+  "flesch": 40.03782608695656,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 116,
+  "category": "Warranty Duration",
+  "out": "For twelve (12) months after delivery of any Licensed Product to a Customer, Licensor warrants that each Product will perform as described in the applicable Documentation. If Licensee or any Redistributor or Customer discovers any errors or discrepancies in the Licensed Products from the Documentation",
+  "rouge_l": 0.32098765432098764,
+  "flesch": -10.870454545454521,
+  "copy": 0.9069767441860465,
+  "invented": 0
+ },
+ {
+  "i": 117,
+  "category": "Rofr/Rofo/Rofn",
+  "out": "Subject to the restrictions set forth in Section 5.1 of this Agreement and Section 2.3 of the Warrant, in the event any member of the Farids Group proposes to Transfer (other than a Permitted Transfer) a Threshold Block, in a transaction or series of related transactions,",
+  "rouge_l": 0.23076923076923078,
+  "flesch": 47.991363636363644,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 118,
+  "category": "Notice Period To Terminate Renewal",
+  "out": "This Agreement shall be effective until the earlier of (a) its termination in accordance with the provisions of this Article 14 or (b) the date that is two (2) years after the date of this Agreement; provided, however, that this Agreement will renew automatically for successive terms of one (1) year each unless a",
+  "rouge_l": 0.22988505747126436,
+  "flesch": 15.728823529411784,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 119,
+  "category": "Parties",
+  "out": "GNG Networks. Inc.",
+  "rouge_l": 0.28571428571428575,
+  "flesch": 92.5125,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 120,
+  "category": "Non-Compete",
+  "out": "Xencor hereby covenants and agrees that it shall not (and shall cause its Affiliates not to), either directly or through granting a license or other right to, or otherwise facilitating, a Third Party to (a) Develop, Manufacture or Commercialize the Antibody",
+  "rouge_l": 0.2619047619047619,
+  "flesch": 12.527317073170764,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 121,
+  "category": "Parties",
+  "out": "Japan Telecom Co., Ltd.",
+  "rouge_l": 0.5,
+  "flesch": 56.755000000000024,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 122,
+  "category": "Insurance",
+  "out": "Workers' Compensation insurance with benefits afforded under the laws of any state in which the Work is to be performed and Employers Liability insurance with limits of at least: $500,000 for Bodily Injury - each accident $500,000 - every employee",
+  "rouge_l": 0.36363636363636365,
+  "flesch": 17.545000000000016,
+  "copy": 0.9210526315789473,
+  "invented": 0
+ },
+ {
+  "i": 123,
+  "category": "Insurance",
+  "out": "Racing shall also provide comprehensive (fire and theft) and collision insurance on each vehicle used in the Business.",
+  "rouge_l": 0.3636363636363636,
+  "flesch": 33.465,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 124,
+  "category": "Exclusivity",
+  "out": "(i) a product that includes, as an active pharmaceutical ingredient, an agent that is a [ * ] (other than Encorafenib), or grant the right to a licensee or distributor to Commercialize in the Ono Territory any of the above described products (each",
+  "rouge_l": 0.1971830985915493,
+  "flesch": 13.955000000000013,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 125,
+  "category": "Cap On Liability",
+  "out": "In no event shall Operator be liable under this Agreement (including with respect to its obligations related to the Facility Service Warranty, the Power Performance Warranty or Warranty Specification) for (i) any failure of or damage to the Bloom System or (ii) all obligations on the part of Operator (including internal rate of",
+  "rouge_l": 0.2891566265060241,
+  "flesch": -6.582641509433955,
+  "copy": 0.9411764705882353,
+  "invented": 0
+ },
+ {
+  "i": 126,
+  "category": "Warranty Duration",
+  "out": "Upon receipt from iVillage of the proposed Bridge Site design and content, FMM shall have no more than five (5) business days in which to provide FMM with its acceptance or rejection of such design.",
+  "rouge_l": 0.19672131147540986,
+  "flesch": 47.91323529411767,
+  "copy": 0.8787878787878788,
+  "invented": 0
+ },
+ {
+  "i": 127,
+  "category": "Third Party Beneficiary",
+  "out": "Notwithstanding the foregoing, UTK may assign this Agreement or any portion of its Compensation as outlined herein to its subsidiaries in its sole discretion.",
+  "rouge_l": 0.5116279069767442,
+  "flesch": 20.325000000000017,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 128,
+  "category": "Exclusivity",
+  "out": "PaperExchange shall retain the right to place advertisements for its own account on the remaining ***** of the Third Party Advertising Allocation.",
+  "rouge_l": 0.31578947368421045,
+  "flesch": 28.40571428571431,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 129,
+  "category": "Anti-Assignment",
+  "out": "Sponsor shall have no right to assign any right to use Team Marks, or any other Sponsorship Rights granted hereunder, to any third party, except as otherwise explicitly set forth herein.",
+  "rouge_l": 0.3859649122807018,
+  "flesch": 38.91838709677421,
+  "copy": 0.9310344827586207,
+  "invented": 0
+ },
+ {
+  "i": 130,
+  "category": "Parties",
+  "out": "Care G. B. Plus Ltd.",
+  "rouge_l": 0.5555555555555556,
+  "flesch": 120.54333333333335,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 131,
+  "category": "License Grant",
+  "out": "To the extent any Development owned by Biocept relates directly to the practice of, or constitutes an improvement to, the Assay, Biocept grants to Life Technologies, during the Term of this Agreement, a non-exclusive license under Biocept's Intellectual Property Rights in such Development, solely to",
+  "rouge_l": 0.22222222222222224,
+  "flesch": 0.7300000000000182,
+  "copy": 0.9534883720930233,
+  "invented": 0
+ },
+ {
+  "i": 132,
+  "category": "Insurance",
+  "out": "Operator shall maintain statutory worker's compensation insurance, covering all of its and its Affiliates' employees and statutory employees, in accordance with the benefits afforded by the statutory Worker's Compensation Acts applicable to the state, territory, or district of hire, supervision, or place of accident",
+  "rouge_l": 0.39436619718309857,
+  "flesch": -12.733260869565186,
+  "copy": 0.9761904761904762,
+  "invented": 0
+ },
+ {
+  "i": 133,
+  "category": "Parties",
+  "out": "Company is a company.",
+  "rouge_l": 0.3333333333333333,
+  "flesch": 33.57500000000002,
+  "copy": 0.0,
+  "invented": 0
+ },
+ {
+  "i": 134,
+  "category": "Governing Law",
+  "out": "His Agreement shall be governed by and construed in accordance with the laws of India and the Delhi Courts shall have exclusive jurisdiction over any legal proceedings in respect of this Agreement.",
+  "rouge_l": 0.2127659574468085,
+  "flesch": 31.59250000000003,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 135,
+  "category": "Minimum Commitment",
+  "out": "On the third Business Day immediately preceding the Remarketing Settlement Date (the \"Remarketing Date\"), the Agent shall use its commercially reasonable efforts to remarket the Remarket Securities at a price at least equal to: (i) 100% of the aggregate Accreted Value thereof as of the end",
+  "rouge_l": 0.30769230769230765,
+  "flesch": 7.000000000000028,
+  "copy": 0.8636363636363636,
+  "invented": 0
+ },
+ {
+  "i": 136,
+  "category": "Rofr/Rofo/Rofn",
+  "out": "Snap shall be free thereafter to enter into an agreement with any third party.",
+  "rouge_l": 0.2222222222222222,
+  "flesch": 59.68214285714288,
+  "copy": 0.9166666666666666,
+  "invented": 0
+ },
+ {
+  "i": 137,
+  "category": "Audit Rights",
+  "out": "Inspections shall be conducted at a reasonable time and during normal hours of operation.",
+  "rouge_l": 0.5714285714285714,
+  "flesch": 35.5107142857143,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 138,
+  "category": "Parties",
+  "out": "Company is a company.",
+  "rouge_l": 0.3333333333333333,
+  "flesch": 33.57500000000002,
+  "copy": 0.0,
+  "invented": 0
+ },
+ {
+  "i": 139,
+  "category": "Cap On Liability",
+  "out": "EXCEPT IN THE EVENT OF WILLFUL MISCONDUCT OR GROSS NEGLIGENCE, THE RESELLER AND ITS AFFILIATES SHALL NOT BE LIABLE TO THE COMPANY, AND SHALL HAVE NO OBLIGATION TO IND",
+  "rouge_l": 0.21052631578947367,
+  "flesch": 40.2896551724138,
+  "copy": 0.9259259259259259,
+  "invented": 0
+ },
+ {
+  "i": 140,
+  "category": "Parties",
+  "out": "Transporter is a company that is based in the United States.",
+  "rouge_l": 0.2105263157894737,
+  "flesch": 49.54272727272729,
+  "copy": 0.0,
+  "invented": 0
+ },
+ {
+  "i": 141,
+  "category": "Warranty Duration",
+  "out": "If Company does not give Annual Notice pursuant to Section 3.1 hereof, Distributor may, within 90 days of modification, improvement or alteration, return the Products to the Company.",
+  "rouge_l": 0.5384615384615384,
+  "flesch": 27.69384615384618,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 142,
+  "category": "Rofr/Rofo/Rofn",
+  "out": "If Adaptimmune Limited fails to exercise its option within the Option Period with respect to any Invention, the right to negotiate a license agreement with such Invention will automatically terminate, and MD Anderson will be free to negotiate and enter into a licence with any other party.",
+  "rouge_l": 0.39473684210526316,
+  "flesch": 4.3300000000000125,
+  "copy": 0.7777777777777778,
+  "invented": 0
+ },
+ {
+  "i": 143,
+  "category": "Price Restrictions",
+  "out": "VOTOCAST expressly reserves the right to change its rates charged hereunder for the Services during any Renewal Term (as detined herein).",
+  "rouge_l": 0.2631578947368421,
+  "flesch": 24.37714285714287,
+  "copy": 0.9473684210526315,
+  "invented": 0
+ },
+ {
+  "i": 144,
+  "category": "Insurance",
+  "out": "Each Party will maintain at its sole cost and expense, an adequate amount of commercial general liability and product liability insurance throughout the Term and for a period of five (5) years thereafter, to protect against potential liabilities and risk arising out of products supplied or activities to be performed under this Agreement and any Quality Agreement related",
+  "rouge_l": 0.2926829268292683,
+  "flesch": -9.830526315789427,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 145,
+  "category": "Expiration Date",
+  "out": "Term: 12 months from the date of the Agreement which term shall automatically renew for an additional 12 months on such date if the Agreement is not otherwise terminated.",
+  "rouge_l": 0.4074074074074074,
+  "flesch": 38.430000000000035,
+  "copy": 0.7777777777777778,
+  "invented": 0
+ },
+ {
+  "i": 146,
+  "category": "Audit Rights",
+  "out": "All such records required to be created and maintained pursuant to Section 2.12(a) shall be kept available at the Operator's office and made available for the Owner's inspection upon request at all reasonable times.",
+  "rouge_l": 0.2857142857142857,
+  "flesch": 40.515000000000015,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 147,
+  "category": "Uncapped Liability",
+  "out": "EXCEPT WITH REGARD TO OBLIGATIONS TO INDEMNIFY A PARTY FOR CLAIMS MADE BY THIRD PARTIES, Notwithstanding the provisions of this Agreement, NEITHER PARTIY SHALL BE LIABLE TO THE OTHER",
+  "rouge_l": 0.14285714285714285,
+  "flesch": 31.537931034482767,
+  "copy": 0.6296296296296297,
+  "invented": 0
+ },
+ {
+  "i": 148,
+  "category": "Competitive Restriction Exception",
+  "out": "ExxonMobil hereby grants approval for FCE solely to conduct Authorized Work using Generation 1 Technology with Authorized Third Parties for Carbon Capture Applications and any work using Generation 2 Technology solely for Power Applications and Hydrogen Applications.",
+  "rouge_l": 0.6557377049180328,
+  "flesch": -29.312857142857126,
+  "copy": 1.0,
+  "invented": 0
+ },
+ {
+  "i": 149,
+  "category": "Parties",
+  "out": "A person without legal training can understand racing.",
+  "rouge_l": 0.13333333333333333,
+  "flesch": 40.09,
+  "copy": 0.0,
+  "invented": 0
+ }
+]

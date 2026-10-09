@@ -229,7 +229,7 @@ if os.path.exists(os.path.join(V, "runs", "L512", "results.json")):
     cal = ds["calibration"]
     C("calibration raw ECE", f"{cal['transformer_raw']['ece']:.3f}"); C("calibration iso ECE", f"{cal['transformer_isotonic']['ece']:.3f}")
     C("calibration Brier", f"{cal['transformer_raw']['brier']:.3f} to {cal['transformer_isotonic']['brier']:.3f}")
-    C("calibration Platt", f"{cal['transformer_platt']['ece']:.3f}")
+    C("calibration Platt", f"Platt scaling, which fits a single logistic curve, reaches an Expected Calibration Error of {cal['transformer_platt']['ece']:.3f} and a Brier score of {cal['transformer_platt']['brier']:.3f}")
     C("app errors", f"{ds['errors']['n_false_positives']} false positives and only {ds['errors']['n_false_negatives']} misses")
     if os.path.exists(os.path.join(V, "truncation_256.json")):
         tr = J(V, "truncation_256.json")
@@ -265,6 +265,22 @@ if os.path.exists(os.path.join(V, "runs", "L512", "results.json")):
         C("cards recall without", f"from 90.3% to {pc(cd['high_recall_without_possible'])}")
         C("cards >= 50%", f"Of the {cd['at_least_50']['n']:,} cards at 50% or more, {pc(cd['at_least_50']['real_share'])}")
         C("cards non-compete", f"with a chance of about {100 * cd['lowest_non_compete_chance']:.0f}%")
+
+AB = os.path.join(A, "extra_windows_ab.json")
+if os.path.exists(AB):
+    ab2 = J(AB); m = lambda k, c: st.mean(r["seconds"] for r in ab2 if r["extra"] == k and r["contract"] == c)
+    C("extra windows A/B", f"the 75th-percentile contract took {m(5, '75th'):.1f} against {m(0, '75th'):.1f} seconds on average, and the longest {m(5, 'longest'):.1f} against {m(0, 'longest'):.1f} seconds")
+
+# ---- what the app reads in long contracts (window_cap.py, app_presence_test.py) ----
+WC = os.path.join(V, "runs", "L512", "window_cap.json")
+if os.path.exists(WC):
+    wc = J(WC)["test"]; ap = J(V, "runs", "L512", "app_presence_test.json")
+    for row, r in (("Every window", wc["whole"]), ("First 30 windows", wc["first30"])):
+        C(f"window cap {row}", f"{pc(r['high_found'])} ({r['high_missed']}) {f3(r['micro_f1'])} {f3(r['micro_f2'])} {pc(r['high_found_long'])}", "tab:windowcap")
+    C("window cap app (measured)", f"{pc(ap['high_found'])} ({ap['high_missed']}) {f3(ap['micro_f1'])} {f3(ap['micro_f2'])} {pc(ap['high_found_long'])}", "tab:windowcap")
+    C("window cap replay = app", f"{pc(wc['chosen']['high_found'])} ({wc['chosen']['high_missed']}) {f3(wc['chosen']['micro_f1'])}", "tab:windowcap")
+    C("window cap k", f"The number {J(WC)['chosen']['k']} was chosen on the 81 validation contracts")
+    C("window cap long n", f"on the {ap['n_long']} test contracts that are longer than the limit")
 
 # ---- retrained span model (Section 5.2.1, retrain/span_v2) ----------------
 SV = os.path.join(HERE, "span_v2", "runs", "chunks")
@@ -304,13 +320,38 @@ if os.path.exists(os.path.join(SV, "evaluation.json")):
     h = hashlib.sha256(open(os.path.join(P, "notebooks", "outputs", "span_v2", "final", "model.safetensors"), "rb").read()).hexdigest()[:16]
     C("span_v2 fingerprint", h)
 
+# ---- clause classifier (retrain/clause_v2) ----------------------------------
+CE = os.path.join(HERE, "clause_v2", "runs", "evaluation.json")
+if os.path.exists(CE):
+    ce = J(CE); tc = ce["test_chosen"]; vv = ce["validation"]; bv = J(HERE, "clause_v2", "runs", "bert_val.json")
+    C("clause v2 test", f"it gives the right category {pc(tc['acc41'])} of the time, against {pc(ce['old_presence_zscore']['acc41'])} before, the right one in its top three {pc(tc['top3'])} of the time, and the right risk level {pc(tc['risk_level_acc'])}")
+    C("clause v2 any label", f"it is right {pc(tc['acc_any_label'])} of the time")
+    C("clause v2 none", f"It calls only {pc(tc['clauses_called_none'])} of real clauses")
+    C("clause v2 none lines", f"of {tc['n_none']} test lines that belong to no clause, it recognises {pc(tc['none_acc'], 0)}")
+    C("clause v2 validation", f"({pc(vv['tfidf']['acc41'])}, against {pc(vv['bert']['acc41'])} for DistilBERT and {pc(vv['average']['acc41'])} for the average)")
+    C("clause v2 bert epochs", ", ".join(pc(h["eval_acc41"]) for h in bv["epochs_eval"][:-1]) + f" and {pc(bv['epochs_eval'][-1]['eval_acc41'])}")
+    C("clause v2 bert minutes", f"three epochs, {bv['train_minutes']:.1f} minutes")
+    C("clause v2 n test", f"On the same {tc['n_clauses']} test clauses")
+
+# ---- larger models for the plain-English line (retrain/plain_v2) -----------
+PE = os.path.join(HERE, "plain_v2", "runs", "plain_english.json")
+if os.path.exists(PE):
+    pe = J(PE); tcp = pe["test_chosen"]; fs = J(HERE, "plain_v2", "runs", "fewshot.json")["result"]
+    rows = J(HERE, "plain_v2", "runs", "rows_" + pe["chosen"].replace("|", "_") + ".json")
+    test_i = [i for i in range(150) if i not in set(pe["dev_idx"])]
+    near = sum(rows[i]["copy"] >= 0.9 for i in test_i) / len(test_i)
+    C("plain v2 scores", f"it scores {f3(tcp['rouge_l'])}, against {f3(pe['baselines_on_test_100']['template_vs_diverse'])} for the category template and {f3(pe['baselines_on_test_100']['finetuned_vs_diverse'])} for our fine-tuned model")
+    C("plain v2 copy", f"On average {pc(tcp['copy_share'])} of an output's three-word sequences appear word for word in the clause, and {pc(near, 0)} of the outputs")
+    C("plain v2 fewshot", f"ROUGE-L {f3(fs['rouge_l'])}, with {pc(fs['near_verbatim'], 0)} of outputs near-verbatim")
+    C("plain v2 split", f"into {pe['dev_n']} for choosing the model and instruction and {pe['test_n']} for testing")
+
 # ---- clause mode (app repository) -----------------------------------------
 CAL2 = os.path.join(os.path.dirname(P), "final project app p3", "clause_calibration_v2.json")
 if os.path.exists(CAL2):
     cv = J(CAL2)["eval"]; c1 = J(os.path.dirname(CAL2), "clause_calibration.json")["eval"]
-    C("clause mode re-run", f"from {pc(cv['raw_argmax_acc'])} (raw highest score) to {pc(cv['calibrated_acc'])}, against {pc(c1['calibrated_acc'])}")
-    C("clause mode top3/risk", f"{pc(cv['calibrated_top3'])} of the time, and the right risk level is given {pc(cv['risk_level_acc'])}")
-    C("clause mode unrecognized", f"{pc(cv['share_test_max_z_below_2'])} of clauses are left unrecognized")
+    C("clause mode first version", f"the right category out of 41 for {pc(cv['calibrated_acc'])} of clauses ({pc(cv['raw_argmax_acc'])} with the raw scores)")
+    C("clause mode top3/risk", f"the right one in the top three {pc(cv['calibrated_top3'])} of the time and the right risk level {pc(cv['risk_level_acc'])} of the time")
+    C("clause mode unrecognized", f"it left {pc(cv['share_test_max_z_below_2'])} of clauses unrecognized")
 
 # ---- run ------------------------------------------------------------------
 def found(s, hay):

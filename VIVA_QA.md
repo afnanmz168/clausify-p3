@@ -449,7 +449,8 @@ lengths; library changes in transformers 5.x.
 # Part E, Results and evaluation
 
 **E1. Headline numbers?** Presence, re-run: the tuned ensemble reaches micro-F1 **0.809** and accuracy
-**88.43 percent**; the app's recall-first setting finds **90.3 percent** of High-risk clauses. Span,
+**88.43 percent**; the recall-first setting finds **90.3 percent** of High-risk clauses in whole contracts and **88.6
+percent** as the app reads long ones. Span,
 retrained: token-F1 **0.779** on any window that holds the clause, and **59.6 percent** of real
 clauses get a good quote end to end (22.1 with the first span model).
 
@@ -512,8 +513,9 @@ windows the same model reached only 0.366. The retrained model reaches 0.779 on 
 use a full-document ranked test; ours measures extraction inside windows that contain the answer.
 
 **E11. Is the model calibrated?** The raw score is not: Expected Calibration Error 0.206 on the test set.
-An isotonic map fitted on the validation contracts brings it to **0.016** (Brier 0.195 to 0.091;
-Platt scaling 0.084). The app shows this calibrated chance, limited to 1 to 99 percent.
+An isotonic map fitted on the validation contracts brings it to **0.016** (Brier 0.195 to 0.091).
+Platt scaling reaches an ECE of 0.084 and a Brier score of 0.103, so isotonic is better on both
+measures. The app shows this calibrated chance, limited to 1 to 99 percent.
 
 **E12. Rare categories?** First setup: the AND rule gained nothing on the ten rarest (F1 0.364 against
 0.368) and found only 18 of 70. Re-run: the recall-first transformer finds 49 of 70 (F1 0.460) and
@@ -600,12 +602,20 @@ recall-first ensemble and the balanced AND ensemble are settings. The default do
 TF-IDF model, which learnt from long SEC filings and scores short contracts too low: on our 7,033-
 character demo contract it scores the IP-assignment clause 0.08, so the ensemble misses it.
 
-**H4. How fast?** On the M4, CPU only: shortest test contract 2.0 s, median **64.4 s**, worst **87.1
-s**, peak memory 1.93 GB. Reading whole windows doubled the time of the first setup (median 30.1 s).
+**H4. How fast?** On the M4, CPU only: shortest test contract 2.0 s, median **74.7 s**, worst **116.2
+s**, peak memory 2.07 GB (repeated runs vary by up to a quarter on this laptop). Reading whole windows doubled the time of the first setup (median 30.1 s).
 
-**H5. Why do the two longest contracts take about the same time?** Both hit the **30-window cap**
-(about 45,500 characters). 38.4 percent of CUAD contracts are longer, and clauses after the cut cannot
-be found. It is a limit of the app, not of the method.
+**H5. Does the app read the whole contract?** Not a long one. Every clause type is checked in the
+first **30 windows** (about 45,500 characters); 38.4 percent of CUAD contracts are longer. Reading only
+those, the default found **77.3 percent** of High-risk clauses on the test set instead of 90.3, and
+68.8 percent on the 38 long contracts. So the app now lets the TF-IDF model pick the **5 later windows**
+most likely to hold each clause type and checks those too (5 chosen on validation). Measured through
+the app's own code: **88.6 percent** of High-risk clauses found (20 missed), 90.3 percent on the long
+contracts, micro-F1 0.765. The rest of a very long contract is still never read.
+
+**If pushed, "so your 90 percent figure was wrong for the app?"** It was right for the model reading
+whole contracts, which is what every table measures, and wrong for the app, which did not read whole
+contracts: 77.3 percent. We measured that, fixed most of it, and now quote 88.6 for the app.
 
 **H6. Can a user trust the bar?** Yes, more than before: it is the calibrated chance (ECE 0.016 on the
 test set), measured on CUAD contracts, so on very different contracts it is only a guide.
@@ -632,14 +642,30 @@ that caps liability, and the summarizer's warning on that card points to the rig
 misses the revenue-sharing and the 90-day warranty clauses. We kept these mistakes in the report's
 figures.
 
+**If pushed, "why not use a bigger model for the plain-English line?"** We tried. FLAN-T5 base and
+large (about 780 million parameters), four instructions each, chosen on 50 of the 150 clauses and
+tested on the other 100. The best scores ROUGE-L 0.331 against clause-specific references (template
+0.115), but only by copying: 68 percent of its outputs are near-verbatim excerpts of the clause, and
+some reverse an obligation ("IntriCon must make records available to Dynamic Hearing's auditor"
+became "IntriCon has the right to inspect"). Three worked examples in the prompt did not help (71
+percent near-verbatim). So we kept the template, labelled as such, and RQ3 stays no.
+
 **H9. Clause-by-clause mode?** One card per numbered clause; the clause heading decides the category
-when it names one, otherwise the model's adjusted scores do (see the report for its measured
-accuracy). A contract with 18 numbered clauses gives exactly 18 cards.
+when it names one, otherwise a clause classifier does. A contract with 18 numbered clauses gives
+exactly 18 cards.
+
+**If pushed, "44.9 percent is barely better than a coin."** That was the first version, which reused
+the presence model's yes/no scores. We trained a classifier for the task itself (41 types plus
+"none", on the 327 fit contracts, chosen on validation): on the same 721 test clauses it is right
+**72.1 percent** of the time, the right type is in its top three 90.3 percent of the time, and the
+risk level is right 83.1 percent of the time. A word model (TF-IDF) beat DistilBERT here, 69.9 against
+59.3 percent on validation. Its weak point: it recognises only about half of paragraphs that are no
+clause at all.
 
 **H10. Privacy?** Everything runs locally; nothing is saved or sent. On a shared server that would no
 longer hold.
 
-**H11. Is it tested?** 45 automatic end-to-end tests, including checks that the deployed thresholds are
+**H11. Is it tested?** 46 automatic end-to-end tests, including checks that the deployed thresholds are
 the tested ones, that the calibration map is valid, and that every card under 50 percent is marked
 "Possible — check". The output of the last run is saved in the app repository as
 `tests/test_output.log`.
@@ -667,8 +693,8 @@ only. *Statistical:* three seeds is a small sample; five categories have at most
 one split; the re-run's seed and split variation is unmeasured.
 
 **I4. Biggest limitations?** No user study; small models; the presence model's choice of window
-(17.4 percent wrong); the summarizer does not summarize; risk is per category; the 30-window cap;
-one dataset.
+(17.4 percent wrong); the summarizer does not summarize; risk is per category; the window limit on
+long contracts; one dataset.
 
 **I5. AI tools?** One declared use affecting a number: an LLM assistant drafted the 150 clause-specific
 reference sentences from clause text alone, with no sight of model output.
@@ -733,7 +759,7 @@ won on the overall score was the worst for the clauses the system exists to warn
 |---|---|---|
 | First setup: TF-IDF / transformer / AND | 0.775 / 0.692 / 0.779 | AND accuracy 85.65%; AND vs TF-IDF a tie |
 | Re-run, tuned for F1: TF-IDF / transformer / AND | 0.785 / 0.797 / **0.809** | AND accuracy 88.43%; lead +0.024 [+0.011, +0.037] |
-| Re-run, recall-first: transformer (app) / averaging | 0.757 / 0.783 | High-risk found **90.3%** / 86.9% |
+| Re-run, recall-first: transformer (app default) / averaging | 0.757 / 0.783 | High-risk found **90.3%** / 86.9% (app reading: 88.6%) |
 | Control, 256 tokens tuned: transformer | 0.761 | loses to tuned TF-IDF by 0.024 |
 | Window fix alone (512 vs 256) | +0.024 untuned, +0.036 tuned | High-risk found +8.0 points |
 | Macro-F1, 34 common categories | 0.711 (re-run transformer) vs 0.673 (tuned TF-IDF) | |
@@ -750,7 +776,8 @@ first setup 22.0%); right window 82.6% (was 69.1%); span OK given the right wind
 model 28.0%; 76.2% / 76.8% in first / second half, was 40.7% / 5.4%). Quoted paragraph contains at
 least half the clause: 77.2% of detected, 71.7% of all real clauses.
 
-**Calibration:** raw ECE 0.206, isotonic on validation 0.016, Platt 0.084; Brier 0.195 to 0.091.
+**Calibration:** raw ECE 0.206, isotonic on validation 0.016, Platt ECE 0.084; Brier 0.195 to 0.091
+(isotonic) or 0.103 (Platt).
 
 **Span:** first model on centred windows token-F1 0.764 [0.743, 0.782], exact match 35.5%, overlap at
 F1 >= 0.5 82.8%; on plain windows 0.366. Retrained model on plain windows 0.779 (77.7% at F1 >= 0.5);
@@ -768,5 +795,5 @@ scoring (512 tokens, epoch 2 of 3); span ~25 min; summarizer 8-13 min CPU.
 **Longformer (M4):** step 258 s / 14.71 GB at batch 1; ~136 days for our schedule; 454 s vs 10.6 s per
 median contract.
 
-**Clausify:** median 64.4 s, worst 87.1 s, 1.93 GB; 30-window cap (38.4% of CUAD longer); default
-recall-first transformer; 45 tests (log in `tests/test_output.log`); demo contract 27 types (5 High, 13 Medium, 9 Low).
+**Clausify:** median 74.7 s, worst 116.2 s, 2.07 GB; first 30 windows + 5 TF-IDF picks per type (app: 88.6% of High-risk found; first 30 only: 77.3%); default
+recall-first transformer; 46 tests (log in `tests/test_output.log`); demo contract 27 types (5 High, 13 Medium, 9 Low).

@@ -60,6 +60,7 @@ The first 16 characters of the SHA-256 hash of each file (October 2026 models, a
 \texttt{outputs/presence\_v2/final/model.safetensors} & \texttt{e5f84bd42eb8bf27}\\
 \texttt{artifacts/baseline\_v2.pkl} & \texttt{3fc0d273065d0a11}\\
 \texttt{outputs/span\_v2/final/model.safetensors} & \texttt{20ac289e746e84fb}\\
+\texttt{outputs/clause\_v2/tfidf.pkl} & \texttt{9d288ab0c8231f95}\\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
@@ -100,6 +101,10 @@ The four \texttt{stage} scripts are run from the \texttt{notebooks/} folder, exa
 \texttt{caffeinate -i python3 -u retrain/span\_v2/\allowbreak span\_chunks.py} & Retrained span model of Section~\ref{sec:spanv2} ($\approx$46\,min)\\
 \texttt{python3 retrain/span\_v2/\allowbreak evaluate\_span.py} & Validation choices and Table~\ref{tab:spanv2}, including the app's quote; the settings in the app's \texttt{span\_v2.json} ($\approx$20\,min)\\
 \texttt{python3 retrain/v2\_fullwindow/\allowbreak card\_chance.py} & Cards under 50\% and 20\% chance (Section~\ref{sec:demolimits})\\
+\texttt{python3 retrain/v2\_fullwindow/\allowbreak window\_cap.py} & Reading rules for long contracts, number of extra windows chosen on validation (Table~\ref{tab:windowcap})\\
+\texttt{python3 retrain/v2\_fullwindow/\allowbreak app\_presence\_test.py} & The app's own detection on the test contracts ($\approx$85\,min on MPS)\\
+\texttt{python3 retrain/clause\_v2/\allowbreak clause\_classifier.py tfidf} (then \texttt{bert}, then \texttt{test}) & Clause-mode classifier, chosen on validation (Section~\ref{sec:clausemode})\\
+\texttt{python3 retrain/plain\_v2/\allowbreak plain\_english.py} (then \texttt{plain\_fewshot.py}) & Larger FLAN-T5 models for the plain-English line (Section~\ref{sec:summ})\\
 \texttt{python3 retrain/analysis\_oct2026/\allowbreak app\_bench.py} & Table~\ref{tab:appbench}\\
 \texttt{python3 retrain/verify\_report.py} & Checks the reported numbers in this report against the result files; prints \texttt{0 mismatched} when they agree\\
 \texttt{tectonic project\_report/main.tex} & This report\\
@@ -141,6 +146,8 @@ clausify-p3/  (github.com/afnanmz168/clausify-p3)   -- research deliverable
 |  |- analysis_oct2026/               -- analyses re-run on the October models
 |  |- v2_fullwindow/                  -- 512-token re-run and 256-token control
 |  |- span_v2/                        -- span model retrained on the chunks it reads
+|  |- clause_v2/                      -- clause-mode classifier (41 types + none)
+|  |- plain_v2/                       -- larger FLAN-T5 models for the plain-English line
 |  |- verify_report.py                -- checks report numbers against results
 |- analysis/
 |  |- bootstrap_ci.py                 -- cluster bootstrap, presence models
