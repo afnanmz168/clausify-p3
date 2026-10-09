@@ -1,0 +1,12 @@
+{
+ "max_len": 256,
+ "question_tokens_median": 53.0,
+ "share_read_median": 0.493,
+ "share_read_p10": 0.4115,
+ "share_read_p90": 0.5735,
+ "chars_read_median": 986,
+ "contract_never_read": 0.3427,
+ "positive_train_windows": 21028,
+ "positive_train_windows_clause_after_cut": 4875,
+ "share_label_noise": 0.2318
+}

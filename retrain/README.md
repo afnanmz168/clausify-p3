@@ -110,6 +110,14 @@ cd ~/Desktop/"final project p3"
 python3 retrain/verify_report.py        # expected last line: "... checks, 0 mismatched"
 ```
 
+## 5. Stage 2A re-run: whole window, tuned on validation (the final presence results)
+
+The original presence model reads only about half of each window (256 tokens; see
+`v2_fullwindow/measure_truncation.py`). `v2_fullwindow/` re-trains it at 512 tokens, holds out 81
+training contracts for validation, tunes both models there, and tests once. Commands and results are in
+`v2_fullwindow/README.md`; the report's Table 5.14 comes from `v2_fullwindow/runs/L512/results.json`,
+and the app reads its thresholds from `decision.json` (copied to the app as `decision_v2.json`).
+
 ## Notes
 
 - Run one script at a time. Two trainings at once share the GPU and memory and can stall.

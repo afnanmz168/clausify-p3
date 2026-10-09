@@ -1,0 +1,22 @@
+| configuration | micro-F1 [95% CI] | P | R | F2 | macro-F1 (>=10 pos) | High-risk recall (missed) |
+|---|---|---|---|---|---|---|
+| original: tfidf_408_C1_t0.5 | 0.775 | 0.742 | 0.810 | 0.796 | 0.666 | 0.648 (62) |
+| original: transformer256_408_max_t0.5 | 0.692 | 0.557 | 0.913 | 0.810 | 0.6114 | 0.841 (28) |
+| original: and_ensemble_original | 0.779 | 0.774 | 0.784 | 0.782 | 0.6584 | 0.631 (65) |
+| tfidf_untuned | 0.773 [0.755, 0.790] | 0.743 | 0.805 | 0.792 | 0.6494 | 0.653 (61) |
+| transformer_untuned | 0.693 [0.675, 0.710] | 0.554 | 0.924 | 0.815 | 0.6209 | 0.858 (25) |
+| tfidf_tuned_f1 | 0.785 [0.768, 0.801] | 0.750 | 0.824 | 0.808 | 0.6731 | 0.676 (57) |
+| transformer_tuned_f1 | 0.761 [0.744, 0.778] | 0.704 | 0.829 | 0.800 | 0.6591 | 0.648 (62) |
+| ensemble_tuned_f1 | 0.810 [0.794, 0.825] | 0.780 | 0.842 | 0.829 | 0.6958 | 0.676 (57) |
+| tfidf_tuned_f2 | 0.743 [0.727, 0.759] | 0.631 | 0.904 | 0.832 | 0.6535 | 0.795 (36) |
+| transformer_tuned_f2 | 0.716 [0.698, 0.734] | 0.589 | 0.915 | 0.824 | 0.6422 | 0.824 (31) |
+| ensemble_tuned_f2 | 0.777 [0.760, 0.794] | 0.708 | 0.861 | 0.826 | 0.6735 | 0.727 (48) |
+
+- **tfidf_untuned**: chosen on validation {'C': 1.0, 'threshold': 0.5}
+- **transformer_untuned**: chosen on validation {'pool': 'max', 'threshold': 0.5}; vs baseline {'diff': -0.0798, 'ci95': [-0.096748, -0.063626], 'p_gt0': 0.0}
+- **tfidf_tuned_f1**: chosen on validation {'C': 10.0, 'global_threshold': 0.5}
+- **transformer_tuned_f1**: chosen on validation {'pool': 'max', 'global_threshold': 0.94}; vs baseline {'metric': 'micro-F1', 'diff': -0.0237, 'ci95': [-0.040653, -0.006855], 'p_gt0': 0.003}
+- **ensemble_tuned_f1**: chosen on validation {'rule': 'AVG', 'validation_scores': {'AND': 0.8377, 'OR': 0.7994, 'MIXED': 0.83, 'AVG': 0.8392}, 'tfidf_C': 10.0, 'transformer_pool': 'max'}; vs baseline {'metric': 'micro-F1', 'diff': 0.0247, 'ci95': [0.013303, 0.036353], 'p_gt0': 1.0}
+- **tfidf_tuned_f2**: chosen on validation {'C': 10.0, 'global_threshold': 0.24}
+- **transformer_tuned_f2**: chosen on validation {'pool': 'top2', 'global_threshold': 0.44}; vs baseline {'metric': 'micro-F2', 'diff': -0.0083, 'ci95': [-0.023315, 0.006478], 'p_gt0': 0.14}
+- **ensemble_tuned_f2**: chosen on validation {'rule': 'AND', 'validation_scores': {'AND': 0.8869, 'OR': 0.8563, 'MIXED': 0.8788, 'AVG': 0.8798}, 'tfidf_C': 10.0, 'transformer_pool': 'top2'}; vs baseline {'metric': 'micro-F2', 'diff': -0.0067, 'ci95': [-0.016678, 0.002903], 'p_gt0': 0.09}

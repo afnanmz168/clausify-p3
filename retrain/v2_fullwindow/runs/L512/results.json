@@ -1,0 +1,518 @@
+{
+ "tag": "L512",
+ "n_fit": 327,
+ "n_val": 81,
+ "n_test": 102,
+ "rules": "see module docstring",
+ "configs": {
+  "tfidf_untuned": {
+   "chosen_on_validation": {
+    "C": 1.0,
+    "threshold": 0.5
+   },
+   "test": {
+    "micro_f1": 0.7728,
+    "micro_f2": 0.7917,
+    "precision": 0.7432,
+    "recall": 0.8049,
+    "macro_f1_all41": 0.5581,
+    "macro_f1_ge10pos": 0.6494,
+    "n_cats_ge10pos": 34,
+    "high_risk_recall": 0.6534,
+    "high_risk_missed": 61,
+    "high_risk_total": 176,
+    "tp": 1085,
+    "fp": 375,
+    "fn": 263,
+    "micro_f1_ci95": [
+     0.755109,
+     0.789679
+    ],
+    "high_risk_recall_ci95": [
+     0.555556,
+     0.744186
+    ]
+   }
+  },
+  "transformer_untuned": {
+   "chosen_on_validation": {
+    "pool": "max",
+    "threshold": 0.5
+   },
+   "test": {
+    "micro_f1": 0.7173,
+    "micro_f2": 0.8424,
+    "precision": 0.5749,
+    "recall": 0.9533,
+    "macro_f1_all41": 0.5927,
+    "macro_f1_ge10pos": 0.6514,
+    "n_cats_ge10pos": 34,
+    "high_risk_recall": 0.8864,
+    "high_risk_missed": 20,
+    "high_risk_total": 176,
+    "tp": 1285,
+    "fp": 950,
+    "fn": 63,
+    "micro_f1_ci95": [
+     0.699035,
+     0.734212
+    ],
+    "high_risk_recall_ci95": [
+     0.837695,
+     0.931822
+    ],
+    "vs_tfidf_untuned": {
+     "diff": -0.0555,
+     "ci95": [
+      -0.075187,
+      -0.036425
+     ],
+     "p_gt0": 0.0
+    }
+   }
+  },
+  "tfidf_tuned_f1": {
+   "chosen_on_validation": {
+    "C": 10.0,
+    "global_threshold": 0.5,
+    "per_category_thresholds": {
+     "Affiliate License-Licensee": 0.52,
+     "Affiliate License-Licensor": 0.5,
+     "Agreement Date": 0.64,
+     "Anti-Assignment": 0.42,
+     "Audit Rights": 0.56,
+     "Cap On Liability": 0.4,
+     "Change Of Control": 0.32,
+     "Competitive Restriction Exception": 0.46,
+     "Covenant Not To Sue": 0.52,
+     "Document Name": 0.5,
+     "Effective Date": 0.46,
+     "Exclusivity": 0.42,
+     "Expiration Date": 0.5,
+     "Governing Law": 0.5,
+     "Insurance": 0.58,
+     "Ip Ownership Assignment": 0.38,
+     "Irrevocable Or Perpetual License": 0.5,
+     "Joint Ip Ownership": 0.28,
+     "License Grant": 0.6,
+     "Liquidated Damages": 0.32,
+     "Minimum Commitment": 0.32,
+     "Most Favored Nation": 0.5,
+     "No-Solicit Of Customers": 0.5,
+     "No-Solicit Of Employees": 0.26,
+     "Non-Compete": 0.48,
+     "Non-Disparagement": 0.5,
+     "Non-Transferable License": 0.5,
+     "Notice Period To Terminate Renewal": 0.24,
+     "Parties": 0.5,
+     "Post-Termination Services": 0.62,
+     "Price Restrictions": 0.5,
+     "Renewal Term": 0.24,
+     "Revenue/Profit Sharing": 0.58,
+     "Rofr/Rofo/Rofn": 0.42,
+     "Source Code Escrow": 0.5,
+     "Termination For Convenience": 0.32,
+     "Third Party Beneficiary": 0.5,
+     "Uncapped Liability": 0.38,
+     "Unlimited/All-You-Can-Eat-License": 0.5,
+     "Volume Restriction": 0.38,
+     "Warranty Duration": 0.42
+    }
+   },
+   "test": {
+    "micro_f1": 0.7852,
+    "micro_f2": 0.8081,
+    "precision": 0.7497,
+    "recall": 0.8242,
+    "macro_f1_all41": 0.5846,
+    "macro_f1_ge10pos": 0.6731,
+    "n_cats_ge10pos": 34,
+    "high_risk_recall": 0.6761,
+    "high_risk_missed": 57,
+    "high_risk_total": 176,
+    "tp": 1111,
+    "fp": 371,
+    "fn": 237,
+    "micro_f1_ci95": [
+     0.768491,
+     0.801307
+    ],
+    "high_risk_recall_ci95": [
+     0.595506,
+     0.753086
+    ]
+   }
+  },
+  "transformer_tuned_f1": {
+   "chosen_on_validation": {
+    "pool": "max",
+    "global_threshold": 0.96,
+    "per_category_thresholds": {
+     "Affiliate License-Licensee": 0.92,
+     "Affiliate License-Licensor": 0.96,
+     "Agreement Date": 0.9,
+     "Anti-Assignment": 0.92,
+     "Audit Rights": 0.96,
+     "Cap On Liability": 0.96,
+     "Change Of Control": 0.94,
+     "Competitive Restriction Exception": 0.34,
+     "Covenant Not To Sue": 0.96,
+     "Document Name": 0.8,
+     "Effective Date": 0.88,
+     "Exclusivity": 0.96,
+     "Expiration Date": 0.94,
+     "Governing Law": 0.18,
+     "Insurance": 0.96,
+     "Ip Ownership Assignment": 0.9,
+     "Irrevocable Or Perpetual License": 0.96,
+     "Joint Ip Ownership": 0.92,
+     "License Grant": 0.94,
+     "Liquidated Damages": 0.74,
+     "Minimum Commitment": 0.96,
+     "Most Favored Nation": 0.96,
+     "No-Solicit Of Customers": 0.96,
+     "No-Solicit Of Employees": 0.76,
+     "Non-Compete": 0.96,
+     "Non-Disparagement": 0.96,
+     "Non-Transferable License": 0.88,
+     "Notice Period To Terminate Renewal": 0.96,
+     "Parties": 0.96,
+     "Post-Termination Services": 0.86,
+     "Price Restrictions": 0.96,
+     "Renewal Term": 0.94,
+     "Revenue/Profit Sharing": 0.96,
+     "Rofr/Rofo/Rofn": 0.96,
+     "Source Code Escrow": 0.96,
+     "Termination For Convenience": 0.88,
+     "Third Party Beneficiary": 0.96,
+     "Uncapped Liability": 0.96,
+     "Unlimited/All-You-Can-Eat-License": 0.96,
+     "Volume Restriction": 0.9,
+     "Warranty Duration": 0.92
+    }
+   },
+   "test": {
+    "micro_f1": 0.7973,
+    "micro_f2": 0.8357,
+    "precision": 0.7405,
+    "recall": 0.8635,
+    "macro_f1_all41": 0.6448,
+    "macro_f1_ge10pos": 0.7108,
+    "n_cats_ge10pos": 34,
+    "high_risk_recall": 0.6761,
+    "high_risk_missed": 57,
+    "high_risk_total": 176,
+    "tp": 1164,
+    "fp": 408,
+    "fn": 184,
+    "micro_f1_ci95": [
+     0.781061,
+     0.812217
+    ],
+    "high_risk_recall_ci95": [
+     0.601093,
+     0.75127
+    ],
+    "vs_tuned_tfidf": {
+     "metric": "micro-F1",
+     "diff": 0.0121,
+     "ci95": [
+      -0.005327,
+      0.029885
+     ],
+     "p_gt0": 0.912
+    }
+   }
+  },
+  "ensemble_tuned_f1": {
+   "chosen_on_validation": {
+    "rule": "AND",
+    "validation_scores": {
+     "AND": 0.8574,
+     "OR": 0.8043,
+     "MIXED": 0.8441,
+     "AVG": 0.8495
+    },
+    "tfidf_C": 10.0,
+    "transformer_pool": "max"
+   },
+   "test": {
+    "micro_f1": 0.8091,
+    "micro_f2": 0.7796,
+    "precision": 0.8636,
+    "recall": 0.7611,
+    "macro_f1_all41": 0.5789,
+    "macro_f1_ge10pos": 0.6661,
+    "n_cats_ge10pos": 34,
+    "high_risk_recall": 0.5398,
+    "high_risk_missed": 81,
+    "high_risk_total": 176,
+    "tp": 1026,
+    "fp": 162,
+    "fn": 322,
+    "micro_f1_ci95": [
+     0.792683,
+     0.825
+    ],
+    "high_risk_recall_ci95": [
+     0.462366,
+     0.617486
+    ],
+    "vs_tuned_tfidf": {
+     "metric": "micro-F1",
+     "diff": 0.024,
+     "ci95": [
+      0.011266,
+      0.036907
+     ],
+     "p_gt0": 1.0
+    }
+   }
+  },
+  "tfidf_tuned_f2": {
+   "chosen_on_validation": {
+    "C": 10.0,
+    "global_threshold": 0.24,
+    "per_category_thresholds": {
+     "Affiliate License-Licensee": 0.36,
+     "Affiliate License-Licensor": 0.24,
+     "Agreement Date": 0.64,
+     "Anti-Assignment": 0.24,
+     "Audit Rights": 0.22,
+     "Cap On Liability": 0.28,
+     "Change Of Control": 0.2,
+     "Competitive Restriction Exception": 0.36,
+     "Covenant Not To Sue": 0.28,
+     "Document Name": 0.24,
+     "Effective Date": 0.38,
+     "Exclusivity": 0.28,
+     "Expiration Date": 0.42,
+     "Governing Law": 0.38,
+     "Insurance": 0.3,
+     "Ip Ownership Assignment": 0.24,
+     "Irrevocable Or Perpetual License": 0.24,
+     "Joint Ip Ownership": 0.24,
+     "License Grant": 0.46,
+     "Liquidated Damages": 0.24,
+     "Minimum Commitment": 0.24,
+     "Most Favored Nation": 0.24,
+     "No-Solicit Of Customers": 0.24,
+     "No-Solicit Of Employees": 0.12,
+     "Non-Compete": 0.36,
+     "Non-Disparagement": 0.24,
+     "Non-Transferable License": 0.28,
+     "Notice Period To Terminate Renewal": 0.24,
+     "Parties": 0.24,
+     "Post-Termination Services": 0.28,
+     "Price Restrictions": 0.24,
+     "Renewal Term": 0.14,
+     "Revenue/Profit Sharing": 0.58,
+     "Rofr/Rofo/Rofn": 0.14,
+     "Source Code Escrow": 0.24,
+     "Termination For Convenience": 0.16,
+     "Third Party Beneficiary": 0.24,
+     "Uncapped Liability": 0.28,
+     "Unlimited/All-You-Can-Eat-License": 0.24,
+     "Volume Restriction": 0.38,
+     "Warranty Duration": 0.26
+    }
+   },
+   "test": {
+    "micro_f1": 0.7433,
+    "micro_f2": 0.8322,
+    "precision": 0.631,
+    "recall": 0.9043,
+    "macro_f1_all41": 0.5863,
+    "macro_f1_ge10pos": 0.6535,
+    "n_cats_ge10pos": 34,
+    "high_risk_recall": 0.7955,
+    "high_risk_missed": 36,
+    "high_risk_total": 176,
+    "tp": 1219,
+    "fp": 713,
+    "fn": 129,
+    "micro_f1_ci95": [
+     0.7267,
+     0.759243
+    ],
+    "high_risk_recall_ci95": [
+     0.72535,
+     0.860828
+    ]
+   }
+  },
+  "transformer_tuned_f2": {
+   "chosen_on_validation": {
+    "pool": "max",
+    "global_threshold": 0.88,
+    "per_category_thresholds": {
+     "Affiliate License-Licensee": 0.38,
+     "Affiliate License-Licensor": 0.88,
+     "Agreement Date": 0.88,
+     "Anti-Assignment": 0.88,
+     "Audit Rights": 0.96,
+     "Cap On Liability": 0.96,
+     "Change Of Control": 0.64,
+     "Competitive Restriction Exception": 0.34,
+     "Covenant Not To Sue": 0.88,
+     "Document Name": 0.8,
+     "Effective Date": 0.88,
+     "Exclusivity": 0.18,
+     "Expiration Date": 0.14,
+     "Governing Law": 0.18,
+     "Insurance": 0.96,
+     "Ip Ownership Assignment": 0.88,
+     "Irrevocable Or Perpetual License": 0.88,
+     "Joint Ip Ownership": 0.92,
+     "License Grant": 0.94,
+     "Liquidated Damages": 0.14,
+     "Minimum Commitment": 0.4,
+     "Most Favored Nation": 0.88,
+     "No-Solicit Of Customers": 0.88,
+     "No-Solicit Of Employees": 0.76,
+     "Non-Compete": 0.2,
+     "Non-Disparagement": 0.88,
+     "Non-Transferable License": 0.88,
+     "Notice Period To Terminate Renewal": 0.04,
+     "Parties": 0.88,
+     "Post-Termination Services": 0.86,
+     "Price Restrictions": 0.88,
+     "Renewal Term": 0.94,
+     "Revenue/Profit Sharing": 0.96,
+     "Rofr/Rofo/Rofn": 0.82,
+     "Source Code Escrow": 0.88,
+     "Termination For Convenience": 0.8,
+     "Third Party Beneficiary": 0.88,
+     "Uncapped Liability": 0.92,
+     "Unlimited/All-You-Can-Eat-License": 0.88,
+     "Volume Restriction": 0.88,
+     "Warranty Duration": 0.9
+    }
+   },
+   "test": {
+    "micro_f1": 0.7569,
+    "micro_f2": 0.8518,
+    "precision": 0.6383,
+    "recall": 0.9295,
+    "macro_f1_all41": 0.6243,
+    "macro_f1_ge10pos": 0.6891,
+    "n_cats_ge10pos": 34,
+    "high_risk_recall": 0.9034,
+    "high_risk_missed": 17,
+    "high_risk_total": 176,
+    "tp": 1253,
+    "fp": 710,
+    "fn": 95,
+    "micro_f1_ci95": [
+     0.73977,
+     0.773396
+    ],
+    "high_risk_recall_ci95": [
+     0.860104,
+     0.944444
+    ],
+    "vs_tuned_tfidf": {
+     "metric": "micro-F2",
+     "diff": 0.0196,
+     "ci95": [
+      0.003611,
+      0.035767
+     ],
+     "p_gt0": 0.992
+    }
+   }
+  },
+  "ensemble_tuned_f2": {
+   "chosen_on_validation": {
+    "rule": "AVG",
+    "validation_scores": {
+     "AND": 0.8995,
+     "OR": 0.866,
+     "MIXED": 0.891,
+     "AVG": 0.8997
+    },
+    "tfidf_C": 10.0,
+    "transformer_pool": "max"
+   },
+   "test": {
+    "micro_f1": 0.7832,
+    "micro_f2": 0.861,
+    "precision": 0.6807,
+    "recall": 0.9221,
+    "macro_f1_all41": 0.6376,
+    "macro_f1_ge10pos": 0.7025,
+    "n_cats_ge10pos": 34,
+    "high_risk_recall": 0.8693,
+    "high_risk_missed": 23,
+    "high_risk_total": 176,
+    "tp": 1243,
+    "fp": 583,
+    "fn": 105,
+    "micro_f1_ci95": [
+     0.7679,
+     0.798375
+    ],
+    "high_risk_recall_ci95": [
+     0.816324,
+     0.917584
+    ],
+    "vs_tuned_tfidf": {
+     "metric": "micro-F2",
+     "diff": 0.0288,
+     "ci95": [
+      0.017912,
+      0.039942
+     ],
+     "p_gt0": 1.0
+    }
+   }
+  }
+ },
+ "reference_original": {
+  "tfidf_408_C1_t0.5": {
+   "micro_f1": 0.7747,
+   "micro_f2": 0.7956,
+   "precision": 0.7424,
+   "recall": 0.8101,
+   "macro_f1_all41": 0.5724,
+   "macro_f1_ge10pos": 0.666,
+   "n_cats_ge10pos": 34,
+   "high_risk_recall": 0.6477,
+   "high_risk_missed": 62,
+   "high_risk_total": 176,
+   "tp": 1092,
+   "fp": 379,
+   "fn": 256
+  },
+  "transformer256_408_max_t0.5": {
+   "micro_f1": 0.6924,
+   "micro_f2": 0.8099,
+   "precision": 0.5575,
+   "recall": 0.9132,
+   "macro_f1_all41": 0.5454,
+   "macro_f1_ge10pos": 0.6114,
+   "n_cats_ge10pos": 34,
+   "high_risk_recall": 0.8409,
+   "high_risk_missed": 28,
+   "high_risk_total": 176,
+   "tp": 1231,
+   "fp": 977,
+   "fn": 117
+  },
+  "and_ensemble_original": {
+   "micro_f1": 0.7789,
+   "micro_f2": 0.782,
+   "precision": 0.7738,
+   "recall": 0.7841,
+   "macro_f1_all41": 0.5691,
+   "macro_f1_ge10pos": 0.6584,
+   "n_cats_ge10pos": 34,
+   "high_risk_recall": 0.6307,
+   "high_risk_missed": 65,
+   "high_risk_total": 176,
+   "tp": 1057,
+   "fp": 309,
+   "fn": 291
+  }
+ }
+}
