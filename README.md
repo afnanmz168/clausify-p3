@@ -41,9 +41,9 @@ in the report.
 | `retrain/` | Re-training and re-testing scripts with **exact terminal commands** (`retrain/README.md`), logs and results; `v2_fullwindow/` is the 512-token re-run with validation tuning (the final presence results and the app's thresholds); `analysis_oct2026/` re-runs every analysis on the October models; `smoke_test.py` checks every model; `verify_report.py` checks every reported number |
 | `analysis/` | August 2026 control runs (seeds, training budget, split variance, Longformer cost, app speed) |
 | `data/` | The 80/20 split as CSV |
-| `review/` | Risk-taxonomy review sheet and agreement script for legal reviewers |
+| `USABILITY_PROTOCOL.md` | Protocol for a small user test of the app |
 | `demo_clause.txt` | 18-clause demonstration contract (used by the app's tests) |
-| `P25301051 p3.pptx`, `PRESENTATION_SPEECH*`, `SPEECH_slides_*`, `VIVA_QA*` | Presentation and viva material |
+| `P25301051-p3-presentation-15-slides.pptx`, `VIVA_QA*` | Presentation (with speaker notes) and viva question bank |
 
 The application lives in its own repository: **[clausify-p3-app](https://github.com/afnanmz168/clausify-p3-app)**
 (Streamlit; all four models, PDF/Word upload, highlighted contract view, risk report download,
@@ -78,4 +78,4 @@ cd project_report && tectonic main.tex
 Python 3.13, PyTorch 2.8, transformers 5.12.1, scikit-learn 1.6.1 (see `requirements.txt`). Developed and
 trained on an Apple M4 laptop (MPS); no CUDA needed.
 
-*Research prototype — not legal advice. The risk taxonomy has not been reviewed by a lawyer.*
+*Research prototype — not legal advice.*
