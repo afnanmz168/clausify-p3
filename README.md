@@ -50,8 +50,9 @@ The application lives in its own repository: **[clausify-p3-app](https://github.
 missing-protection checklist). Trained weights: **[af123Af/clausify-models](https://huggingface.co/af123Af/clausify-models)**.
 The re-run presence model (`notebooks/outputs/presence_v2/`) and its TF-IDF model
 (`notebooks/artifacts/baseline_v2.pkl`) are in that repository as `presence_v2/` and
-`baseline_v2/baseline.pkl` (uploaded 9 October 2026; same SHA-256 as the local files), so the app
-downloads the final models, with the calibrated chance, when it runs from GitHub.
+`baseline_v2/baseline.pkl`, and the retrained span model (`notebooks/outputs/span_v2/`) is there as
+`span_v2/` (all uploaded 9 October 2026; same SHA-256 as the local files), so the app downloads the
+final models, with the calibrated chance and the new quoting, when it runs from GitHub.
 
 ---
 
