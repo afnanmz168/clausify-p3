@@ -238,27 +238,29 @@ We therefore ran the whole system on all 102 test contracts and asked, for each 
 \label{tab:e2e}
 \small
 \begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{llcc}
+\begin{tabular}{llcccc}
 \toprule
-\textbf{Step} & \textbf{Condition} & \textbf{Clauses left} & \textbf{Share of all}\\
+ & & \multicolumn{2}{c}{\textbf{First setup (AND)}} & \multicolumn{2}{c}{\textbf{App (recall-first)}}\\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+\textbf{Step} & \textbf{Condition} & \textbf{Left} & \textbf{Share} & \textbf{Left} & \textbf{Share}\\
 \midrule
- -- & real clauses in the test set & 1{,}348 & 100.0\%\\
-2A Presence & category found & 1{,}057 & 78.4\%\\
-2B Span & extracted text overlaps the real clause at F1 $\geq$ 0.5 & 296 & 22.0\%\\
-Risk & correct risk level given & 296 & 22.0\%\\
+ -- & real clauses in the test set & 1{,}348 & 100.0\% & 1{,}348 & 100.0\%\\
+2A Presence & category found & 1{,}057 & 78.4\% & 1{,}253 & 93.0\%\\
+2B Span & extracted text overlaps the real clause at F1 $\geq$ 0.5 & 296 & 22.0\% & 298 & 22.1\%\\
+Risk & correct risk level given & 296 & 22.0\% & 298 & 22.1\%\\
 \midrule
-\multicolumn{2}{l}{\textbf{Clauses that get through every step}} & \textbf{296} & \textbf{22.0\%}\\
-\multicolumn{2}{l}{\emph{95\% CI, bootstrap over contracts}} & & $[19.8\%,\ 24.2\%]$\\
+\multicolumn{2}{l}{\textbf{Clauses that get through every step}} & \textbf{296} & \textbf{22.0\%} & \textbf{298} & \textbf{22.1\%}\\
+\multicolumn{2}{l}{\emph{95\% CI, bootstrap over contracts}} & & $[19.8\%,\ 24.2\%]$ & & $[19.7\%,\ 24.6\%]$\\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
 
-{\footnotesize\singlespacing \emph{Note.} AND-ensemble presence rule. The last column is the share of real clauses still left after that step.\par}
+{\footnotesize\singlespacing \emph{Note.} First setup: AND-ensemble at 0.5. App: the re-run transformer with its recall-first thresholds (Section~\ref{sec:v2}). Each share is of all real clauses still left after that step.\par}
 \end{table}
 
-Only 22.0\% of real clauses get through, and this is the number that describes what a user gets. It is far below what the separate scores suggest: 78.4\% presence recall times 82.8\% span overlap predicts about 65\%, and the system delivers about a third of that. The rest of this section explains the gap.
+Only 22.0\% of real clauses get through with the first setup, and 22.1\% with the app's setting. This is the number that describes what a user gets. It is far below what the separate scores suggest: 78.4\% presence recall times 82.8\% span overlap predicts about 65\% for the first setup, and 93.0\% times 82.8\% predicts about 77\% for the app. Both deliver less than a third of that. The rest of this section explains the gap.
 
-The risk step loses nothing. The level is a fixed lookup for each category, so it is right exactly when the category is right and adds no errors of its own. ``Correct'' also only means ``matches our risk table'', which no expert has checked yet (Section~\ref{sec:taxvalid}).
+The risk step loses nothing. The level is a fixed lookup for each category, so it is right exactly when the category is right and adds no errors of its own. ``Correct'' here means ``matches our risk table''.
 
 \subsubsection{Where the clauses are lost}
 The big loss happens at the span step, and it has two separate causes. We told them apart by checking, for every clause whose category was found, whether the window chosen by the presence model actually contained the clause.
@@ -269,23 +271,25 @@ The big loss happens at the span step, and it has two separate causes. We told t
 \label{tab:e2eattr}
 \small
 \begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{lcc}
+\begin{tabular}{lcccc}
 \toprule
- & \textbf{Count} & \textbf{Share}\\
+ & \multicolumn{2}{c}{\textbf{First setup}} & \multicolumn{2}{c}{\textbf{App}}\\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+ & \textbf{Count} & \textbf{Share} & \textbf{Count} & \textbf{Share}\\
 \midrule
-Chosen window \emph{contains} the real clause & 730 & 69.1\%\\
-\quad and the span model found it (F1 $\geq$ 0.5) & 289 & 39.6\% of 730\\
-\quad but the span model still missed it & 441 & 60.4\% of 730\\
-Chosen window does \emph{not} contain the real clause & 327 & 30.9\%\\
-\quad but the span still scored $\geq$ 0.5 (same wording elsewhere) & 7 & \\
+Chosen window \emph{contains} the real clause & 730 & 69.1\% & 1{,}035 & 82.6\%\\
+\quad and the span model found it (F1 $\geq$ 0.5) & 289 & 39.6\% & 290 & 28.0\%\\
+\quad but the span model still missed it & 441 & 60.4\% & 745 & 72.0\%\\
+Chosen window does \emph{not} contain the real clause & 327 & 30.9\% & 218 & 17.4\%\\
+\quad but the span still scored $\geq$ 0.5 (same wording elsewhere) & 7 & & 8 & \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
 \end{table}
 
-The first cause is that the window with the highest score is often the wrong window. We chose the maximum rule (Section~\ref{sec:mil}) because it removes the search limit: if any window fires, the category is reported. Section~\ref{sec:mil} already discussed what that costs in precision. We had not expected the second cost. The highest-scoring window is also used to locate the clause, and it is poor at that job, missing the clause entirely 30.9\% of the time. The model was never trained to locate clauses. It was trained to answer ``does this window contain a clause of this category?'', and a window that talks about liability in general can score higher than the one that sets the limit. For those 327 clauses the span step gets the wrong 2{,}000 characters, and no extraction model could recover them.
+The first cause is that the window with the highest score is often the wrong window. Reading the whole window helps here: the re-run model's best window misses the clause 17.4\% of the time, against 30.9\% for the first setup. We chose the maximum rule (Section~\ref{sec:mil}) because it removes the search limit: if any window fires, the category is reported. Section~\ref{sec:mil} already discussed what that costs in precision. We had not expected the second cost. The highest-scoring window is also used to locate the clause, and it is poor at that job, missing the clause entirely 30.9\% of the time. The model was never trained to locate clauses. It was trained to answer ``does this window contain a clause of this category?'', and a window that talks about liability in general can score higher than the one that sets the limit. For those 327 clauses (218 with the app's setting) the span step gets the wrong 2{,}000 characters, and no extraction model could recover them.
 
-The second cause is that the span model is much weaker on windows unlike the ones it was trained on. Even when the window does contain the clause, extraction succeeds only 39.6\% of the time, against 82.8\% in the separate test of Section~\ref{sec:span}. The focus windows explain this (Section~\ref{sec:spanmethod}). In training, every example was centred so that the answer started about 150 characters into a 1{,}200-character window. This is allowed, because the answer is used to build a training example and never as an input when the system runs (Section~\ref{sec:leakage}). It still had a cost. The model has only seen windows with the answer near the start, while the real system gives it plain 1{,}200-character chunks where the answer can be anywhere, and the average token-F1 falls from 0.764 to 0.383.
+The second cause is that the span model is much weaker on windows unlike the ones it was trained on. Even when the window does contain the clause, extraction succeeds only 39.6\% of the time with the first setup and 28.0\% with the app's setting, against 82.8\% in the separate test of Section~\ref{sec:span}. With the window choice improved, this is now the larger loss. Where the clause sits in the window explains the drop. The first model read only the first half of each window, so when its chosen window was right, the clause was in the second half only 8.9\% of the time. With the re-run model it is 35.8\%. In the first half the span model succeeds about equally often for both (41.7\% and 40.7\%); in the second half it succeeds only 18.5\% and 5.4\% of the time. All of the drop from 39.6\% to 28.0\% comes from clauses the first model could not even see. The focus windows explain this (Section~\ref{sec:spanmethod}). In training, every example was centred so that the answer started about 150 characters into a 1{,}200-character window. This is allowed, because the answer is used to build a training example and never as an input when the system runs (Section~\ref{sec:leakage}). It still had a cost. The model has only seen windows with the answer near the start, while the real system gives it plain 1{,}200-character chunks where the answer can be anywhere, and the average token-F1 falls from 0.764 to 0.383 (0.350 with the app's setting).
 
 \subsubsection{What this changes}
 This changes how the earlier results should be read in three ways.
@@ -294,7 +298,7 @@ The span scores in Section~\ref{sec:span} are an upper limit on real extraction 
 
 A bigger model is also not the most useful next step. The second cause is a data problem with a cheap fix: train the span model on windows where the answer sits at different positions, or on the same plain chunks it sees in real use. The first cause needs a model trained to choose the extraction window, instead of reusing the presence score. Both fit within this project's computing budget, and neither needs more parameters.
 
-Clausify's output should be read as a shortlist. When the system shows a clause card, the category is right about 78\% of the time the clause was present, but in this test the span model's quoted text was a good copy of the real clause only about one time in five overall. The app has since changed how it picks the quote. It now quotes the whole paragraph that the presence model scores highest, which fixed the clear failures we saw in our own tests, but we have not measured this method on the test set. The app tells users that it is not legal advice and that the quoted text may not be the exact clause the badge refers to (Section~\ref{sec:demolimits}).
+Clausify's output should be read as a shortlist. With the app's setting, the category is found for 93.0\% of the clauses that are really there, but in this test the span model's quoted text was a good copy of the real clause only about one time in five overall. The app has since changed how it picks the quote. It now quotes the whole paragraph that the presence model scores highest, which fixed the clear failures we saw in our own tests, but we have not measured this method on the test set. The app tells users that it is not legal advice and that the quoted text may not be the exact clause the badge refers to (Section~\ref{sec:demolimits}).
 \subsection{Risk-Weighted Evaluation: Does the Metric Match the Purpose?}
 \label{sec:riskeval}
 
@@ -348,7 +352,44 @@ We do not change the reported setup because of this table. Picking OR after seei
 
 It does show that our evaluation score never matched our stated goal, and that the mismatch is large enough to reverse the ranking of the models. A system meant to warn a signer before signing should be chosen by how many High-risk clauses it finds, or by a score that weights recall more. An average over 41 categories, where half of the real clauses are Low-risk ones such as dates and party names, is the wrong yardstick. Section~\ref{sec:v2} runs the proper version of this test: it fixes a recall-first goal (micro-F2) in advance, chooses the rule and thresholds on a validation split, and reports on the test set once. The recall-first setups it chooses find 86.9\% and 90.3\% of High-risk clauses.
 
-The table also depends on Section~\ref{sec:taxvalid}. Every number in Table~\ref{tab:riskeval} uses our own choice of which categories are High, Medium and Low. If a lawyer disagrees about which categories are High, the table changes with it. The risk-weighted test carries all the warnings about the unchecked risk table and adds no independent evidence for it.
+Every number in Table~\ref{tab:riskeval} uses our own choice of which categories are High, Medium and Low, so a different risk table would change it.
+\subsubsection{The same breakdown for the re-run setups}
+Table~\ref{tab:riskeval2} repeats the breakdown for the setups of Section~\ref{sec:v2}, whose rules and thresholds were chosen on the validation contracts. The recall-first settings fix the problem this section found. The app's default misses 17 of the 176 High-risk clauses and 55 of the 498 Medium-risk ones, against 65 and 160 for the first setup's AND-ensemble. The price is precision: 0.439 on the High level, against 0.581. The balanced setup, chosen for micro-F1, misses more High-risk clauses than any first-setup rule (81), which is the same conflict between the overall score and the purpose of the tool.
+
+\begin{table}[!htbp]
+\centering
+\caption{Results by risk band, re-run setups}
+\label{tab:riskeval2}
+\small
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{llccccc}
+\toprule
+\textbf{Band} & \textbf{Setup} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{Found} & \textbf{Missed}\\
+\midrule
+\multirow{4}{*}{\shortstack[l]{\textbf{High}\\176 positives}}
+ & Recall-first transformer (app) & 0.439 & \textbf{0.903} & 0.591 & 159 & \textbf{17}\\
+ & Recall-first ensemble & 0.515 & 0.869 & 0.647 & 153 & 23\\
+ & Balanced ensemble (AND) & 0.736 & 0.540 & 0.623 & 95 & 81\\
+ & TF--IDF, tuned & 0.572 & 0.676 & 0.620 & 119 & 57\\
+\addlinespace
+\multirow{4}{*}{\shortstack[l]{\textbf{Medium}\\498 positives}}
+ & Recall-first transformer (app) & 0.534 & 0.890 & 0.668 & 443 & 55\\
+ & Recall-first ensemble & 0.565 & 0.890 & 0.691 & 443 & 55\\
+ & Balanced ensemble (AND) & 0.787 & 0.659 & 0.717 & 328 & 170\\
+ & TF--IDF, tuned & 0.620 & 0.747 & 0.678 & 372 & 126\\
+\addlinespace
+\multirow{4}{*}{\shortstack[l]{\textbf{Low}\\674 positives}}
+ & Recall-first transformer (app) & 0.843 & 0.966 & 0.900 & 651 & 23\\
+ & Recall-first ensemble & 0.868 & 0.960 & 0.912 & 647 & 27\\
+ & Balanced ensemble (AND) & 0.939 & 0.895 & 0.916 & 603 & 71\\
+ & TF--IDF, tuned & 0.920 & 0.920 & 0.920 & 620 & 54\\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+
+{\footnotesize\singlespacing \emph{Note.} Same 102 test contracts as Table~\ref{tab:riskeval}. Every setup uses the per-category thresholds chosen on the 81 validation contracts.\par}
+\end{table}
+
 \subsection{What the Errors Actually Look Like}
 \label{sec:errorexamples}
 The confusion matrix counts 309 false positives and 291 false negatives. Counts alone do not show whether the model fails for silly reasons or understandable ones, so Table~\ref{tab:errors} shows real cases from the test contracts. The false positives are sorted by the model's own confidence, since a system's most confident mistakes tell us the most about it.
@@ -397,6 +438,8 @@ Insurance & F1 0.20 & The real clause is the insurance duty; the model returns t
 Three patterns stand out. Many false positives match the words without the duty: a contract that mentions insurance costs does not require insurance, and a bag-of-words model reading the whole document cannot tell the two apart. Many misses are the reverse, the idea without the usual words. A \$5{,}000-per-month cancellation fee is liquidated damages, but a model that has seen only about fifty contracts with this category, most of them using the usual words, will not learn that. Disagreement with the labels is the third pattern and part of the rare-category problem. The \emph{Third Party Beneficiary} case above looks like a labelling mistake, so the 0.000 F1 scores in Section~\ref{sec:raretail} come partly from the model and partly from the labels. We did not try to measure the split between the two, because that would mean labelling the contracts again, and we are not qualified to do it.
 
 The span errors point to something easier to fix. The one-word answer ``\texttt{the}'' and the confident answer from a window that cannot contain the clause have the same cause: the extraction model has no way to say that nothing is there. Training with unanswerable examples, as in SQuAD~v2, would give it that option, and we list it as future work.
+
+The app's recall-first setting makes a different mix of mistakes, because it was chosen to miss as little as possible. On the test set it reports 710 false positives and only 95 misses, against 309 and 291 for the first setup's ensemble. Its most confident false alarms are informational categories, \emph{Parties}, \emph{Agreement Date} and \emph{Effective Date}, reported with scores above 0.98 in exhibits and addenda where CUAD's annotators marked no such clause. These are cheap mistakes for a user, since the Low-risk cards sit at the bottom of the report. Its misses are mostly clauses written without the usual words: a renewal ``by amendment to this agreement'' (\emph{Renewal Term}), and a sponsor's promise about other sponsors read as \emph{Most Favored Nation}.
 \subsection{Does the AND Rule Hurt Rare Categories More Than Common Ones?}
 \label{sec:raretail}
 Section~\ref{sec:bootstrap} supports the AND-ensemble for the kind of mistakes it makes, since it turns the transformer's many false alarms into balanced precision and recall. That argument rests on the overall numbers, and an overall number can hide a trade that falls unevenly across categories. The rare categories are the obvious place to look. Agreement between two models is hardest to get where each model has the least training data, and agreement is exactly what the rule requires.
@@ -436,6 +479,34 @@ On the rare categories the ensemble gains nothing. The AND rule gains 34.6 point
 The per-category details are clearer than the average. On five of the ten rarest categories the AND rule scores exactly 0.000. On three of those (\emph{Price Restrictions}, \emph{Unlimited/All-You-Can-Eat License}, \emph{No-Solicit of Customers}) the transformer alone was finding something (F1 0.087, 0.500, 0.323) before the AND rule removed it.
 
 The overall micro-F1 counts all 4{,}182 decisions equally, and a signer does not. Missing a rare clause is not clearly cheaper than missing a common one, and it may be much worse. \emph{Most Favored Nation} is among the ten rarest categories, it is one of our eight High-risk categories, and both models score 0.000 on it. A rule that favours precision on common categories, even one with no settings, improves the score without reducing harm. The first setup reported the ensemble as its main configuration because the overall test chose it. On this evidence, though, a system meant to protect signers would do better with the more permissive rule for High-risk categories and the AND rule for the rest, accepting more false alarms where a missed clause costs the most. Choosing that mixed rule here, after looking at the test set, would not be a fair test. Section~\ref{sec:v2} includes it among the rules chosen on a validation split. The validation split preferred the AND rule for micro-F1 and the average of the two scores for micro-F2, so the mixed rule was not used.
+
+Table~\ref{tab:raretail2} repeats the comparison for the re-run setups. The app's recall-first transformer finds 49 of the 70 rare clauses (F1 0.460, against 0.368 for the first setup's transformer), and it scores zero on only one of the ten rarest categories (\emph{Price Restrictions}), where the first setup's ensemble scored zero on five. It also finds one of the seven \emph{Most Favored Nation} clauses. The balanced AND setup repeats the first setup's pattern: on the rare categories it finds 18 of 70 and scores zero on five, so requiring agreement still costs the most where training data is thinnest.
+
+\begin{table}[!htbp]
+\centering
+\caption{Rare vs.\ common categories, re-run setups}
+\label{tab:raretail2}
+\small
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{llccccc}
+\toprule
+\textbf{Group} & \textbf{Setup} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{TP} & \textbf{FN}\\
+\midrule
+\multirow{3}{*}{Rarest 10 (70 test positives)}
+ & Recall-first transformer (app) & 0.343 & 0.700 & 0.460 & 49 & 21\\
+ & Recall-first ensemble & 0.449 & 0.629 & \textbf{0.524} & 44 & 26\\
+ & Balanced ensemble (AND) & 0.692 & 0.257 & 0.375 & 18 & 52\\
+\addlinespace
+\multirow{3}{*}{Other 31 (1{,}278 test positives)}
+ & Recall-first transformer (app) & 0.662 & 0.942 & 0.777 & 1{,}204 & 74\\
+ & Recall-first ensemble & 0.694 & 0.938 & 0.798 & 1{,}199 & 79\\
+ & Balanced ensemble (AND) & 0.867 & 0.789 & \textbf{0.826} & 1{,}008 & 270\\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+
+{\footnotesize\singlespacing \emph{Note.} Same ten rarest categories as Table~\ref{tab:raretail}; thresholds chosen on the validation contracts.\par}
+\end{table}
 
 \section{Final Design Adjustments}
 Three choices made before training were never checked: max-pooling as the way to combine window scores, 0.5 as the decision threshold, and the 256-token input length. After the main tests we went back to all three. The first two are tested in Sections~\ref{sec:pooling} and~\ref{sec:threshold} on the original models. The third turned out to be a flaw, and Section~\ref{sec:v2} fixes it and re-runs the presence comparison with both models tuned on a validation split. Those re-run results replace the original ones as the project's answer to RQ1.
@@ -483,7 +554,7 @@ This test has limits. It changes only the rule applied to the window scores. It 
 \subsection{The Threshold and What the Confidence Score Means}
 \label{sec:threshold}
 
-Every presence decision in this project, and every clause card in Clausify, comes from comparing a score with 0.5. Section~\ref{sec:valprotocol} notes that nobody chose this threshold; it is the default for a two-class model. Two questions follow. Is 0.5 a good place to draw the line, and does the score being compared with it mean anything? Figure~\ref{fig:threshcal} answers both.
+In the first setup, every presence decision came from comparing a score with 0.5. Section~\ref{sec:valprotocol} notes that nobody chose this threshold; it is the default for a two-class model. Clausify no longer uses it: it compares each score with a threshold chosen for that clause type on the validation contracts (Section~\ref{sec:v2}). Two questions follow. Is 0.5 a good place to draw the line, and does the score being compared with it mean anything? Figure~\ref{fig:threshcal} answers both.
 
 \begin{figure}[!htbp]
 \centering
@@ -506,7 +577,9 @@ The transformer's score has an Expected Calibration Error \cite{guo2017calibrati
 
 The TF--IDF baseline is also off (ECE 0.172), mostly in the safer direction: in the middle range it is less confident than it should be. Its predictions between 0.7 and 0.8 are right 89.6\% of the time, and those between 0.8 and 0.9 are right 97.8\% of the time.
 
-For the app this means the score on every card is not a probability of being right, which we record in Section~\ref{sec:demolimits}. The fix needs no retraining. Platt scaling or isotonic regression, fitted on a validation split, would turn the scores into real probabilities, and it is the cheapest single improvement to the interface. The original runs had no validation split to fit it on (Section~\ref{sec:valprotocol}). The re-run in Section~\ref{sec:v2} sets one aside, but we have not fitted the calibration map yet.
+For the app this means the score on every card is not a probability of being right, which we record in Section~\ref{sec:demolimits}. The fix needs no retraining. Platt scaling or isotonic regression, fitted on a validation split, would turn the scores into real probabilities, and it is the cheapest single improvement to the interface. The original runs had no validation split to fit it on (Section~\ref{sec:valprotocol}).
+
+The re-run of Section~\ref{sec:v2} sets one aside, so we fitted the map there. On the 81 validation contracts we fitted isotonic regression, a monotone map from the re-run transformer's highest window score to the share of times the clause is really present, and applied it unchanged to the test contracts. The raw score has an Expected Calibration Error of 0.206 on the test set, almost the same as the first setup's model. After the map it is 0.016, and the Brier score falls from 0.195 to 0.091. Platt scaling, which fits a single logistic curve, reaches 0.084. The map keeps the order of the scores, so it changes no detection. Clausify now shows this calibrated chance on every card, limited to the range 1\% to 99\%, in place of the raw score. On the test set, contracts whose raw score was at least 0.99 contained the clause 99.0\% of the time, and those between 0.90 and 0.95 only 32.3\% of the time.
 
 \subsection{Reading the Whole Window, and Tuning Both Models the Same Way}
 \label{sec:v2}
@@ -597,7 +670,7 @@ The ensemble claim that Section~\ref{sec:bootstrap} withdrew now holds, and the 
 The conflict between micro-F1 and the purpose of the tool from Section~\ref{sec:riskeval} appears again, and this time it can be resolved without looking at the test set. The setup with the best micro-F1 finds only 54.0\% of High-risk clauses. The recall-first setups, chosen on validation before the test was scored, find far more. The ensemble that averages the two scores finds 86.9\% (missing 23 of 176) at a micro-F1 of 0.783, so it beats the original headline setup on both measures (0.779 and 63.1\%). The transformer alone finds 90.3\% (missing 17), the most of any setup, at a micro-F1 of 0.757. Both recall-first setups beat the tuned baseline on micro-F2, the measure they were tuned for (the ensemble by $+0.029$, interval $[+0.018, +0.040]$). This is where reading the whole window matters most: with 256 tokens, neither recall-first setup beats the tuned baseline, and they find only 82.4\% and 72.7\% of High-risk clauses.
 
 \subsubsection{What the re-run does not change}
-The TF--IDF baseline is still strong. Tuned, it reaches 0.785, and on micro-F1 the transformer's lead over it is not proven. The transformer's scores are still badly calibrated: the shared threshold chosen on validation is 0.96 for micro-F1 and 0.88 for micro-F2, so its scores still bunch near 1 and the confidence bar in the app is still not a probability (Section~\ref{sec:threshold}). Every other analysis in this chapter (the whole-system test, the risk-weighted test, the error examples, the rare categories, the seeds, the training budget and the split variation) was run on the original models. We have not repeated them with the new ones, and the 22.0\% whole-system figure in particular may change, because the new presence model also chooses the window that the span model reads.
+The TF--IDF baseline is still strong. Tuned, it reaches 0.785, and on micro-F1 the transformer's lead over it is not proven. The transformer's raw scores are still badly calibrated: the shared threshold chosen on validation is 0.96 for micro-F1 and 0.88 for micro-F2, so its scores still bunch near 1. A calibration map fitted on the validation contracts fixes this for the app (Section~\ref{sec:threshold}). The whole-system test, the risk-weighted breakdown, the error examples and the rare categories were first run on the original models. Sections~\ref{sec:e2e} to~\ref{sec:raretail} now report the re-run setups next to them. The seed, training-budget and split checks of Section~\ref{sec:bootstrap} onwards have not been repeated for the re-run model.
 
 \subsubsection{Which setup the app uses}
 Clausify's default is the recall-first transformer alone, with the per-category thresholds chosen on validation. It finds the most High-risk clauses on the test set, and it does not depend on the TF--IDF model, which does not transfer well to the short contracts a user is likely to paste. The TF--IDF model learnt its word statistics from long SEC filings. The 7{,}033-character demonstration contract of Section~\ref{sec:clausify} has section headings that name four High-risk clause types (\emph{Exclusivity}, \emph{IP Ownership Assignment}, \emph{Non-Compete} and \emph{Liquidated Damages}). The TF--IDF model scores its intellectual-property assignment clause at 0.08, so the averaging ensemble misses it and reports three of the four. The transformer alone reports all four. It also reports \emph{Uncapped Liability} for the liability clause, which in fact caps liability, and it misses the revenue-sharing and warranty-period clauses (Sections~8 and~10 of that contract). The first setup's model made three High-risk false alarms on the same contract: the same \emph{Uncapped Liability}, plus \emph{Minimum Commitment} and \emph{Irrevocable or Perpetual License}, which the contract does not contain either. The averaging ensemble and the AND rule remain in the app as settings, described with their test-set results.
@@ -708,7 +781,7 @@ How the extra data changed things is still informative. Recall rose from 0.9080 
 
 We also saw a smaller effect that leaves our conclusion unchanged. The AND-ensemble built on the full-data transformer scores 0.7820, and its lead over the baseline is $+0.0073$ with a 95\% interval of $[-0.0000, +0.0140]$. It wins in 97.4\% of resamples, but the interval still touches zero, so more training data moves the ensemble's lead from a clear tie to a borderline one. We do not claim it, because an interval whose lower end sits on zero does not pass the bar we set in Section~\ref{sec:bootstrap}, and we will not lower the bar because the number moved our way. The ensemble's balance between precision and recall stays the same with more data.
 
-The rest of this chapter (the confusion matrix, the per-category results and the whole-system test of Section~\ref{sec:e2e}) and the model in Clausify all use the October 2026 model trained on 24{,}000 examples. The full-data run is a control experiment that tests one possible explanation, and we report it that way instead of swapping in a slightly better number afterwards. The two cannot be told apart, so nothing later would change if we had.
+The first-setup results in this chapter (the confusion matrix, the per-category results and the first-setup rows of Section~\ref{sec:e2e} onwards) use the October 2026 model trained on 24{,}000 examples. Clausify uses the re-run model of Section~\ref{sec:v2}. The full-data run is a control experiment that tests one possible explanation, and we report it that way instead of swapping in a slightly better number afterwards. The two cannot be told apart, so nothing later would change if we had.
 \subsection{A Third Source of Variation: The Split Itself}
 \label{sec:splitvar}
 Sections~\ref{sec:budget} and~\ref{sec:seeds} tested two things that could move our numbers, the amount of training data and the random seed, and neither changed the conclusions. A third source may be the largest of all: the split. Every result in this project comes from one contract-level 80/20 split made with seed 42. With only 510 contracts, a different split puts different rare categories in the test set and could move the scores by itself. Seed variance does not capture this, because changing the training seed keeps the test set the same.
@@ -762,12 +835,12 @@ Table~\ref{tab:scorecard} collects the test results of all three models. The sep
 2A Presence, first setup & AND-ensemble (TF--IDF + DistilBERT) & micro-F1 / Accuracy & 0.779 / 85.65\%\\
 2A Presence, first setup & AND-ensemble & Precision / Recall     & 77.38\% / 78.41\%\\
 2B Span     & DistilBERT-QA & token-F1 (given the window) & 0.764\\
-2B Span     & DistilBERT-QA & token-F1 (window chosen by 2A) & 0.383\\
+2B Span     & DistilBERT-QA & token-F1 (window chosen by 2A, app setting) & 0.350\\
 2B Span     & DistilBERT-QA & Exact Match           & 35.5\%\\
 1 Summarizer & FLAN-T5-small & ROUGE-L (41 templates)  & 0.775\\
 1 Summarizer & FLAN-T5-small & ROUGE-L (clause-specific) & 0.116\\
 \midrule
-\textbf{Full pipeline} & \textbf{all three steps (first setup)} & \textbf{real clauses that get through} & \textbf{22.0\%}\\
+\textbf{Full pipeline} & \textbf{all three steps (app setting)} & \textbf{real clauses that get through} & \textbf{22.1\%}\\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
@@ -798,7 +871,7 @@ For the first setup we withdrew one claim. The AND-ensemble's first place in Tab
 Two costs only showed up once we looked for them, and neither is flattering.
 \begin{itemize}[itemsep=2pt]
   \item In the first setup, the AND rule does not help everywhere. On the ten rarest categories it gains nothing in F1 over the transformer alone (0.364 against 0.368): it buys 34.6 points of precision with 30.0 points of recall and cuts the clauses found from 39 of 70 to 18 of 70 (Section~\ref{sec:raretail}). All of its overall benefit comes from the common categories, and one of the categories it scores zero on is High-risk.
-  \item The separate scores do not multiply. With the first setup's presence model, only 22.0\% of real clauses get through the whole system, against about 65\% predicted by multiplying the separate scores (Section~\ref{sec:e2e}); we have not repeated this test with the re-run model. The presence model's highest-scoring window is the wrong window 30.9\% of the time, and the span model was trained on centred windows it never sees in real use.
+  \item The separate scores do not multiply. Only 22.0\% of real clauses get through the whole system with the first setup and 22.1\% with the app's setting, against about 65\% and 77\% predicted by multiplying the separate scores (Section~\ref{sec:e2e}). Reading the whole window cut wrong-window choices from 30.9\% to 17.4\%, so the span model's training mismatch is now the main loss. The presence model's highest-scoring window is the wrong window 30.9\% of the time, and the span model was trained on centred windows it never sees in real use.
 \end{itemize}
 
 The numbers in this chapter that we first trusted least (the ensemble's rank, the summarizer's ROUGE, the span model's token-F1) each turned out to measure something narrower than it seemed. Each time, we found out by measuring the thing the score stood for: we resampled the contracts, changed the seed, changed the reference sentences, or ran the steps in a chain. None of these checks needed a bigger model or more data.
@@ -807,7 +880,7 @@ The numbers in this chapter that we first trusted least (the ensemble's rank, th
 \label{sec:usability}
 We did not run a usability study. The app's main claim, that grouping clauses by risk helps a non-lawyer act on a contract, is therefore untested, and Section~\ref{sec:threats} lists it under construct validity.
 %% ==================================================================
-%% TODO IF THE INFORMAL WALKTHROUGH IS RUN (review/USABILITY_PROTOCOL.md)
+%% TODO IF THE INFORMAL WALKTHROUGH IS RUN (USABILITY_PROTOCOL.md)
 %% Replace the paragraph above with 3-5 sentences, e.g.:
 %%
 %% "We ran an informal walkthrough with two non-lawyer participants (15
@@ -826,7 +899,7 @@ We did not run a usability study. The app's main claim, that grouping clauses by
 \label{sec:demolimits}
 By default the app finds clauses with the re-run transformer alone, using the recall-first thresholds chosen on validation (Section~\ref{sec:v2}). The two re-run ensembles are offered as settings. The default finds the most High-risk clauses on the test set (90.3\%) at the cost of the lowest micro-F1 of the three (0.757), because a missed High-risk clause is the mistake this tool exists to prevent (Section~\ref{sec:ethics}). The ensembles also depend on the TF--IDF model, which scores short contracts too low (Section~\ref{sec:v2}).
 
-The confidence score is still not a probability. Section~\ref{sec:threshold} shows that the original transformer's score has an Expected Calibration Error of 0.205, and the re-run model's thresholds (0.88 shared, chosen on validation) show that its scores still bunch near 1. Each card therefore shows the model's score next to the threshold set for that clause type, and every bar is labelled as a model score. Fitting a calibration map on the validation split would fix this without retraining.
+The model's raw score is not a probability. Section~\ref{sec:threshold} shows that the original transformer's score has an Expected Calibration Error of 0.205, and the re-run model's thresholds (0.88 shared, chosen on validation) show that its scores still bunch near 1. The app therefore shows a calibrated chance instead: the isotonic map of Section~\ref{sec:threshold}, fitted on the validation contracts, turns each score into the share of validation contracts with that score that really contained the clause, and on the test set it reaches an Expected Calibration Error of 0.016. It was measured on CUAD contracts, so on contracts unlike CUAD's it is only a guide, and the app says so.
 
 Long contracts are cut off. To keep the app fast, it scores at most 30 windows, so any contract longer than 45{,}500 characters is only partly read and clauses after that point cannot be found. The app says so in its notice, but none of the numbers in this chapter include the cut, because they score whole documents. It affects many contracts: 38.4\% of CUAD contracts (196 of 510) are longer than 45{,}500 characters, and the app reads only the first 16\% of the longest test contract (289{,}615 characters). Table~\ref{tab:appbench} shows the effect: the 75th-percentile contract and the longest contract take almost the same time (96.6 and 102.8 seconds) although one is four times longer, because both are cut to 30 windows. The quoted text is also less reliable than the label. Section~\ref{sec:e2e} shows that when the presence model chooses the window, the span model's answer overlaps the real clause in only about a fifth of cases overall. The app now quotes the whole paragraph that the presence model scores highest, which fixed the clear failures we saw in our own tests, though this has not been measured on the test set. For a user, the risk badge and the category name are much more reliable than the quoted text under them, and the app says this too. A card means ``this contract seems to contain a clause of this type; look here'' and should not be read as ``this is the clause''. The risk levels are also set per category. The risk table says a \emph{Cap on Liability} clause needs attention, but it does not check whether a particular cap is generous or harsh. The notice above every analysis states all of this. The demonstration does show that the models work on contracts they have never seen, and that the output can be presented in a form a non-lawyer can act on.
 

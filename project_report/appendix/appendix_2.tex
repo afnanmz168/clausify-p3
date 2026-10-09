@@ -98,7 +98,6 @@ The four \texttt{stage} scripts are run from the \texttt{notebooks/} folder, exa
 \texttt{python3 retrain/v2\_fullwindow/\allowbreak measure\_truncation.py} & How much of each window the 256-token model reads (Section~\ref{sec:v2})\\
 \texttt{python3 retrain/analysis\_oct2026/\allowbreak app\_bench.py} & Table~\ref{tab:appbench}\\
 \texttt{python3 retrain/verify\_report.py} & Checks the reported numbers in this report against the result files; prints \texttt{0 mismatched} when they agree\\
-\texttt{python3 review/agreement.py <sheets>} & Reviewer agreement and Cohen's/Fleiss' $\kappa$ once the risk-table review sheets are returned\\
 \texttt{tectonic project\_report/main.tex} & This report\\
 \bottomrule
 \end{longtable}
@@ -147,9 +146,6 @@ clausify-p3/  (github.com/afnanmz168/clausify-p3)   -- research deliverable
 |  |- presence_run.py                 -- presence training at any data budget
 |  |- longformer_bench.py             -- sparse-attention cost benchmark
 |  |- diverse_refs.json               -- 150 clause-specific pilot references
-|- review/
-|  |- risk_taxonomy_review_sheet.csv  -- face-validity review instrument
-|  |- agreement.py                    -- reviewer agreement (kappa)
 |- demo_clause.txt                    -- 18-clause demonstration contract
 
 clausify-p3-app/  (github.com/afnanmz168/clausify-p3-app)
@@ -160,6 +156,6 @@ clausify-p3-app/  (github.com/afnanmz168/clausify-p3-app)
 |- cat_questions.json                 -- 41 category->question strings
 |- sample_contract.txt / test_contract.txt
 |- decision_v2.json                   -- tested rules and per-category thresholds
-|- tests/test_app.py                  -- 42 end-to-end checks
+|- tests/test_app.py                  -- 43 end-to-end checks
 \end{verbatim}
 }

@@ -350,7 +350,7 @@ The name of this layer limits what we can claim. The system does not read a clau
 
 \subsubsection{Assignment criteria}
 \label{sec:riskcriteria}
-We wrote down the rules we used so that a reader, or a reviewing lawyer, can disagree with a particular level for a particular reason. Each category was scored on five points, from the weaker party's side:
+We wrote down the rules we used so that a reader can disagree with a particular level for a particular reason. Each category was scored on five points, from the weaker party's side:
 
 \begin{enumerate}[itemsep=3pt]
   \item \textbf{Money at risk.} Can this clause cost money, and is there a limit? Having no limit is the strongest single sign of High risk.
@@ -362,7 +362,7 @@ We wrote down the rules we used so that a reader, or a reviewing lawyer, can dis
 
 The rule we used is this. A category is High if it has no money limit (point~1), cannot be undone (point~2), or limits freedom after the contract (point~3). It is Low if it only gives information (it records a fact such as a date, a name or the governing law, or gives a benefit) and scores on none of the five points. Everything else is Medium: a real duty, but limited and reversible. This is why \emph{Cap on Liability} is Medium even though it sounds protective (it limits how much you can recover, which may not cover a real loss), and why \emph{Governing Law} is Low even though it matters in a court case (it is a fact about the contract and puts no one-sided duty on the signer).
 
-The eight High categories fall into three groups, each based on a different point: money you could owe without limit (\emph{Uncapped Liability}, \emph{Liquidated Damages}, \emph{Minimum Commitment}, \emph{Most Favored Nation}); something you cannot get back (\emph{IP Ownership Assignment}, \emph{Irrevocable/Perpetual License}); and your freedom to earn later (\emph{Non-Compete}, \emph{Exclusivity}). The full table with reasons is in Appendix~\ref{app:taxonomy}, and Figure~\ref{fig:riskdist} shows how the categories are spread across the levels.
+The eight High categories fall into three groups, each based on a different point: money you could owe without limit (\emph{Uncapped Liability}, \emph{Liquidated Damages}, \emph{Minimum Commitment}, \emph{Most Favored Nation}); something you cannot get back (\emph{IP Ownership Assignment}, \emph{Irrevocable/Perpetual License}); and your freedom to earn later (\emph{Non-Compete}, \emph{Exclusivity}). The levels are our own judgement, made with these rules and the CUAD category descriptions. The full table with reasons is in Appendix~\ref{app:taxonomy}, and Figure~\ref{fig:riskdist} shows how the categories are spread across the levels.
 
 \subsubsection{Who is the ``weaker party''?}
 \label{sec:weaker}
@@ -373,52 +373,6 @@ We defined it as the party with less power over how the contract was written, wh
 \subsubsection{Why a lookup table rather than a learned score}
 The risk table is a simple lookup, which we chose on purpose. It can be checked line by line, its reasoning is written down for each category, and it cannot change silently between versions. The cost is the limit named at the start of this section: it cannot tell a \$10{,}000 liability limit from a \$10{,}000{,}000 one. Section~\ref{sec:riskeval} measures a second cost we did not expect. Because the levels are fixed per category, the system's mistakes depend entirely on which categories it finds well, and the High-risk categories turn out to be among those it finds worst.
 
-
-\subsubsection{Provenance and validation status of the taxonomy}
-\label{sec:taxvalid}
-The risk table is the main thing this project adds to CUAD, and it also has the weakest evidence behind it, so we state where it comes from.
-
-The three of us set all 41 levels. We are computer science students, not lawyers. We judged each category by its effect on the weaker party (can this clause cost you unlimited money, take away something you cannot get back, or limit what you can do later?) and compared our levels with the CUAD category descriptions. The levels rest only on our own judgement, and no legal professional has reviewed them.
-
-Every other part of this project is measured against answers marked by experts, and this part is measured against nothing. It also affects the user most directly, since the level decides what Clausify tells a signer to worry about first. If we marked a category Medium that a lawyer would mark High, the app fails silently: the warning never appears.
-
-The basic check is a review by someone with legal training. The reviewer gets the 41 categories with our level and reason, says whether they agree with each one, and we report the number of disagreements, whatever it is. We have prepared a review sheet for this (\texttt{review/risk\_taxonomy\_review\_sheet.csv} in the repository, with one row per category and columns for the reviewer's own level and comments). It takes a reviewer about half an hour.
-
-One reviewer would give a basic check, and two or three reviewing separately would give a stronger one. Simple percentage agreement is a poor measure for this table because the levels are uneven: 22 of the 41 categories are Medium, so a reviewer who answered ``Medium'' every time would agree 54\% of the time while adding no information. Agreement corrected for chance (Cohen's $\kappa$ for two reviewers, Fleiss' $\kappa$ for three or more) removes this problem, and that is what we would report. The repository includes \texttt{review/agreement.py}, which reads the completed sheets and prints each reviewer's agreement, both kappa values and the categories in dispute. The analysis is fixed in advance, so the results cannot shape it.
-
-\emph{At the time of writing this review has not been done, and no number from it is reported anywhere in this project.} Until then, every level has a written reason that can be argued with line by line, but no qualified person has checked any of them.
-%% ==================================================================
-%% TODO BEFORE FINAL SUBMISSION -- REPLACE THE ITALIC PARAGRAPH ABOVE
-%%
-%% Send review/REVIEWER_REQUEST.md + risk_taxonomy_review_sheet.csv to a
-%% law student or practitioner. Then delete the italic sentence above and
-%% paste ONE of the following, filling in the numbers.
-%%
-%% --- IF TWO OR MORE REVIEWERS COMPLETED THE SHEET -----------------
-%% Run: python review/agreement.py reviewer1.csv reviewer2.csv
-%%
-%% "The 41 assignments were reviewed independently by <N> reviewers
-%%  (<roles>) in <month year>. Agreement with our levels was <X>% and <Y>%;
-%%  Cohen's kappa against our taxonomy was <k1> and <k2>, and reviewer-to-
-%%  reviewer agreement was <k3> (<interpretation>). The <M> disputed
-%%  categories were <list>. We adopted <K> of these changes; Appendix A
-%%  reflects the revised levels. We report the disagreements we did not
-%%  adopt as well, with our reason in each case."
-%%
-%% --- IF ONLY ONE REVIEWER WAS AVAILABLE ---------------------------
-%% Run: python review/agreement.py reviewer1.csv
-%%
-%% "The 41 assignments were reviewed by <name/role> in <month year>. The
-%%  reviewer agreed with <X> of 41 (<Y>%); the <M> disputed categories were
-%%  <list>, of which we adopted <K>. Only one reviewer was available in the
-%%  time before submission, so inter-rater statistics (Cohen's or Fleiss'
-%%  kappa) could not be computed and no chance-corrected agreement figure is
-%%  reported. Raw agreement on a three-level scale where 22 of 41 categories
-%%  are Medium should be read with that in mind."
-%%
-%% Report the disagreements WHATEVER they are. A low agreement figure,
-%% honestly reported, is a stronger report than no figure at all.
-%% ==================================================================
 
 \begin{figure}[ht]
 \centering
@@ -791,9 +745,9 @@ The app is a single-page Streamlit program (\texttt{app.py}) built on two small 
 \label{sec:clausemode}
 Users often paste a few clauses instead of a whole contract and expect one card per clause. Whole-contract mode does not work that way. For each of the 41 categories it asks whether the category appears anywhere in the window, so six related clauses pasted together gave fourteen categories, eight of them wrong. The app therefore has a second mode, chosen automatically for a short list of paragraphs or chosen by the user, in which each paragraph is one clause and gets exactly one category and one risk level. When most paragraphs are numbered (``1.'', ``4.2'', ``(a)'', ``Section 5''), only the numbered ones are treated as clauses. The title, opening paragraph and signature lines are listed separately as skipped, so a contract with 18 numbered clauses gives exactly 18 cards, numbered as in the contract.
 
-In this mode, if a clause heading names a category (``\textsc{2. Exclusivity.}''), the heading decides the category directly, and headings that do not clearly name one category are ignored. Otherwise the presence model scores the clause against all 41 category questions. Clause mode keeps the first setup's presence model, because the adjustment below and the accuracy figures reported for it were measured with that model. The raw scores cannot be compared across categories as they are; \emph{Parties}, for example, scores about 0.98 on almost any clause that names the two sides. Each category's score is therefore adjusted by how that category scores on real CUAD clauses of other categories, using 1{,}586 clauses from the training split, and the clause gets the category with the highest adjusted score. A clause whose best adjusted score is below 2 is shown as \emph{unrecognized} instead of being forced into a category.
+In this mode, if a clause heading names a category (``\textsc{2. Exclusivity.}''), the heading decides the category directly, and headings that do not clearly name one category are ignored. Otherwise the presence model scores the clause against all 41 category questions. Clause mode uses the re-run presence model, with the adjustment below fitted for it. The raw scores cannot be compared across categories as they are; \emph{Parties}, for example, scores about 0.98 on almost any clause that names the two sides. Each category's score is therefore adjusted by how that category scores on real CUAD clauses of other categories, using 1{,}586 clauses from the training split, and the clause gets the category with the highest adjusted score. A clause whose best adjusted score is below 2 is shown as \emph{unrecognized} instead of being forced into a category.
 
-On 721 clauses from the test split, this adjustment raises the share of clauses given the right category out of 41 from 9.6\% (raw highest score) to 42.3\%. The right category is in the top three 65.3\% of the time, and the right risk level is given 67.0\% of the time. These scores are well below the whole-contract ones, which we expected, since the presence model was trained to scan 2{,}000-character windows and not to label single clauses. The app shows these numbers under every clause-mode result. On the six-clause example above, the version with headings is labelled correctly (five High, one Low). With the headings removed, the model alone gets none of the six risk levels right: it labels five of them Medium and leaves one unrecognized. For inputs like this the clause headings provide the accuracy, and cards decided by the model alone should be checked against the clause text.
+On 721 clauses from the test split, this adjustment raises the share of clauses given the right category out of 41 from 5.1\% (raw highest score) to 44.9\%, against 42.3\% with the first setup's model. The right category is in the top three 67.1\% of the time, and the right risk level is given 69.9\% of the time; 25.8\% of clauses are left unrecognized. These scores are well below the whole-contract ones, which we expected, since the presence model was trained to scan 2{,}000-character windows and not to label single clauses. The app shows these numbers under every clause-mode result. With the first setup's model, on the six-clause example above, the version with headings is labelled correctly (five High, one Low). With the headings removed, the model alone gets none of the six risk levels right: it labels five of them Medium and leaves one unrecognized. For inputs like this the clause headings provide the accuracy, and cards decided by the model alone should be checked against the clause text.
 
 \subsubsection{Measured Latency}
 \label{sec:appbench}
